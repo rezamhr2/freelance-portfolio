@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبزینه: شمارش کالری و رژیم غذایی | نمونه کار</title>
+<style>
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../assets/fonts/vazirmatn-arabic.woff2) format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../assets/fonts/vazirmatn-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Vazirmatn,Tahoma,Arial,sans-serif;line-height:1.9;color:#1f2937;background:#f5f7f5}
+a{text-decoration:none;color:inherit}
+.badge{position:fixed;top:12px;left:12px;z-index:100;background:#f59e0b;color:#fff;padding:4px 14px;border-radius:999px;font-size:13px;font-weight:bold;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.container{max-width:1080px;margin:0 auto;padding:0 20px}
+section{padding:44px 0}
+section h2.sec-title{font-size:24px;color:#14532d;text-align:center;margin-bottom:6px}
+section p.sec-sub{text-align:center;color:#64748b;font-size:15px;margin-bottom:28px}
+.card{background:#fff;border-radius:18px;padding:28px;box-shadow:0 2px 14px rgba(0,0,0,.05);margin-bottom:20px}
+
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:90;background:#fff;box-shadow:0 1px 10px rgba(0,0,0,.06)}
+.nav-inner{max-width:1080px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:8px;height:64px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:bold;font-size:20px;color:#14532d;margin-left:auto}
+.logo svg{flex:none}
+.nav-links{display:flex;gap:4px;flex-wrap:wrap}
+.nav-links a{padding:6px 12px;border-radius:999px;font-size:14px;color:#334155}
+.nav-links a:hover{color:#16a34a;background:#f0fdf4}
+.nav-links a.active{color:#16a34a;border-bottom:2px solid #16a34a;border-radius:0}
+.nav-cta{background:#16a34a;color:#fff!important;padding:8px 18px;border-radius:999px;font-weight:bold;font-size:14px}
+.nav-cta:hover{background:#15803d}
+
+/* ---------- hero ---------- */
+.hero{background:linear-gradient(135deg,#eef7ea 0%,#f5f7f5 55%,#e7f3e2 100%);border-radius:0 0 32px 32px;padding:56px 0 48px}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center}
+.hero h1{font-size:32px;line-height:1.5;color:#14532d}
+.hero h1 .hl{color:#16a34a}
+.hero p{color:#475569;margin:14px 0 22px;font-size:16px}
+.btn{display:inline-block;background:#16a34a;color:#fff;border:none;padding:13px 30px;border-radius:999px;font-weight:bold;font-size:16px;font-family:inherit;cursor:pointer}
+.btn:hover{background:#15803d}
+.btn.ghost{background:#fff;color:#16a34a;border:2px solid #16a34a;margin-right:10px}
+.btn.ghost:hover{background:#f0fdf4}
+.hero-art{display:flex;justify-content:center}
+.hero-art svg{max-width:100%;height:auto}
+.hero-note{font-size:13px;color:#64748b;margin-top:14px}
+
+/* ---------- calculator ---------- */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+label{display:block;font-weight:bold;margin:14px 0 6px;color:#334155}
+input,select{width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:10px;font-family:inherit;font-size:15px;background:#fff}
+input[type=radio]{width:auto;margin-left:6px}
+.radio-row{display:flex;gap:20px;flex-wrap:wrap;padding:8px 0}
+.radio-row label{font-weight:normal;margin:0}
+.hint{font-size:13px;color:#64748b;margin-top:4px}
+button.calc-btn{background:#16a34a;color:#fff;border:none;padding:13px 32px;border-radius:999px;font-weight:bold;font-size:17px;font-family:inherit;cursor:pointer;margin-top:20px;width:100%}
+button.calc-btn:hover{background:#15803d}
+.error{color:#dc2626;font-size:14px;margin-top:8px;display:none}
+#result{display:none}
+.big{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin:16px 0}
+.stat{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px;text-align:center}
+.stat b{font-size:24px;color:#14532d;display:block}
+.stat span{font-size:13px;color:#475569}
+.bmi-scale{position:relative;height:12px;border-radius:999px;background:linear-gradient(to left,#38bdf8 0%,#22c55e 30%,#eab308 55%,#f97316 75%,#dc2626 100%);margin:26px 8px 8px}
+.bmi-marker{position:absolute;top:-7px;width:4px;height:26px;background:#1f2937;border-radius:2px;transform:translateX(50%)}
+.bmi-labels{display:flex;justify-content:space-between;font-size:12px;color:#64748b;padding:0 4px}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:15px}
+th,td{border-bottom:1px solid #e2e8f0;padding:10px 8px;text-align:right}
+th{background:#f8fafc;color:#14532d}
+.meal{margin-top:14px}
+.meal h3{color:#14532d;font-size:16px;margin-bottom:4px}
+.meal p{color:#475569;font-size:15px}
+.notice{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:12px 16px;font-size:14px;margin-bottom:20px}
+.water-box{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:12px;padding:14px 18px;font-size:15px;margin-top:20px}
+.suggest{list-style:none;margin-top:8px}
+.suggest li{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px 16px;margin-bottom:10px;font-size:15px;color:#334155}
+.suggest li::before{content:"✓ ";color:#16a34a;font-weight:bold}
+.menu-total{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px 16px;margin-top:14px;font-size:15px;color:#14532d}
+.meal .kcal{color:#15803d;font-weight:bold}
+
+/* ---------- features ---------- */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.feature{background:#fff;border-radius:18px;padding:24px;box-shadow:0 2px 14px rgba(0,0,0,.05);display:flex;gap:16px;align-items:flex-start}
+.feature .icon{flex:none;width:56px;height:56px;border-radius:16px;background:#f0fdf4;display:flex;align-items:center;justify-content:center}
+.feature h3{font-size:16px;color:#14532d;margin-bottom:4px}
+.feature p{font-size:14px;color:#475569}
+
+/* ---------- plans ---------- */
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.plan{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.05);display:flex;flex-direction:column}
+.plan-top{height:8px;background:linear-gradient(to left,#65a30d,#16a34a)}
+.plan-body{padding:22px;display:flex;flex-direction:column;flex:1}
+.plan-days{display:inline-block;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;border-radius:999px;padding:2px 12px;font-size:13px;font-weight:bold;width:fit-content;margin-bottom:10px}
+.plan h3{font-size:18px;color:#14532d}
+.plan p{font-size:14px;color:#475569;flex:1;margin:8px 0 16px}
+.plan-meta{font-size:13px;color:#64748b;border-top:1px dashed #e2e8f0;padding-top:10px;margin-bottom:14px}
+.plan button{background:#fff;color:#16a34a;border:2px solid #16a34a;padding:10px 20px;border-radius:999px;font-weight:bold;font-size:15px;font-family:inherit;cursor:pointer;width:100%}
+.plan button:hover{background:#f0fdf4}
+
+/* ---------- recipes ---------- */
+.chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
+.chip{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #e2e8f0;border-radius:999px;padding:8px 16px;font-size:14px;font-family:inherit;cursor:pointer;color:#334155}
+.chip:hover{border-color:#86efac}
+.chip.active{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:bold}
+.recipes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.recipe{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.05)}
+.recipe-art{height:120px;display:flex;align-items:center;justify-content:center;font-size:52px}
+.recipe-body{padding:16px 18px}
+.recipe-body h3{font-size:16px;color:#14532d}
+.recipe-body p{font-size:13px;color:#64748b;margin:6px 0 10px}
+.recipe-kcal{font-size:13px;font-weight:bold;color:#15803d;background:#f0fdf4;border-radius:999px;padding:2px 10px;display:inline-block}
+.recipe-empty{display:none;text-align:center;color:#64748b;padding:20px}
+
+/* ---------- testimonials ---------- */
+.carousel{position:relative;max-width:720px;margin:0 auto}
+.testi{background:#fff;border-radius:18px;padding:32px;box-shadow:0 2px 14px rgba(0,0,0,.05);text-align:center;display:none}
+.testi.show{display:block}
+.testi .avatar{width:72px;height:72px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:bold;color:#fff}
+.testi .stars{color:#f59e0b;font-size:20px;letter-spacing:2px}
+.testi blockquote{font-size:16px;color:#334155;margin:12px 0}
+.testi .who{font-weight:bold;color:#14532d}
+.testi .num{font-size:13px;color:#64748b}
+.carousel-nav{display:flex;justify-content:center;gap:12px;margin-top:18px;align-items:center}
+.carousel-nav button{background:#fff;border:2px solid #16a34a;color:#16a34a;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;font-family:inherit;line-height:1}
+.carousel-nav button:hover{background:#f0fdf4}
+.dots{display:flex;gap:6px}
+.dots span{width:10px;height:10px;border-radius:50%;background:#cbd5e1;cursor:pointer}
+.dots span.on{background:#16a34a}
+
+/* ---------- FAQ ---------- */
+.faq{max-width:760px;margin:0 auto}
+.faq-item{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:12px;overflow:hidden}
+.faq-q{width:100%;background:none;border:none;text-align:right;font-family:inherit;font-size:16px;font-weight:bold;color:#14532d;padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.faq-q .plus{color:#16a34a;font-size:22px;flex:none;transition:transform .2s}
+.faq-item.open .faq-q .plus{transform:rotate(45deg)}
+.faq-a{display:none;padding:0 20px 18px;color:#475569;font-size:15px}
+.faq-item.open .faq-a{display:block}
+
+/* ---------- app / footer ---------- */
+.app-band{background:#14532d;border-radius:24px;color:#fff;padding:36px;text-align:center}
+.app-band h2{font-size:22px;margin-bottom:8px}
+.app-band p{color:#bbf7d0;margin-bottom:20px}
+.app-band .btn.ghost{background:transparent;color:#fff;border-color:#fff}
+.app-band .btn.ghost:hover{background:rgba(255,255,255,.1)}
+footer{background:#14532d;color:#bbf7d0;padding:32px 0 24px;text-align:center;font-size:14px;margin-top:44px}
+.trust{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
+.trust span{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 16px;font-size:13px}
+footer a{color:#fff;text-decoration:underline}
+
+
+@media (max-width:760px){
+  .hero-grid,.calc-grid{grid-template-columns:1fr}
+  .hero h1{font-size:26px}
+  .nav-links{display:none}
+  .badge{display:none}
+}
+@media (max-width:480px){
+  section{padding:32px 0}
+  .container{padding:0 16px}
+  .hero{padding:40px 0 32px}
+  .hero h1{font-size:24px}
+  .card{padding:20px 16px}
+  .nav-cta{padding:10px 18px}
+  .stat b{font-size:20px}
+  table{font-size:13px}
+  th,td{padding:8px 5px}
+  .chip{min-height:44px;padding:10px 16px}
+  .plan button{min-height:48px}
+  .faq-q{min-height:56px;padding:14px 16px}
+  .carousel-nav button{width:44px;height:44px}
+  .testi{padding:24px 18px}
+  .app-band{padding:28px 20px}
+  .btn{padding:13px 24px}
+}
+
+/* ===== rework 2026-11-10 (batch B), warm neutrals, real food, type-first =====
+   Design read: Persian diet-calculator sample for people who want to speak
+   (here: eat) in real life, not in stock-photo "healthy". Warm neutrals
+   #f6f5f4, one green accent, real Iranian food as proof. Dials ENERGY 2 /
+   RHYTHM 2 / MOTION 1 (the calculator is used repeatedly; it must never
+   feel like a performance). */
+body{background:#f6f5f4}
+.hero{background:#f6f5f4;border-radius:0}
+.hero h1{font-size:40px;font-weight:700}
+.hero-photo{border-radius:18px;overflow:hidden;margin:0;line-height:0}
+.hero-photo img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5}
+.hero-photo figcaption{font-size:12px;color:#64748b;line-height:1.6;padding:10px 4px 0}
+.eyebrow{font-size:12px;font-weight:bold;letter-spacing:2px;color:#15803d;text-align:center;margin-bottom:6px}
+.plan-top{background:#16a34a}
+a,button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #16a34a;outline-offset:2px}
+/* hamburger (<=760px): nav-links become a dropdown panel */
+.menu-btn{display:none;width:44px;height:44px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;font-size:20px;cursor:pointer;color:#14532d;align-items:center;justify-content:center;flex:0 0 auto}
+@media(max-width:760px){
+  .menu-btn{display:flex}
+  .nav-inner{flex-wrap:wrap;height:auto;padding-top:10px;padding-bottom:10px}
+  .nav-links{display:none;flex-basis:100%;flex-direction:column;gap:2px;padding:8px 0}
+  .nav-links.open{display:flex}
+  .nav-links a{display:flex;min-height:44px;align-items:center;border-radius:10px}
+  .nav-links a.active{border-bottom:0;background:#f0fdf4}
+  .logo{margin-left:0}
+}
+/* scroll reveals: one observer, once-only, 16px rise, 60ms stagger capped at 6 */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s cubic-bezier(.23,1,.32,1),transform .6s cubic-bezier(.23,1,.32,1);transition-delay:var(--d,0ms)}
+.reveal.in{opacity:1;transform:none}
+/* features: numbered, typographic, no generic icons */
+.feature{display:block}
+.feature .icon{display:none}
+.feature .num{font-size:13px;font-weight:bold;letter-spacing:2px;color:#15803d;border-bottom:2px solid #16a34a;padding-bottom:8px;margin-bottom:12px;display:inline-block}
+/* recipes: typographic art band, category + number, no emoji */
+.recipe-art{height:110px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:16px 18px;background:#f0fdf4!important}
+.recipe-art .r-cat{font-size:13px;font-weight:bold;color:#15803d}
+.recipe-art .r-num{font-size:26px;font-weight:bold;color:#14532d}
+/* recipe hero: the real dish (ghormeh sabzi) above the rails */
+.recipe-hero{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;margin-bottom:28px;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.05)}
+.recipe-hero img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/3;display:block}
+.recipe-hero .rh-body{padding:24px}
+.recipe-hero .rh-body h3{font-size:20px;color:#14532d;margin-bottom:8px}
+.recipe-hero .rh-body p{font-size:15px;color:#475569}
+.recipe-hero .rh-body .recipe-kcal{margin-top:12px}
+@media(max-width:760px){.recipe-hero{grid-template-columns:1fr}}
+/* features photo: market as a place, not a concept */
+.features-photo{margin:0 0 24px;line-height:0}
+.features-photo img{width:100%;height:280px;object-fit:cover;display:block;border-radius:18px}
+.features-photo figcaption{font-size:12px;color:#64748b;line-height:1.6;padding:10px 4px 0}
+/* testimonials: named horizontal rail, one trust metric per card */
+.testi-rail{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 18px;scrollbar-width:thin}
+.testi-rail::-webkit-scrollbar{height:8px}
+.testi-rail::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:99px}
+.testi-rail .testi{flex:0 0 min(340px,85%);display:block;scroll-snap-align:start}
+.testi .avatar{font-variant-numeric:tabular-nums}
+/* macro bars: scaleX, not width, 500ms */
+.macro-bars{margin-top:14px;display:grid;gap:10px}
+.macro-bar-row{display:grid;grid-template-columns:90px 1fr 56px;gap:12px;align-items:center;font-size:14px}
+.macro-bar-row .mb-label{color:#334155;font-weight:bold}
+.macro-bar-row .mb-track{height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.macro-bar-row .mb-fill{height:100%;background:#16a34a;border-radius:999px;transform:scaleX(0);transform-origin:right;transition:transform .5s cubic-bezier(.23,1,.32,1)}
+.macro-bar-row .mb-fill.fat{background:#f59e0b}
+.macro-bar-row .mb-fill.carbs{background:#38bdf8}
+.macro-bar-row .mb-val{text-align:left;font-variant-numeric:tabular-nums;color:#14532d;font-weight:bold}
+.stat b{font-variant-numeric:tabular-nums}
+.photo-credits{font-size:12px;color:#86a98d;text-align:center;margin-top:16px;line-height:1.8}
+.photo-credits a{color:#bbf7d0;text-decoration:underline}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+  .macro-bar-row .mb-fill{transform:scaleX(1)}
+}
+</style>
+</head>
+<body>
+<div class="badge">نمونه کار</div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="#16a34a"/><path d="M17 25c-5-2-7-6-7-10 0-1 .2-2 .5-3C13 13 15 15 17 15s4-2 6.5-3c.3 1 .5 2 .5 3 0 4-2 8-7 10z" fill="#fff"/><path d="M17 15v9" stroke="#16a34a" stroke-width="1.6" stroke-linecap="round"/></svg>
+      سبزینه
+    </div>
+    <button class="menu-btn" type="button" aria-label="باز کردن منو" aria-expanded="false" aria-controls="navLinks">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="#home" class="active">خانه</a>
+      <a href="#calculator">محاسبه‌گر شاخص تودهٔ بدنی</a>
+      <a href="#plans">برنامه‌های غذایی</a>
+      <a href="#recipes">دستورهای غذایی</a>
+      <a href="#faq">پرسش‌های پرتکرار</a>
+    </div>
+    <a href="#app" class="nav-cta">دریافت برنامه</a>
+  </div>
+</nav>
+
+<!-- ======== hero ======== -->
+<header class="hero" id="home">
+  <div class="container hero-grid">
+    <div>
+      <h1>با <span class="hl">سبزینه</span> می‌توانید<br>کالری روزانه‌تان را بشمارید<br>و به وزن دلخواه برسید</h1>
+      <p>کالری و درشت‌مغذی‌های هر وعده را ثبت کنید، برنامه غذایی شخصی بگیرید و قدم‌به‌قدم به هدفتان نزدیک شوید.</p>
+      <a href="#calculator" class="btn">شروع امروز</a>
+      <a href="#plans" class="btn ghost">دیدن برنامه‌ها</a>
+      <p class="hero-note">بدون نیاز به ثبت‌نام، محاسبه‌گر همین‌جا در صفحه کار می‌کند.</p>
+    </div>
+    <figure class="hero-photo">
+      <img src="../assets/graphics/diet/salad-bowl-pexels.jpg" alt="کاسه سالاد از بالا روی سنگ مرمر سفید با فضای خالی زیاد" width="1200" height="1800" fetchpriority="high">
+      <figcaption>کاسه سالاد تازه؛ فضای خالی عکس، جای محاسبه‌گر است.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+<!-- ======== calculator ======== -->
+<section id="calculator">
+  <div class="container">
+    <p class="eyebrow reveal">۰۱ · محاسبه‌گر</p>
+    <h2 class="sec-title reveal">محاسبه‌گر کالری و شاخص تودهٔ بدنی</h2>
+    <p class="sec-sub reveal">مشخصات خود را وارد کنید تا کالری روزانه، شاخص تودهٔ بدنی و درشت‌مغذی‌های پیشنهادی را ببینید.</p>
+
+    <div class="card">
+      <div class="calc-grid">
+        <div>
+          <h2 style="font-size:20px;color:#14532d;margin-bottom:6px">مشخصات شما</h2>
+          <form id="dietForm" novalidate>
+            <label>جنسیت</label>
+            <div class="radio-row">
+              <label><input type="radio" name="sex" value="male" checked> مرد</label>
+              <label><input type="radio" name="sex" value="female"> زن</label>
+            </div>
+            <label for="age">سن (سال)</label>
+            <input type="number" id="age" min="15" max="80" value="30" required>
+            <p class="hint">بین ۱۵ تا ۸۰ سال</p>
+            <label for="height">قد (سانتی‌متر)</label>
+            <input type="number" id="height" min="130" max="220" value="175" required>
+            <label for="weight">وزن (کیلوگرم)</label>
+            <input type="number" id="weight" min="35" max="200" step="0.5" value="75" required>
+            <label for="activity">میزان فعالیت بدنی</label>
+            <select id="activity">
+              <option value="1.2">کم‌تحرک، کار نشسته، ورزش نمی‌کنم</option>
+              <option value="1.375">فعالیت سبک، ورزش سبک ۱ تا ۳ روز در هفته</option>
+              <option value="1.55" selected>فعالیت متوسط، ورزش متوسط ۳ تا ۵ روز در هفته</option>
+              <option value="1.725">فعالیت زیاد، ورزش سنگین ۶ تا ۷ روز در هفته</option>
+              <option value="1.9">بسیار فعال، ورزش سنگین روزانه + کار بدنی</option>
+            </select>
+            <label for="goal">هدف</label>
+            <select id="goal">
+              <option value="loss">کاهش وزن (چربی‌سوزی)</option>
+              <option value="maintain" selected>حفظ وزن</option>
+              <option value="gain">افزایش وزن (عضله‌سازی)</option>
+            </select>
+            <div class="error" id="formError">لطفاً همه مقادیر را در بازه مجاز وارد کنید.</div>
+            <button type="submit" class="calc-btn">محاسبه کالری و برنامه غذایی</button>
+          </form>
+        </div>
+
+        <div id="result">
+          <h2 style="font-size:20px;color:#14532d;margin-bottom:6px">نتیجه شما</h2>
+          <div class="big">
+            <div class="stat"><b id="rBmr">…</b><span>متابولیسم پایه<br>کالری در روز</span></div>
+            <div class="stat"><b id="rTdee">…</b><span>کالری مصرفی روزانه<br>با احتساب فعالیت</span></div>
+            <div class="stat"><b id="rTarget">…</b><span>کالری هدف روزانه<br>بر اساس هدف شما</span></div>
+            <div class="stat"><b id="rBmi">…</b><span>شاخص تودهٔ بدنی</span><br><span id="rBmiCat" style="font-size:13px;color:#14532d;font-weight:bold"></span></div>
+          </div>
+          <div class="bmi-scale"><div class="bmi-marker" id="bmiMarker"></div></div>
+          <div class="bmi-labels"><span>کمبود وزن</span><span>سالم</span><span>اضافه وزن</span><span>چاقی</span></div>
+
+          <h2 style="margin-top:20px;font-size:18px;color:#14532d">هدف روزانه و پیش‌بینی تغییر وزن</h2>
+          <p style="color:#475569;font-size:15px" id="projLine"></p>
+          <table>
+            <tr><th>بازه</th><th>تغییر وزن</th><th>وزن پیش‌بینی‌شده</th></tr>
+            <tbody id="projBody"></tbody>
+          </table>
+          <p class="hint">پیش‌بینی بر پایه این فرض ساده است: هر کیلوگرم چربی بدن حدود ۷٬۷۰۰ کالری انرژی دارد. در واقعیت، تغییر وزن خطی نیست و آب بدن و عضله هم روی عدد ترازو اثر می‌گذارند.</p>
+
+          <div class="water-box"><strong>آب روزانه:</strong> <span id="rWater">…</span></div>
+
+          <h2 style="margin-top:20px;font-size:18px;color:#14532d">درشت‌مغذی‌های روزانه</h2>
+          <table>
+            <tr><th>ماده مغذی</th><th>گرم در روز</th><th>کالری</th><th>سهم</th></tr>
+            <tr><td>پروتئین</td><td id="rProtein">…</td><td id="rProteinCal">…</td><td id="rProteinPct">…</td></tr>
+            <tr><td>چربی</td><td id="rFat">…</td><td id="rFatCal">…</td><td id="rFatPct">…</td></tr>
+            <tr><td>کربوهیدرات</td><td id="rCarbs">…</td><td id="rCarbsCal">…</td><td id="rCarbsPct">…</td></tr>
+          </table>
+          <p class="hint" id="macroNote"></p>
+
+          <div class="macro-bars" id="macroBars" aria-label="سهم درشت‌مغذی‌ها از کالری هدف">
+            <div class="macro-bar-row"><span class="mb-label">پروتئین</span><div class="mb-track"><div class="mb-fill" id="mbProtein"></div></div><span class="mb-val" id="mbProteinVal">…</span></div>
+            <div class="macro-bar-row"><span class="mb-label">چربی</span><div class="mb-track"><div class="mb-fill fat" id="mbFat"></div></div><span class="mb-val" id="mbFatVal">…</span></div>
+            <div class="macro-bar-row"><span class="mb-label">کربوهیدرات</span><div class="mb-track"><div class="mb-fill carbs" id="mbCarbs"></div></div><span class="mb-val" id="mbCarbsVal">…</span></div>
+          </div>
+
+          <h2 style="margin-top:24px;font-size:18px;color:#14532d">نمونه برنامه یک روز (مقادیر به گرم)</h2>
+          <div id="mealPlan"></div>
+
+          <h2 style="margin-top:24px;font-size:18px;color:#14532d">قدم‌های بعدی شما</h2>
+          <ul class="suggest" id="suggestList"></ul>
+
+        </div>
+
+        <div id="resultEmpty">
+          <h2 style="font-size:20px;color:#14532d;margin-bottom:6px">نتیجه شما</h2>
+          <p style="color:#64748b">هنوز محاسبه‌ای انجام نشده است. مشخصات را وارد کنید و دکمه محاسبه را بزنید تا کالری روزانه، شاخص تودهٔ بدنی و برنامه یک روزه‌تان را ببینید.</p>
+          <div style="margin-top:24px;text-align:center" aria-hidden="true">
+            <svg width="180" height="140" viewBox="0 0 180 140"><rect x="30" y="10" width="120" height="120" rx="16" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="2"/><text x="90" y="82" text-anchor="middle" font-size="44" fill="#16a34a">٪</text><rect x="48" y="104" width="84" height="8" rx="4" fill="#bbf7d0"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== features ======== -->
+<section id="features" style="padding-top:8px">
+  <div class="container">
+    <p class="eyebrow reveal">۰۲ · سبزینه را بشناسید</p>
+    <h2 class="sec-title reveal">سبزینه را بشناسید</h2>
+    <p class="sec-sub reveal">همه ابزارهای لازم برای رسیدن به وزن دلخواه، در یک برنامه</p>
+    <figure class="features-photo reveal">
+      <img src="../assets/graphics/diet/vegetable-market.jpg" alt="غرفه بازار کشاورزان پر از پرتقال" width="1020" height="900" loading="lazy">
+      <figcaption>غذا به‌مثابه یک مکان: غرفه بازار. عکس: Nick-D، CC BY-SA 4.0</figcaption>
+    </figure>
+    <div class="features">
+      <div class="feature reveal"><span class="num">۰۱ · شمارش</span><h3>شمارش ریز و درشت‌مغذی‌ها</h3><p>کالری، پروتئین، چربی و کربوهیدرات هر وعده را ثبت کنید و سهم روزانه‌تان را ببینید.</p></div>
+      <div class="feature reveal" style="--d:60ms"><span class="num">۰۲ · برنامه</span><h3>برنامه غذایی شخصی</h3><p>بر اساس هدف، وزن و میزان فعالیت شما یک برنامه روزانه ساخته می‌شود.</p></div>
+      <div class="feature reveal" style="--d:120ms"><span class="num">۰۳ · هدف</span><h3>تعیین هدف وزنی</h3><p>هدف وزنی و زمان رسیدن به آن را مشخص کنید؛ برنامه هر هفته با پیشرفت شما هماهنگ می‌شود.</p></div>
+      <div class="feature reveal"><span class="num">۰۴ · دستور</span><h3>دستورهای غذایی</h3><p>دستورهای خانگی با کالری مشخص، دسته‌بندی‌شده بر اساس نوع غذا.</p></div>
+      <div class="feature reveal" style="--d:60ms"><span class="num">۰۵ · یادآور</span><h3>یادآور آب و وعده</h3><p>یادآور نوشیدن آب و ثبت وعده‌ها، تا هیچ وعده‌ای از قلم نیفتد.</p></div>
+      <div class="feature reveal" style="--d:120ms"><span class="num">۰۶ · ورزش</span><h3>ورزش در خانه</h3><p>تمرین‌های خانگی دسته‌بندی‌شده بر اساس قسمت‌های بدن، بدون نیاز به باشگاه.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== plans ======== -->
+<section id="plans" style="padding-top:8px">
+  <div class="container">
+    <p class="eyebrow reveal">۰۳ · برنامه‌های غذایی</p>
+    <h2 class="sec-title reveal">برنامه‌های غذایی</h2>
+    <p class="sec-sub reveal">یک برنامه را انتخاب کنید؛ محاسبه‌گر با هدف همان برنامه تنظیم می‌شود</p>
+    <div class="plans">
+      <div class="plan"><div class="plan-top"></div><div class="plan-body">
+        <span class="plan-days">۱۶:۸ · ۳۰ روز</span><h3>روزه‌داری متناوب ۱۶:۸</h3>
+        <p>۱۶ ساعت روزه و ۸ ساعت پنجره غذا خوردن در روز؛ مناسب کسانی که می‌خواهند بدون حذف غذاهای محبوب، کالری را کم کنند.</p>
+        <div class="plan-meta">هدف: کاهش وزن &nbsp;•&nbsp; ۳ وعده در پنجره ۸ ساعته</div>
+        <button type="button" data-goal="loss">انتخاب این برنامه</button>
+      </div></div>
+      <div class="plan"><div class="plan-top"></div><div class="plan-body">
+        <span class="plan-days">۵:۲ · ۷ روز</span><h3>رژیم ۵:۲</h3>
+        <p>پنج روز خوردن معمولی و دو روز کم‌کالری در هفته؛ شروع سبک برای آشنایی با روزه‌داری متناوب.</p>
+        <div class="plan-meta">هدف: کاهش وزن &nbsp;•&nbsp; ۲ روز کم‌کالری در هفته</div>
+        <button type="button" data-goal="loss">انتخاب این برنامه</button>
+      </div></div>
+      <div class="plan"><div class="plan-top"></div><div class="plan-body">
+        <span class="plan-days">پروتئینی · ۱۴ روز</span><h3>برنامه پروتئینی</h3>
+        <p>پروتئین بالا و کربوهیدرات کنترل‌شده؛ برای حفظ عضله در کنار کاهش وزن یا عضله‌سازی.</p>
+        <div class="plan-meta">هدف: کاهش وزن &nbsp;•&nbsp; پروتئین بالا در هر وعده</div>
+        <button type="button" data-goal="loss">انتخاب این برنامه</button>
+      </div></div>
+      <div class="plan"><div class="plan-top"></div><div class="plan-body">
+        <span class="plan-days">مدیترانه‌ای · ۲۱ روز</span><h3>رژیم مدیترانه‌ای</h3>
+        <p>سبزیجات، حبوبات، ماهی و روغن زیتون؛ یک سبک زندگی سالم و پایدار، نه یک رژیم موقت.</p>
+        <div class="plan-meta">هدف: حفظ وزن &nbsp;•&nbsp; سبک زندگی بلندمدت</div>
+        <button type="button" data-goal="maintain">انتخاب این برنامه</button>
+      </div></div>
+      <div class="plan"><div class="plan-top"></div><div class="plan-body">
+        <span class="plan-days">گیاهی · ۲۱ روز</span><h3>برنامه گیاهی</h3>
+        <p>بدون گوشت، با پروتئین گیاهی از حبوبات و سویا؛ برای کسانی که به رژیم گیاهی علاقه دارند.</p>
+        <div class="plan-meta">هدف: حفظ وزن &nbsp;•&nbsp; پروتئین از منابع گیاهی</div>
+        <button type="button" data-goal="maintain">انتخاب این برنامه</button>
+      </div></div>
+      <div class="plan"><div class="plan-top"></div><div class="plan-body">
+        <span class="plan-days">کم‌کربوهیدرات · ۲۸ روز</span><h3>کم‌کربوهیدرات</h3>
+        <p>کاهش نان، برنج و شیرینی و جایگزینی با سبزیجات و پروتئین؛ برای کنترل اشتها و قند خون.</p>
+        <div class="plan-meta">هدف: کاهش وزن &nbsp;•&nbsp; کربوهیدرات پایین</div>
+        <button type="button" data-goal="loss">انتخاب این برنامه</button>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== recipes ======== -->
+<section id="recipes" style="padding-top:8px">
+  <div class="container">
+    <p class="eyebrow reveal">۰۴ · دستورهای غذایی</p>
+    <h2 class="sec-title reveal">دستورهای غذایی</h2>
+    <p class="sec-sub reveal">دسته‌ای را انتخاب کنید تا دستورهای همان گروه را ببینید</p>
+    <div class="recipe-hero reveal">
+      <img src="../assets/graphics/diet/ghormeh-sabzi.jpg" alt="خورش سبزی گیاهی با برنج و سالاد گوجه و خیار" width="1200" height="880">
+      <div class="rh-body">
+        <h3>خورش سبزی با مرغ</h3>
+        <p>سبزی خورشتی، لوبیا قرمز و سینه مرغ؛ نسخه سبک خورش سنتی. این همان غذایی است که مخاطب واقعاً می‌خورد، نه یک «کاسه سالم» استوک.</p>
+        <span class="recipe-kcal">۳۸۰ کالری • ۵۰ دقیقه</span>
+      </div>
+    </div>
+    <div class="chips" id="chips">
+      <button type="button" class="chip active" data-cat="all">همه</button>
+      <button type="button" class="chip" data-cat="salad">سالاد</button>
+      <button type="button" class="chip" data-cat="stew">خورش</button>
+      <button type="button" class="chip" data-cat="rice">پلو مخلوط</button>
+      <button type="button" class="chip" data-cat="drinks">نوشیدنی</button>
+      <button type="button" class="chip" data-cat="kebab">کباب</button>
+      <button type="button" class="chip" data-cat="veg">گیاهی</button>
+      <button type="button" class="chip" data-cat="dessert">دسر</button>
+    </div>
+    <div class="recipes" id="recipeGrid">
+      <div class="recipe" data-cat="salad"><div class="recipe-art"><span class="r-cat">سالاد</span><span class="r-num">۰۱</span></div><div class="recipe-body"><h3>سالاد فصل با مرغ گریل</h3><p>کاهو، گوجه، خیار و سینه مرغ گریل با سس ماست و لیمو</p><span class="recipe-kcal">۳۲۰ کالری • ۲۰ دقیقه</span></div></div>
+      <div class="recipe" data-cat="salad"><div class="recipe-art"><span class="r-cat">سالاد</span><span class="r-num">۰۲</span></div><div class="recipe-body"><h3>سالاد شیرازی با پنیر</h3><p>خیار، گوجه و پیاز با پنیر کم‌چرب و نعناع تازه</p><span class="recipe-kcal">۱۸۰ کالری • ۱۰ دقیقه</span></div></div>
+      <div class="recipe" data-cat="stew"><div class="recipe-art"><span class="r-cat">خورش</span><span class="r-num">۰۳</span></div><div class="recipe-body"><h3>خورش قیمه کم‌چرب</h3><p>لپه و گوشت کم‌چرب با لیموعمانی؛ با برنج کم یا بدون برنج</p><span class="recipe-kcal">۴۵۰ کالری • ۶۰ دقیقه</span></div></div>
+      <div class="recipe" data-cat="stew"><div class="recipe-art"><span class="r-cat">خورش</span><span class="r-num">۰۴</span></div><div class="recipe-body"><h3>خورش سبزی با مرغ</h3><p>سبزی خورشتی، لوبیا قرمز و سینه مرغ؛ نسخه سبک خورش سنتی</p><span class="recipe-kcal">۳۸۰ کالری • ۵۰ دقیقه</span></div></div>
+      <div class="recipe" data-cat="rice"><div class="recipe-art"><span class="r-cat">پلو مخلوط</span><span class="r-num">۰۵</span></div><div class="recipe-body"><h3>لوبیاپلو با گوشت کم‌چرب</h3><p>لوبیا سبز، برنج و گوشت چرخ‌کرده کم‌چرب با زعفران</p><span class="recipe-kcal">۵۲۰ کالری • ۴۵ دقیقه</span></div></div>
+      <div class="recipe" data-cat="rice"><div class="recipe-art"><span class="r-cat">پلو مخلوط</span><span class="r-num">۰۶</span></div><div class="recipe-body"><h3>عدس‌پلو با کشمش و خرما</h3><p>عدس، برنج و پیاز داغ کم‌روغن؛ یک وعده گیاهی کامل</p><span class="recipe-kcal">۴۸۰ کالری • ۴۰ دقیقه</span></div></div>
+      <div class="recipe" data-cat="drinks"><div class="recipe-art"><span class="r-cat">نوشیدنی</span><span class="r-num">۰۷</span></div><div class="recipe-body"><h3>اسموتی موز و جو دوسر</h3><p>موز، شیر کم‌چرب، جو دوسر و یک قاشق کره بادام‌زمینی</p><span class="recipe-kcal">۲۸۰ کالری • ۵ دقیقه</span></div></div>
+      <div class="recipe" data-cat="drinks"><div class="recipe-art"><span class="r-cat">نوشیدنی</span><span class="r-num">۰۸</span></div><div class="recipe-body"><h3>دوغ خانگی با نعناع</h3><p>ماست کم‌چرب، آب گازدار و نعناع تازه؛ همراه ناهار</p><span class="recipe-kcal">۹۰ کالری • ۵ دقیقه</span></div></div>
+      <div class="recipe" data-cat="kebab"><div class="recipe-art"><span class="r-cat">کباب</span><span class="r-num">۰۹</span></div><div class="recipe-body"><h3>جوجه‌کباب با سبزیجات گریل</h3><p>سینه مرغ مزه‌دار با زعفران و لیمو، گریل‌شده با فلفل و قارچ</p><span class="recipe-kcal">۴۱۰ کالری • ۳۵ دقیقه</span></div></div>
+      <div class="recipe" data-cat="kebab"><div class="recipe-art"><span class="r-cat">کباب</span><span class="r-num">۱۰</span></div><div class="recipe-body"><h3>کباب تابه‌ای مرغ و قارچ</h3><p>مرغ چرخ‌کرده با قارچ و پیاز، پخته در تابه بدون روغن اضافه</p><span class="recipe-kcal">۳۶۰ کالری • ۲۵ دقیقه</span></div></div>
+      <div class="recipe" data-cat="veg"><div class="recipe-art"><span class="r-cat">گیاهی</span><span class="r-num">۱۱</span></div><div class="recipe-body"><h3>کوکوی سبزی رژیمی</h3><p>سبزی کوکو، تخم‌مرغ و گردوی خردشده؛ پخته در فر</p><span class="recipe-kcal">۲۴۰ کالری • ۳۰ دقیقه</span></div></div>
+      <div class="recipe" data-cat="dessert"><div class="recipe-art"><span class="r-cat">دسر</span><span class="r-num">۱۲</span></div><div class="recipe-body"><h3>فرنی با شیر کم‌چرب</h3><p>شیر کم‌چرب، آرد برنج و کمی عسل؛ دسر سبک شبانه</p><span class="recipe-kcal">۲۱۰ کالری • ۱۵ دقیقه</span></div></div>
+    </div>
+    <p class="recipe-empty" id="recipeEmpty">در این دسته هنوز دستوری ثبت نشده است.</p>
+  </div>
+</section>
+
+<!-- ======== testimonials ======== -->
+<section id="stories" style="padding-top:8px">
+  <div class="container">
+    <p class="eyebrow reveal">۰۵ · تجربه کاربران</p>
+    <h2 class="sec-title reveal">تجربه کاربران سبزینه</h2>
+    <p class="sec-sub reveal">هر کارت، یک معیار اعتماد: نتیجه‌ای که کاربر واقعاً گرفته است</p>
+    <div class="testi-rail" id="testiRail">
+      <div class="testi">
+        <div class="avatar" style="background:#16a34a">س</div>
+        <div class="stars">★★★★★</div>
+        <blockquote>«با شمارش کالری فهمیدم مشکل از وعده‌های کوچک بین وعده‌های اصلی بود؛ در سه ماه ۸ کیلو کم کردم و هنوز همان برنامه را ادامه می‌دهم.»</blockquote>
+        <p class="who">سارا</p><p class="num">۸ کیلو کاهش وزن در ۳ ماه</p>
+      </div>
+      <div class="testi">
+        <div class="avatar" style="background:#65a30d">ا</div>
+        <div class="stars">★★★★★</div>
+        <blockquote>«برنامه ۱۶:۸ برایم خیلی راحت جا افتاد؛ محاسبه‌گر از همان روز اول کالری هدفم را مشخص کرد و دیگر حدس نمی‌زنم.»</blockquote>
+        <p class="who">امیر</p><p class="num">۵ کیلو کاهش وزن در ۲ ماه</p>
+      </div>
+      <div class="testi">
+        <div class="avatar" style="background:#15803d">ن</div>
+        <div class="stars">★★★★★</div>
+        <blockquote>«دستورهای گیاهی برنامه آن‌قدر متنوع است که اصلاً حس رژیم گرفتن ندارم؛ وزن ثابتی دارم و انرژی‌ام بیشتر شده است.»</blockquote>
+        <p class="who">نگار</p><p class="num">حفظ وزن با برنامه گیاهی ۲۱ روزه</p>
+      </div>
+      <div class="testi">
+        <div class="avatar" style="background:#4d7c0f">م</div>
+        <div class="stars">★★★★★</div>
+        <blockquote>«برای عضله‌سازی دنبال پروتئین کافی بودم؛ برنامه پروتئینی و یادآور آب، دو چیزی بود که واقعاً به کارم آمد.»</blockquote>
+        <p class="who">مهدی</p><p class="num">۲ کیلو افزایش عضله در ۶ هفته</p>
+      </div>
+    </div>
+    <div class="carousel-nav">
+      <button type="button" id="prevTesti" aria-label="مورد قبلی">‹</button>
+      <button type="button" id="nextTesti" aria-label="مورد بعدی">›</button>
+    </div>
+  </div>
+</section>
+
+<!-- ======== FAQ ======== -->
+<section id="faq" style="padding-top:8px">
+  <div class="container">
+    <p class="eyebrow reveal">۰۶ · پرسش‌های پرتکرار</p>
+    <h2 class="sec-title reveal">پرسش‌های پرتکرار</h2>
+    <p class="sec-sub reveal">پاسخ کوتاه به سؤال‌هایی که بیشتر پرسیده می‌شوند</p>
+    <div class="faq">
+      <div class="faq-item"><button type="button" class="faq-q">چطور کار با سبزینه را شروع کنم؟<span class="plus">+</span></button><div class="faq-a">وزن، قد، سن و میزان فعالیت خود را در محاسبه‌گر بالای صفحه وارد کنید تا کالری روزانه‌تان مشخص شود؛ بعد یک برنامه غذایی انتخاب کنید و هر وعده را با مقدارش ثبت کنید.</div></div>
+      <div class="faq-item"><button type="button" class="faq-q">کالری روزانه من چطور محاسبه می‌شود؟<span class="plus">+</span></button><div class="faq-a">نرخ متابولیسم پایه با فرمول میفلین–سنت ژور محاسبه می‌شود و در ضریب فعالیت بدنی شما ضرب می‌شود؛ سپس بر اساس هدف (کاهش، حفظ یا افزایش وزن) کالری هدف روزانه تعیین می‌شود.</div></div>
+      <div class="faq-item"><button type="button" class="faq-q">آیا باید همه غذاها را با ترازو وزن کنم؟<span class="plus">+</span></button><div class="faq-a">در هفته‌های اول وزن کردن کمک می‌کند مقدار واقعی هر وعده را یاد بگیرید؛ بعد از مدتی می‌توانید با پیمانه و تخمین چشمی هم ثبت کنید.</div></div>
+      <div class="faq-item"><button type="button" class="faq-q">اگر یک روز از برنامه عقب ماندم چه کار کنم؟<span class="plus">+</span></button><div class="faq-a">هیچ اتفاقی نمی‌افتد؛ یک روز خارج از برنامه، برنامه را خراب نمی‌کند. به‌جای جبران با کم خوردن روز بعد، از همان وعده بعدی به برنامه برگردید.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== app band ======== -->
+<section id="app" style="padding-top:8px">
+  <div class="container">
+    <div class="app-band">
+      <h2>سبزینه را همیشه همراه داشته باشید</h2>
+      <a href="#calculator" class="btn">استفاده از نسخه وب</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="trust">
+      <span>✓ نماد اعتماد الکترونیکی</span>
+      <span>✓ نشان ملی ثبت رسانه‌های دیجیتال</span>
+      <span>✓ درگاه پرداخت امن</span>
+      <span>✓ پشتیبانی ۷ روز هفته</span>
+    </div>
+    <p>سبزینه: برنامه شمارش کالری و رژیم غذایی</p>
+    <p>© ۱۴۰۵</p>
+    <p class="photo-credits">عکس‌ها: کاسه سالاد: Kaboompics، Pexels · خورش سبزی: <a href="https://commons.wikimedia.org/wiki/File%3AAilin14VeganGhormehSabzi.JPG">AilinParsa</a> (CC0) · غرفه بازار: <a href="https://commons.wikimedia.org/wiki/File%3AFruit_and_vegetable_stall_at_Southside_Farmers_Market_November_2025.jpg">Nick-D</a> (CC BY-SA 4.0)</p>
+  </div>
+</footer>
+
+<script>
+function calculateDiet(sex, age, heightCm, weightKg, activity, goal) {
+  // BMR formula
+  var bmr = 10 * weightKg + 6.25 * heightCm - 5 * age + (sex === 'male' ? 5 : -161);
+  var tdee = bmr * activity;
+  var target = goal === 'loss' ? tdee * 0.8 : (goal === 'gain' ? tdee * 1.1 : tdee);
+  var proteinPerKg = goal === 'loss' ? 2.0 : (goal === 'gain' ? 1.8 : 1.6);
+  var protein = proteinPerKg * weightKg;            // grams
+  var fat = (target * 0.25) / 9;                    // 25% of calories, 9 kcal/g
+  var carbs = (target - protein * 4 - fat * 9) / 4; // remainder, 4 kcal/g
+  var bmi = weightKg / Math.pow(heightCm / 100, 2);
+  return { bmr: bmr, tdee: tdee, target: target, protein: protein, fat: fat, carbs: carbs, bmi: bmi };
+}
+
+function round5(n) { return Math.round(n / 5) * 5; }
+function fa(n) { return Math.round(n).toLocaleString('fa-IR'); }
+function fa1(n) { return (Math.round(n * 10) / 10).toLocaleString('fa-IR'); }
+function fa2(n) { return (Math.round(n * 100) / 100).toLocaleString('fa-IR'); }
+
+var reducedMotion = (typeof window.matchMedia === 'function') && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* count-up 700ms, only on Calculate press, from the previous value (never per keystroke) */
+function animNum(el, to, fmtFn){
+  var from = (typeof el._prev === 'number') ? el._prev : 0;
+  el._prev = to;
+  if(reducedMotion || typeof window.requestAnimationFrame !== 'function'){ el.textContent = fmtFn(to); return; }
+  var start = null;
+  (function tick(ts){
+    if(start === null) start = ts;
+    var p = Math.min(1, (ts - start) / 700);
+    el.textContent = fmtFn(from + (to - from) * p);
+    if(p < 1) window.requestAnimationFrame(tick);
+  })(performance.now());
+}
+function bmiCategory(bmi) {
+  if (bmi < 18.5) return 'کمبود وزن';
+  if (bmi < 25) return 'محدودهٔ سالم';
+  if (bmi < 30) return 'اضافه وزن';
+  return 'چاقی';
+}
+
+/* Sample-day menu. Base quantities are sized for 2000 kcal; each item carries
+   its calories per gram (kpg) or a fixed kcal value, and every item scales
+   with the target, so the menu total tracks the calorie target at any size. */
+var MENU = [
+  { title: 'صبحانه', items: [
+    { name: 'تخم‌مرغ', g: 100, kpg: 1.55, note: 'گرم (حدود ۲ عدد)' },
+    { name: 'نان سنگک', g: 80, kpg: 2.5, note: 'گرم' },
+    { name: 'پنیر کم‌چرب', g: 30, kpg: 1.0, note: 'گرم' },
+    { name: 'گوجه و خیار', g: 0, kcal: 15, note: 'به مقدار دلخواه' }
+  ]},
+  { title: 'ناهار', items: [
+    { name: 'سینه مرغ (پخته)', g: 150, kpg: 1.65, note: 'گرم' },
+    { name: 'برنج پخته', g: 300, kpg: 1.3, note: 'گرم' },
+    { name: 'سالاد فصل با یک قاشق روغن زیتون', g: 0, kcal: 150, note: '۱ پرس' }
+  ]},
+  { title: 'میان‌وعده عصر', items: [
+    { name: 'ماست یونانی', g: 150, kpg: 0.6, note: 'گرم' },
+    { name: 'گردو', g: 20, kpg: 6.5, note: 'گرم' },
+    { name: 'سیب', g: 150, kpg: 0.52, note: 'گرم (۱ عدد متوسط)' }
+  ]},
+  { title: 'شام', items: [
+    { name: 'ماهی یا سینه مرغ', g: 150, kpg: 1.65, note: 'گرم' },
+    { name: 'سیب‌زمینی پخته', g: 260, kpg: 0.87, note: 'گرم' },
+    { name: 'سبزیجات بخارپز (بروکلی، هویج)', g: 0, kcal: 40, note: '۱ پرس' }
+  ]}
+];
+
+function buildMealPlan(target) {
+  var s = target / 2000;
+  var total = 0;
+  var html = '';
+  MENU.forEach(function (m) {
+    html += '<div class="meal"><h3>' + m.title + '</h3>';
+    m.items.forEach(function (it) {
+      var grams = it.g ? round5(it.g * s) : 0;
+      var kcal = it.g ? Math.round(grams * it.kpg) : Math.round(it.kcal * s);
+      total += kcal;
+      var amount = it.g ? (fa(grams) + ' ' + it.note) : it.note;
+      html += '<p>• ' + it.name + ': <strong>' + amount + '</strong>، <span class="kcal">' + fa(kcal) + ' کالری</span></p>';
+    });
+    html += '</div>';
+  });
+  var diff = Math.abs(total - target) / target * 100;
+  html += '<div class="menu-total">مجموع این نمونه روز: <strong>' + fa(total) + ' کالری</strong>، هدف روزانه شما ' + fa(target) + ' کالری است (تفاوت ' + fa1(diff) + '٪).</div>';
+  html += '<p class="hint">مقادیر بالا بر اساس کالری هدف شما تنظیم شده‌اند؛ کالری هر ماده بر پایه مقدار نمایش‌داده‌شده محاسبه شده است. آب کافی بنوشید و وعده‌ها را متناسب با ذائقه و شرایط خود جایگزین کنید.</p>';
+  return html;
+}
+
+function renderProjections(r, goal, weightKg) {
+  var daily = goal === 'loss' ? (r.tdee - r.target) : (goal === 'gain' ? (r.target - r.tdee) : 0);
+  var weekly = daily * 7 / 7700; // kg per week (1 kg body fat ≈ 7700 kcal)
+  var signed = goal === 'loss' ? -weekly : (goal === 'gain' ? weekly : 0);
+  var line;
+  if (goal === 'maintain') {
+    line = 'کالری هدف شما برابر کالری مصرفی روزانه است؛ پس با رعایت برنامه، وزن‌تان ثابت می‌ماند.';
+  } else if (goal === 'loss') {
+    line = 'با کسری روزانهٔ ' + fa(daily) + ' کالری، حدود ' + fa2(weekly) + ' کیلوگرم در هفته کم می‌کنید.';
+  } else {
+    line = 'با مازاد روزانهٔ ' + fa(daily) + ' کالری، حدود ' + fa2(weekly) + ' کیلوگرم در هفته اضافه می‌کنید.';
+  }
+  document.getElementById('projLine').textContent = line;
+  var rows = '';
+  [4, 8, 12].forEach(function (w) {
+    var change = signed * w;
+    var after = weightKg + change;
+    var changeTxt = goal === 'maintain' ? 'بدون تغییر' : (fa1(Math.abs(change)) + ' کیلوگرم ' + (goal === 'loss' ? 'کاهش' : 'افزایش'));
+    rows += '<tr><td>' + fa(w) + ' هفته</td><td>' + changeTxt + '</td><td>' + fa1(after) + ' کیلوگرم</td></tr>';
+  });
+  document.getElementById('projBody').innerHTML = rows;
+}
+
+function renderWater(weightKg) {
+  var ml = Math.round(35 * weightKg);
+  document.getElementById('rWater').textContent = 'حدود ' + fa(ml) + ' میلی‌لیتر (حدود ' + fa1(ml / 1000) + ' لیتر، حدود ' + fa(Math.round(ml / 250)) + ' لیوان)';
+}
+
+var SUGGESTIONS = {
+  loss: [
+    'کسری روزانه را ثابت نگه دارید؛ کاهش حدود نیم کیلو در هفته پایدارتر از کاهش سریع است.',
+    'پروتئین هر وعده را کامل بخورید تا در کنار کاهش وزن، عضله حفظ شود.',
+    'هفته‌ای یک بار، صبح و ناشتا وزن‌کشی کنید و میانگین هفته را با هفته قبل مقایسه کنید.'
+  ],
+  maintain: [
+    'وزن را هفته‌ای یک بار چک کنید؛ اگر دو هفته پیاپی بیش از یک کیلو تغییر کرد، کالری روزانه را ۱۰۰ تا ۲۰۰ واحد کم یا زیاد کنید.',
+    'وعده‌ها را متنوع نگه دارید تا برنامه در بلندمدت قابل ادامه باشد.',
+    'خواب منظم و آب کافی، حفظ وزن را راحت‌تر می‌کند.'
+  ],
+  gain: [
+    'افزایش تدریجی هدف است؛ اگر بعد از دو هفته وزنی اضافه نشد، کالری روزانه را ۲۰۰ واحد بیشتر کنید.',
+    'پروتئین هر وعده را کامل بخورید و تمرین مقاومتی را کنار برنامه غذایی داشته باشید.',
+    'میان‌وعده‌ها را حذف نکنید؛ بخش بزرگی از کالری اضافه از همان‌جاست.'
+  ]
+};
+
+function renderSuggestions(goal) {
+  var html = '';
+  SUGGESTIONS[goal].forEach(function (s) { html += '<li>' + s + '</li>'; });
+  document.getElementById('suggestList').innerHTML = html;
+}
+
+function calculateAndShow() {
+  var sex = document.querySelector('input[name="sex"]:checked').value;
+  var age = Number(document.getElementById('age').value);
+  var height = Number(document.getElementById('height').value);
+  var weight = Number(document.getElementById('weight').value);
+  var activity = Number(document.getElementById('activity').value);
+  var goal = document.getElementById('goal').value;
+  var err = document.getElementById('formError');
+  if (!(age >= 15 && age <= 80 && height >= 130 && height <= 220 && weight >= 35 && weight <= 200)) {
+    err.style.display = 'block';
+    document.getElementById('result').style.display = 'none';
+    return false;
+  }
+  err.style.display = 'none';
+  var r = calculateDiet(sex, age, height, weight, activity, goal);
+  animNum(document.getElementById('rBmr'), r.bmr, fa);
+  animNum(document.getElementById('rTdee'), r.tdee, fa);
+  animNum(document.getElementById('rTarget'), r.target, fa);
+  animNum(document.getElementById('rBmi'), r.bmi, fa1);
+  document.getElementById('rBmiCat').textContent = bmiCategory(r.bmi);
+  var marker = document.getElementById('bmiMarker');
+  var pos = Math.max(2, Math.min(98, (r.bmi - 15) / (40 - 15) * 100));
+  marker.style.left = pos + '%';
+  document.getElementById('rProtein').textContent = fa(r.protein) + ' گرم';
+  document.getElementById('rProteinCal').textContent = fa(r.protein * 4) + ' کالری';
+  document.getElementById('rProteinPct').textContent = fa1(r.protein * 4 / r.target * 100) + '٪';
+  document.getElementById('rFat').textContent = fa(r.fat) + ' گرم';
+  document.getElementById('rFatCal').textContent = fa(r.fat * 9) + ' کالری';
+  document.getElementById('rFatPct').textContent = '۲۵٪';
+  document.getElementById('rCarbs').textContent = fa(r.carbs) + ' گرم';
+  document.getElementById('rCarbsCal').textContent = fa(r.carbs * 4) + ' کالری';
+  document.getElementById('rCarbsPct').textContent = fa1(r.carbs * 4 / r.target * 100) + '٪';
+  var pPct = r.protein * 4 / r.target * 100, cPct = r.carbs * 4 / r.target * 100;
+  document.getElementById('mbProteinVal').textContent = fa1(pPct) + '٪';
+  document.getElementById('mbFatVal').textContent = '۲۵٪';
+  document.getElementById('mbCarbsVal').textContent = fa1(cPct) + '٪';
+  var goalFa = goal === 'loss' ? 'کاهش وزن (۸۰٪ کالری مصرفی)' : (goal === 'gain' ? 'افزایش وزن (۱۱۰٪ کالری مصرفی)' : 'حفظ وزن (۱۰۰٪ کالری مصرفی)');
+  document.getElementById('macroNote').textContent = 'هدف انتخاب‌شده: ' + goalFa + '. پروتئین ' + (goal === 'loss' ? '۲' : (goal === 'gain' ? '۱٫۸' : '۱٫۶')) + ' گرم به ازای هر کیلوگرم وزن بدن در نظر گرفته شده است.';
+  renderProjections(r, goal, weight);
+  renderWater(weight);
+  renderSuggestions(goal);
+  document.getElementById('mealPlan').innerHTML = buildMealPlan(r.target);
+  document.getElementById('resultEmpty').style.display = 'none';
+  var res = document.getElementById('result');
+  res.style.display = 'block';
+  res.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  /* macro bars grow via scaleX after the result is visible, so the transition runs */
+  requestAnimationFrame(function(){
+    document.getElementById('mbProtein').style.transform = 'scaleX(' + Math.min(1, pPct / 100) + ')';
+    document.getElementById('mbFat').style.transform = 'scaleX(0.25)';
+    document.getElementById('mbCarbs').style.transform = 'scaleX(' + Math.min(1, cPct / 100) + ')';
+  });
+  return true;
+}
+
+document.getElementById('dietForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  calculateAndShow();
+});
+
+/* plan cards: set the calculator goal and re-run the whole calculation,
+   so the target, projections, menu, macros, water and suggestions all update */
+document.querySelectorAll('.plan button').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    document.getElementById('goal').value = btn.getAttribute('data-goal');
+    calculateAndShow();
+  });
+});
+
+/* recipe chips filter */
+var chips = document.querySelectorAll('#chips .chip');
+var recipes = document.querySelectorAll('#recipeGrid .recipe');
+chips.forEach(function (chip) {
+  chip.addEventListener('click', function () {
+    chips.forEach(function (c) { c.classList.remove('active'); });
+    chip.classList.add('active');
+    var cat = chip.getAttribute('data-cat');
+    var visible = 0;
+    recipes.forEach(function (rc) {
+      var show = cat === 'all' || rc.getAttribute('data-cat') === cat;
+      rc.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('recipeEmpty').style.display = visible === 0 ? 'block' : 'none';
+  });
+});
+
+/* testimonial rail: prev/next scroll the rail by one card; no auto-advance */
+var testiRail = document.getElementById('testiRail');
+function railStep(dir){
+  var card = testiRail.querySelector('.testi');
+  var step = card ? card.offsetWidth + 18 : 360;
+  testiRail.scrollBy({ left: dir * step, behavior: reducedMotion ? 'auto' : 'smooth' });
+}
+document.getElementById('prevTesti').addEventListener('click', function () { railStep(1); });
+document.getElementById('nextTesti').addEventListener('click', function () { railStep(-1); });
+
+/* FAQ accordion */
+document.querySelectorAll('.faq-item').forEach(function (item) {
+  item.querySelector('.faq-q').addEventListener('click', function () {
+    var wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function (it) { it.classList.remove('open'); });
+    if (!wasOpen) item.classList.add('open');
+  });
+});
+
+
+/* hamburger menu */
+var menuBtn = document.querySelector('.menu-btn');
+var navLinks = document.getElementById('navLinks');
+if(menuBtn && navLinks){
+  menuBtn.addEventListener('click', function(){
+    var open = navLinks.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'بستن منو' : 'باز کردن منو');
+    menuBtn.textContent = open ? '✕' : '☰';
+  });
+  navLinks.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      navLinks.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      menuBtn.setAttribute('aria-label', 'باز کردن منو');
+      menuBtn.textContent = '☰';
+    });
+  });
+}
+
+/* scroll reveals: one observer, once-only */
+var revealEls = document.querySelectorAll('.reveal');
+if('IntersectionObserver' in window && !reducedMotion){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold: .15, rootMargin: '0px 0px -10% 0px'});
+  revealEls.forEach(function(el){ io.observe(el); });
+} else {
+  revealEls.forEach(function(el){ el.classList.add('in'); });
+}
+</script>
+</body>
+</html>

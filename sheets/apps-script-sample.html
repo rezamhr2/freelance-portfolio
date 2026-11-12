@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>خودکارسازی شیت قیمت و موجودی با اپس اسکریپت · نمونه کار</title>
+<style>
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../web/assets/fonts/vazirmatn-arabic.woff2) format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../web/assets/fonts/vazirmatn-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+:root { --ink: #171717; --muted: #525252; --faint: #A3A3A3; --blue: #2563EB; --green: #16A34A; --red: #DC2626; --amber: #D97706; --line: #E5E5E5; }
+* { box-sizing: border-box; }
+body { font-family: Vazirmatn, Tahoma, sans-serif; background: #FAFAFA; color: var(--ink);
+  margin: 0; padding: 0 16px 48px; direction: rtl; font-size: 14px; line-height: 1.9; }
+main { max-width: 1120px; margin: 0 auto; }
+.num { direction: ltr; unicode-bidi: embed; font-variant-numeric: tabular-nums; }
+header.page { padding: 28px 4px 16px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+h1 { font-size: 28px; font-weight: 700; margin: 0 0 6px; }
+.sub { color: var(--muted); margin: 0 0 10px; }
+.eyebrow { font-size: 12px; font-weight: 600; color: #64748B; letter-spacing: .04em; margin-bottom: 4px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; font-size: 12px; color: var(--faint); }
+.meta .badge { margin-inline-start: 0; }
+.badge { display: inline-block; background: #fef3c7; color: #92400e; border-radius: 999px;
+  padding: 2px 10px; font-size: 12px; margin-inline-start: 8px; }
+section.card { background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  padding: 20px; margin-bottom: 24px; animation: fadeUp .32s cubic-bezier(.22,1,.36,1) both; scroll-margin-top: 16px; }
+section.card:nth-of-type(1) { animation-delay: 0ms; }
+section.card:nth-of-type(2) { animation-delay: 60ms; }
+section.card:nth-of-type(3) { animation-delay: 120ms; }
+section.card:nth-of-type(4) { animation-delay: 180ms; }
+section.card:nth-of-type(5), section.card:nth-of-type(6), section.card:nth-of-type(7) { animation-delay: 240ms; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
+h3 { font-size: 17px; margin: 14px 0 8px; }
+p { line-height: 1.9; margin: 0 0 12px; }
+ul, ol { line-height: 1.9; margin: 0 0 12px; padding-inline-start: 22px; }
+li { margin-bottom: 6px; }
+table.settings { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.settings th, table.settings td { padding: 9px 10px; border-bottom: 1px solid #e5e7eb;
+  text-align: right; vertical-align: top; line-height: 1.8; }
+table.settings tbody tr:nth-child(even) { background: #f9fafb; }
+code { font-family: "Courier New", monospace; direction: ltr; unicode-bidi: embed;
+  background: #f3f4f6; border-radius: 6px; padding: 1px 6px; font-size: 13px; }
+pre { direction: ltr; text-align: left; background: #111827; color: #e5e7eb;
+  border-radius: 12px; padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6;
+  margin: 0; }
+pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+/* ---- §R4 rework ---- */
+html { scroll-behavior: smooth; }
+/* flow diagram */
+.flow { margin-bottom: 20px; }
+.flow:last-child { margin-bottom: 0; }
+.flow-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
+.flow-steps { display: flex; align-items: stretch; }
+.fstep { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: #FAFAFA; opacity: 0; transform: translateY(8px); animation: fadeUp .32s cubic-bezier(.22,1,.36,1) both; animation-delay: calc(var(--i) * 80ms); }
+.fstep .fnum { display: block; font-size: 15px; font-weight: 700; color: var(--blue); margin-bottom: 2px; }
+.fstep p { margin: 0; font-size: 14px; }
+.fstep code { font-size: 12.5px; }
+.farrow { align-self: center; flex: none; width: 34px; text-align: center; font-size: 20px; color: var(--blue); transform: scaleX(0); animation: arrIn .3s ease .2s both; }
+@keyframes arrIn { to { transform: scaleX(1); } }
+.draft-tag { display: inline-block; background: #FEF3C7; color: #92400E; border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; margin-top: 6px; }
+/* settings card + sheet sketch */
+.config-wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 16px; align-items: start; }
+.settings-card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.settings-head { background: #F9FAFB; border-bottom: 1px solid var(--line); padding: 12px 16px; font-weight: 700; font-size: 15px; }
+.set-group { padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.set-group:last-child { border-bottom: 0; }
+.set-group h4 { margin: 0 0 6px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.set-row { display: flex; gap: 12px; align-items: baseline; padding: 3px 0; font-size: 14px; }
+.set-row code { flex: none; }
+.sketch-cap { font-size: 12.5px; color: var(--muted); margin: 10px 0 0; }
+.sheet-sketch { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; font-size: 11px; }
+.sketch-cell { border: 1px solid #E5E7EB; background: #fff; border-radius: 4px; padding: 6px 2px; text-align: center; min-height: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+.sketch-cell .col-no { font-family: ui-monospace, monospace; font-weight: 700; color: var(--muted); }
+.sketch-title { grid-column: 1 / -1; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 4px; padding: 6px; text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); }
+.sketch-cell.hl-price { background: #DBEAFE; border-color: #93C5FD; }
+.sketch-cell.hl-stock { background: #FEF3C7; border-color: #FCD34D; }
+.sketch-cell.hl-min { background: #FEE2E2; border-color: #FCA5A5; }
+.sketch-cell.row3 { font-weight: 600; }
+/* guards checklist */
+.guards { border: 1px solid var(--line); border-left: 4px solid var(--green); border-radius: 12px; overflow: hidden; margin-top: 14px; }
+.guard-row { display: flex; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); opacity: 0; transform: translateX(4px); transition: opacity .25s ease, transform .25s ease; transition-delay: calc(var(--i) * 70ms); }
+.guard-row:last-child { border-bottom: 0; }
+.guards.in .guard-row { opacity: 1; transform: none; }
+.guard-check { color: var(--green); font-weight: 700; flex: none; font-size: 16px; line-height: 1.6; }
+.guard-row b { display: block; font-size: 14.5px; }
+.guard-row span { font-size: 13.5px; color: var(--muted); }
+.callout { border: 1px solid #FDE68A; background: #FFFBEB; border-radius: 12px; padding: 12px 16px; margin-top: 14px; font-size: 14px; }
+/* code viewer */
+.viewer { border-radius: 12px; overflow: hidden; background: #111827; }
+.viewer-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 14px; background: #1F2937; color: #9CA3AF; font-size: 12.5px; }
+.viewer-file { font-family: ui-monospace, monospace; direction: ltr; color: #E5E7EB; }
+.viewer-links { display: flex; gap: 2px; flex-wrap: wrap; }
+.viewer-links a { color: #93C5FD; text-decoration: none; font-family: ui-monospace, monospace; font-size: 12px; padding: 3px 8px; border-radius: 6px; }
+.viewer-links a:hover { background: #374151; color: #fff; }
+.copy-btn { margin-inline-start: auto; background: #374151; color: #fff; border: 0; border-radius: 6px; padding: 4px 12px; font-family: inherit; font-size: 12.5px; cursor: pointer; transition: background .2s ease; }
+.copy-btn:hover { background: #4B5563; }
+.gutter { position: sticky; left: 0; z-index: 2; background: #111827; flex: none; width: 46px; padding: 16px 8px 16px 0; text-align: right; color: #4B5563; font-family: ui-monospace, 'Courier New', monospace; font-size: 13px; line-height: 1.6; user-select: none; }
+.gutter div { height: 20.8px; }
+.code-scroll { display: flex; direction: ltr; align-items: flex-start; overflow: auto; max-height: 560px; }
+.code-scroll pre { flex: 1; min-width: 0; border-radius: 0; margin: 0; }
+.viewer pre code .fn { color: #60A5FA; }
+.viewer pre code .str { color: #86EFAC; }
+/* install timeline */
+.timeline { position: relative; padding-inline-start: 34px; margin-top: 6px; }
+.tl-line { position: absolute; inset-inline-start: 11px; top: 10px; height: 0; width: 2px; background: var(--blue); transition: height .5s ease; }
+.timeline.in .tl-line { height: calc(100% - 20px); }
+.tstep { position: relative; padding-bottom: 18px; }
+.tstep:last-child { padding-bottom: 0; }
+.tnum { position: absolute; inset-inline-start: -34px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.tstep p { margin: 0; }
+/* honest notes + actions */
+.notes-card { border: 1px solid var(--line); border-left: 4px solid var(--amber); border-radius: 12px; padding: 16px 18px; }
+.notes-card ul { margin: 0; }
+.actions-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.action { display: inline-block; border: 1px solid #D1D5DB; background: #fff; color: var(--ink); border-radius: 8px; padding: 11px 20px; font-size: 15px; text-decoration: none; transition: background .15s ease-out; }
+.action:hover { background: #F9FAFB; }
+.action.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+.action.primary:hover { background: #1D4ED8; }
+@media (max-width: 640px) {
+  .config-wrap { grid-template-columns: 1fr; }
+  .flow-steps { flex-direction: column; }
+  .farrow { width: auto; margin: 2px 0; font-size: 0; animation: none; transform: none; }
+  .farrow::before { content: "↓"; font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+  .fstep { opacity: 1; transform: none; }
+  .farrow { transform: scaleX(1); }
+  .guard-row { opacity: 1; transform: none; }
+  .timeline.in .tl-line, .tl-line { height: calc(100% - 20px); }
+}
+footer { color: #6b7280; font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+<header class="page">
+  <div class="eyebrow">نمونه کد · اپس اسکریپت</div>
+  <h1>خودکارسازی شیت قیمت و موجودی با اپس اسکریپت</h1>
+  <p class="sub">ثبت خودکار تغییر قیمت و پیش‌نویس روزانهٔ گزارش کمبود موجودی برای دفتر قیمت و موجودی در گوگل شیت.</p>
+  <div class="meta"><span>فایل: apps-script-sample.gs</span><span>۲ خودکارسازی</span><span>۶ نگهبان onEdit</span><span class="badge">نمونه کار</span></div>
+</header>
+
+<section class="card">
+  <div class="eyebrow">۰۱ · چه زمانی اجرا می‌شود؟</div>
+  <h2>چه زمانی اجرا می‌شود؟</h2>
+  <div class="flow">
+    <div class="flow-label">خودکار ۱ · ثبت تغییر قیمت</div>
+    <div class="flow-steps">
+      <div class="fstep" style="--i:0"><span class="fnum">۱</span><p>ویرایش قیمت در شیت</p></div>
+      <span class="farrow" aria-hidden="true">←</span>
+      <div class="fstep" style="--i:1"><span class="fnum">۲</span><p><code>onEdit</code> بررسی می‌کند</p></div>
+      <span class="farrow" aria-hidden="true">←</span>
+      <div class="fstep" style="--i:2"><span class="fnum">۳</span><p>ردیف در تاریخچه ثبت می‌شود</p></div>
+    </div>
+  </div>
+  <div class="flow">
+    <div class="flow-label">خودکار ۲ · گزارش روزانهٔ کمبود موجودی</div>
+    <div class="flow-steps">
+      <div class="fstep" style="--i:0"><span class="fnum">۱</span><p>هر روز (تریگر زمانی)</p></div>
+      <span class="farrow" aria-hidden="true">←</span>
+      <div class="fstep" style="--i:1"><span class="fnum">۲</span><p><code>sendLowStockReport</code> کالاهای کم را پیدا می‌کند</p></div>
+      <span class="farrow" aria-hidden="true">←</span>
+      <div class="fstep" style="--i:2"><span class="fnum">۳</span><p>پیش‌نویس در جیمیل ساخته می‌شود<span class="draft-tag">پیش‌نویس، نه ارسال</span></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="eyebrow">۰۲ · معرفی</div>
+  <h2>این اسکریپت چه کار می‌کند</h2>
+  <p>این اسکریپت برای یک دفتر قیمت و موجودی در گوگل شیت نوشته شده است و دو کار را خودکار می‌کند: هر بار که قیمت فروش یک کالا عوض شود، قیمت قبلی و قیمت تازه با تاریخ در برگهٔ «تاریخچهٔ تغییر قیمت» ثبت می‌شود؛ و هر روز کالاهایی که موجودی آن‌ها به حداقل رسیده یا کمتر از آن شده است، در یک پیش‌نویس گزارش در جیمیل گرد هم می‌آیند تا پیش از فرستادن، دیده و تأیید شوند.</p>
+  <p>اسکریپت به هیچ شیت واقعی‌ای متصل نیست. نام برگه‌ها، شمارهٔ ستون‌ها و نشانی گیرندهٔ گزارش همگی در یک بخش تنظیمات در بالای کد گرد آمده‌اند تا با مشخصات فایل واقعی جایگزین شوند.</p>
+</section>
+
+<section class="card">
+  <div class="eyebrow">۰۳ · بخش‌به‌بخش</div>
+  <h2>بخش‌به‌بخش</h2>
+
+  <h3>بخش تنظیمات (<code>CONFIG</code>)</h3>
+  <p>همهٔ مقدارهایی که به فایل واقعی وابسته‌اند، در یک جا جمع شده‌اند؛ برای استفاده در فایل خودتان فقط همین بخش را عوض می‌کنید:</p>
+  <div class="config-wrap">
+    <div class="settings-card">
+      <div class="settings-head">فقط این بخش را عوض کنید</div>
+      <div class="set-group">
+        <h4>برگه‌ها</h4>
+        <div class="set-row"><code>SHEET_PRODUCTS</code><span>نام برگهٔ محصولات</span></div>
+        <div class="set-row"><code>SHEET_PRICE_LOG</code><span>نام برگهٔ تاریخچهٔ تغییر قیمت</span></div>
+      </div>
+      <div class="set-group">
+        <h4>ستون‌ها</h4>
+        <div class="set-row"><code>PRICE_COL · 5</code><span>ستون قیمت فروش در برگهٔ محصولات (ستون پنجم)</span></div>
+        <div class="set-row"><code>STOCK_COL · 6</code><span>ستون موجودی (ستون ششم)</span></div>
+        <div class="set-row"><code>MIN_STOCK_COL · 7</code><span>ستون حداقل موجودی (ستون هفتم)</span></div>
+        <div class="set-row"><code>FIRST_DATA_ROW · 3</code><span>اولین ردیف داده (ردیف ۳؛ ردیف ۱ عنوان و ردیف ۲ سرستون است)</span></div>
+      </div>
+      <div class="set-group">
+        <h4>گزارش</h4>
+        <div class="set-row"><code>REPORT_EMAIL</code><span>نشانی گیرندهٔ گزارش کمبود موجودی</span></div>
+        <div class="set-row"><code>TIMEZONE</code><span>منطقهٔ زمانی برای ثبت تاریخ (تهران)</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="sheet-sketch" role="img" aria-label="طرح برگهٔ محصولات: ۷ ستون؛ ستون‌های قیمت، موجودی و حداقل موجودی مشخص شده‌اند و ردیف ۳ اولین ردیف داده است">
+        <div class="sketch-title">برگهٔ محصولات: طرح کلی</div>
+        <div class="sketch-cell"><span class="col-no">۱ · A</span>کد</div>
+        <div class="sketch-cell"><span class="col-no">۲ · B</span>نام</div>
+        <div class="sketch-cell"><span class="col-no">۳ · C</span>دسته</div>
+        <div class="sketch-cell"><span class="col-no">۴ · D</span>خرید</div>
+        <div class="sketch-cell hl-price"><span class="col-no">۵ · E</span>فروش</div>
+        <div class="sketch-cell hl-stock"><span class="col-no">۶ · F</span>موجودی</div>
+        <div class="sketch-cell hl-min"><span class="col-no">۷ · G</span>حداقل</div>
+        <div class="sketch-cell row3">A001</div>
+        <div class="sketch-cell row3">گلس A55</div>
+        <div class="sketch-cell row3">گلس</div>
+        <div class="sketch-cell row3">۴۵٬۰۰۰</div>
+        <div class="sketch-cell row3 hl-price">۶۸٬۰۰۰</div>
+        <div class="sketch-cell row3 hl-stock">۲۴۰</div>
+        <div class="sketch-cell row3 hl-min">۵۰</div>
+      </div>
+      <p class="sketch-cap">ردیف ۳: اولین ردیف داده (ردیف ۱ عنوان · ردیف ۲ سرستون) · ستون‌های ۵ و ۶ و ۷ همان‌هایی‌اند که در تنظیمات آمده‌اند.</p>
+    </div>
+  </div>
+
+  <h3>منوی اختصاصی (<code>onOpen</code>)</h3>
+  <p>با باز شدن فایل، یک منوی «مدیریت فروشگاه» به شیت اضافه می‌شود که دو گزینه دارد: ثبت دستی تغییر قیمت ردیف انتخاب‌شده، و ساخت پیش‌نویس گزارش کمبود موجودی. با این منو، هر دو کار بدون باز کردن ویرایشگر کد در دسترس‌اند.</p>
+
+  <h3>ثبت خودکار تغییر قیمت (<code>onEdit</code>)</h3>
+  <p>هر بار که سلولی در شیت ویرایش شود، این بخش بررسی می‌کند که آیا ویرایش، تغییر قیمت فروش یک کالا بوده است یا نه. فقط در این صورت یک ردیف تازه، با تاریخ، کد کالا، نام محصول، قیمت قبلی و قیمت تازه، به برگهٔ تاریخچهٔ تغییر قیمت اضافه می‌شود. نگهبان‌های آن این‌هاست:</p>
+  <div class="guards" id="guards">
+    <div class="guard-row" style="--i:0"><span class="guard-check" aria-hidden="true">✓</span><div><b>فقط برگهٔ محصولات</b><span>ویرایش برگه‌های دیگر نادیده گرفته می‌شود.</span></div></div>
+    <div class="guard-row" style="--i:1"><span class="guard-check" aria-hidden="true">✓</span><div><b>فقط ستون قیمت فروش</b><span>تغییر ستون‌های دیگر ثبت نمی‌شود.</span></div></div>
+    <div class="guard-row" style="--i:2"><span class="guard-check" aria-hidden="true">✓</span><div><b>فقط ردیف‌های داده</b><span>ردیف ۳ به بعد؛ عنوان و سرستون ثبت نمی‌شوند.</span></div></div>
+    <div class="guard-row" style="--i:3"><span class="guard-check" aria-hidden="true">✓</span><div><b>فقط ویرایش تک‌ردیفه</b><span>تغییر گروهی چندردیفه ثبت نمی‌شود.</span></div></div>
+    <div class="guard-row" style="--i:4"><span class="guard-check" aria-hidden="true">✓</span><div><b>قیمت قبلی باید موجود باشد</b><span>اگر سلول پیش‌تر خالی بوده، چیزی ثبت نمی‌شود.</span></div></div>
+    <div class="guard-row" style="--i:5"><span class="guard-check" aria-hidden="true">✓</span><div><b>قیمت تازه ≠ قیمت قبلی</b><span>بدون تغییر واقعی، ثبت نمی‌شود.</span></div></div>
+  </div>
+  <p>ستون‌های اندازهٔ تغییر و درصد تغییر در شیت با فرمول حساب می‌شوند، پس در ثبت خالی می‌مانند؛ ستون «دلیل» هم خالی می‌ماند تا کاربر بعداً دستی بنویسد.</p>
+
+  <h3>ثبت دستی تغییر قیمت (<code>logSelectedPriceChange</code>)</h3>
+  <p>اگر قیمت با فرمول یا با وارد کردن داده عوض شده باشد، ثبت خودکار اجرا نمی‌شود. در این حالت کاربر ردیف کالا را انتخاب می‌کند و از منو گزینهٔ ثبت دستی را می‌زند؛ اسکریپت قیمت قبلی را از کاربر می‌پرسد و همان ردیف تاریخچه را می‌سازد.</p>
+  <div class="callout"><b>وقتی ثبت خودکار اجرا نمی‌شود:</b> قیمت با فرمول یا ایمپورت عوض شد ← ثبت دستی از منو.</div>
+
+  <h3>پیش‌نویس گزارش روزانهٔ کمبود موجودی (<code>sendLowStockReport</code>)</h3>
+  <p>این بخش همهٔ کالاها را می‌خواند و آن‌هایی را پیدا می‌کند که موجودی‌شان برابر حداقل موجودی یا کمتر از آن است؛ سپس یک پیش‌نویس در جیمیل می‌سازد که جدول این کالاها، کد کالا، نام محصول، موجودی و حداقل موجودی، را دارد. این گزارش هرگز خودکار فرستاده نمی‌شود؛ فقط پیش‌نویس ساخته می‌شود تا کاربر آن را ببیند و خودش بفرستد. اگر کالایی کم نباشد، هیچ پیش‌نویسی ساخته نمی‌شود.</p>
+</section>
+
+<section class="card">
+  <div class="eyebrow">۰۴ · کد کامل</div>
+  <h2>کد کامل</h2>
+  <p>کد زیر دقیقاً همان فایل اسکریپت است، بدون هیچ تغییری:</p>
+  <div class="viewer">
+    <div class="viewer-bar">
+      <span class="viewer-file">apps-script-sample.gs</span>
+      <nav class="viewer-links" aria-label="پرش به بخش‌های کد">
+        <a href="#codeScroll" data-anchor="CONFIG">CONFIG</a>
+        <a href="#codeScroll" data-anchor="onOpen">onOpen</a>
+        <a href="#codeScroll" data-anchor="onEdit">onEdit</a>
+        <a href="#codeScroll" data-anchor="logSelectedPriceChange">logSelectedPriceChange</a>
+        <a href="#codeScroll" data-anchor="sendLowStockReport">sendLowStockReport</a>
+      </nav>
+      <button class="copy-btn" type="button" id="copyCodeBtn">کپی کد</button>
+    </div>
+    <div class="code-scroll" id="codeScroll">
+      <div class="gutter" id="codeGutter" aria-hidden="true"></div>
+  <pre><code>/**
+ * نمونه کار، اسکریپت نمونه برای گوگل شیت مدیریت قیمت و موجودی
+ * ============================================================
+ *
+ * برای استفاده در فایل واقعی کارفرما:
+ *  ۱. در گوگل شیت، از منوی اکستنشنز گزینهٔ اپس اسکریپت را باز کنید.
+ *  ۲. این کد را جایگذاری کنید و مقدارهای بخش «تنظیمات» را با
+ *     نام برگه‌ها و ایمیل خودتان جایگزین کنید.
+ *  ۳. با هر ویرایش شیت، ثبت خودکار تغییر قیمت اجرا می‌شود؛
+ *     برای گزارش روزانه، از بخش تریگرها یک تریگر زمانی روزانه
+ *     برای تابع sendLowStockReport بسازید.
+ *
+ * این اسکریپت هیچ ایمیلی به‌صورت خودکار «ارسال» نمی‌کند؛
+ * گزارش کمبود موجودی فقط به‌صورت «پیش‌نویس» در جیمیل ساخته می‌شود
+ * تا کاربر پیش از ارسال آن را ببیند و تأیید کند.
+ */
+
+// ------------------------------------------------------------------ تنظیمات
+// این مقدارها را با مشخصات فایل واقعی جایگزین کنید.
+const CONFIG = {
+  SHEET_PRODUCTS: &#x27;محصولات&#x27;,              // نام برگهٔ محصولات
+  SHEET_PRICE_LOG: &#x27;تاریخچه تغییر قیمت&#x27;,  // نام برگهٔ تاریخچهٔ تغییر قیمت
+  PRICE_COL: 5,        // ستون قیمت فروش در برگهٔ محصولات (ستون E)
+  STOCK_COL: 6,        // ستون موجودی (ستون F)
+  MIN_STOCK_COL: 7,    // ستون حداقل موجودی (ستون G)
+  FIRST_DATA_ROW: 3,   // اولین ردیف داده (ردیف ۱ عنوان و ردیف ۲ سرستون است)
+  REPORT_EMAIL: &#x27;example@email.com&#x27;, // ← ایمیل گیرندهٔ گزارش را اینجا بنویسید
+  TIMEZONE: &#x27;Asia/Tehran&#x27;
+};
+
+// ------------------------------------------------- منوی اختصاصی در گوگل شیت
+// با باز شدن فایل، یک منوی «مدیریت فروشگاه» به شیت اضافه می‌شود.
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu(&#x27;مدیریت فروشگاه&#x27;)
+    .addItem(&#x27;ثبت دستی تغییر قیمت انتخاب‌شده&#x27;, &#x27;logSelectedPriceChange&#x27;)
+    .addItem(&#x27;ساخت پیش‌نویس گزارش کمبود موجودی&#x27;, &#x27;sendLowStockReport&#x27;)
+    .addToUi();
+}
+
+// ------------------------------------------- ثبت خودکار تغییر قیمت (onEdit)
+// هر بار که قیمت فروش یک کالا در برگهٔ «محصولات» تغییر کند،
+// یک ردیف تازه با قیمت قبلی، قیمت جدید و تاریخ به برگهٔ
+// «تاریخچه تغییر قیمت» اضافه می‌شود.
+function onEdit(e) {
+  if (!e || !e.range) return; // اگر بدون رویداد ویرایش اجرا شد، کاری نکن.
+
+  const sheet = e.range.getSheet();
+  if (sheet.getName() !== CONFIG.SHEET_PRODUCTS) return;
+
+  // فقط تغییر در ستون قیمت فروش، و فقط در ردیف‌های داده.
+  if (e.range.getColumn() !== CONFIG.PRICE_COL) return;
+  if (e.range.getRow() &lt; CONFIG.FIRST_DATA_ROW) return;
+  if (e.range.getNumRows() !== 1) return; // تغییر گروهی را ثبت نمی‌کنیم.
+
+  const row = e.range.getRow();
+  const newPrice = e.range.getValue();
+  const oldPrice = e.oldValue;
+
+  // اگر قیمت قبلی در دسترس نیست (مثلاً سلول خالی بوده)، ثبت نمی‌کنیم.
+  if (oldPrice === undefined || oldPrice === null || oldPrice === &#x27;&#x27;) return;
+  if (Number(newPrice) === Number(oldPrice)) return; // بدون تغییر واقعی.
+
+  const productCode = sheet.getRange(row, 1).getValue();
+  const productName = sheet.getRange(row, 2).getValue();
+  const today = Utilities.formatDate(new Date(), CONFIG.TIMEZONE, &#x27;yyyy-MM-dd&#x27;);
+
+  const logSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET_PRICE_LOG);
+  if (!logSheet) return;
+
+  // ستون‌ها: تاریخ | کد کالا | نام محصول | قیمت قبلی | قیمت جدید | تغییر | تغییر ٪ | دلیل
+  // ستون‌های تغییر (تومان و درصد) در شیت با فرمول محاسبه می‌شوند، پس خالی می‌مانند.
+  // «دلیل» را کاربر بعداً دستی می‌نویسد؛ تاریخ به میلادی ثبت می‌شود
+  // چون تبدیل به تاریخ جلالی در اپس اسکریپت به کتابخانهٔ جداگانه نیاز دارد.
+  logSheet.appendRow([
+    today,
+    productCode,
+    productName,
+    Number(oldPrice),
+    Number(newPrice),
+    &#x27;&#x27;,
+    &#x27;&#x27;,
+    &#x27;ثبت خودکار، دلیل را وارد کنید&#x27;
+  ]);
+}
+
+// ------------------------------- ثبت دستی تغییر قیمت ردیف انتخاب‌شده
+// اگر onEdit در دسترس نبود (مثلاً قیمت با فرمول یا با ایمپورت تغییر کرده)،
+// کاربر می‌تواند ردیف کالا را انتخاب کند و از منو این گزینه را بزند؛
+// در این حالت قیمت قبلی را از کاربر می‌پرسد.
+function logSelectedPriceChange() {
+  const ui = SpreadsheetApp.getUi();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET_PRODUCTS);
+  if (!sheet) return; // برگهٔ محصولات پیدا نشد.
+  const cell = sheet.getActiveCell();
+  const row = cell.getRow();
+  if (row &lt; CONFIG.FIRST_DATA_ROW) {
+    ui.alert(&#x27;لطفاً یک ردیف کالا (ردیف ۳ به بعد) را انتخاب کنید.&#x27;);
+    return;
+  }
+  const answer = ui.prompt(&#x27;قیمت قبلی (تومان)&#x27;, &#x27;قیمت قبلی این کالا را وارد کنید:&#x27;, ui.ButtonSet.OK_CANCEL);
+  if (answer.getSelectedButton() !== ui.Button.OK) return;
+  const oldPrice = Number(answer.getResponseText());
+  if (!oldPrice) {
+    ui.alert(&#x27;قیمت قبلی معتبر نیست.&#x27;);
+    return;
+  }
+  const newPrice = sheet.getRange(row, CONFIG.PRICE_COL).getValue();
+  const today = Utilities.formatDate(new Date(), CONFIG.TIMEZONE, &#x27;yyyy-MM-dd&#x27;);
+  const logSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET_PRICE_LOG);
+  logSheet.appendRow([
+    today,
+    sheet.getRange(row, 1).getValue(),
+    sheet.getRange(row, 2).getValue(),
+    oldPrice,
+    newPrice,
+    &#x27;&#x27;,
+    &#x27;&#x27;,
+    &#x27;ثبت دستی، دلیل را وارد کنید&#x27;
+  ]);
+  ui.alert(&#x27;تغییر قیمت در برگهٔ «تاریخچه تغییر قیمت» ثبت شد.&#x27;);
+}
+
+// -------------------------------------- پیش‌نویس گزارش روزانهٔ کمبود موجودی
+// کالاهایی را که موجودی‌شان به حداقل یا کمتر از آن رسیده پیدا می‌کند
+// و یک پیش‌نویس ایمیل در جیمیل می‌سازد (ارسال نمی‌کند).
+// برای اجرای روزانه: در اپس اسکریپت از بخش تریگرها یک تریگر زمانی
+// (زمان‌محور، روزانه) برای همین تابع بسازید.
+function sendLowStockReport() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CONFIG.SHEET_PRODUCTS);
+  if (!sheet) return;
+
+  const lastRow = sheet.getLastRow();
+  if (lastRow &lt; CONFIG.FIRST_DATA_ROW) return; // هنوز کالایی ثبت نشده است.
+  const data = sheet.getRange(CONFIG.FIRST_DATA_ROW, 1, lastRow - CONFIG.FIRST_DATA_ROW + 1, 7).getValues();
+
+  const lowItems = [];
+  for (const row of data) {
+    const code = row[0];
+    const name = row[1];
+    const stock = Number(row[5]);
+    const minStock = Number(row[6]);
+    if (!name) continue;
+    if (stock &lt;= minStock) {
+      lowItems.push({ code: code, name: name, stock: stock, minStock: minStock });
+    }
+  }
+
+  if (lowItems.length === 0) return; // چیزی برای گزارش نیست.
+
+  const today = Utilities.formatDate(new Date(), CONFIG.TIMEZONE, &#x27;yyyy-MM-dd&#x27;);
+  let body = &#x27;&lt;p&gt;سلام،&lt;/p&gt;&#x27;;
+  body += &#x27;&lt;p&gt;کالاهای زیر به حداقل موجودی رسیده‌اند و نیاز به سفارش دارند:&lt;/p&gt;&#x27;;
+  body += &#x27;&lt;table border=&quot;1&quot; cellpadding=&quot;6&quot; cellspacing=&quot;0&quot; dir=&quot;rtl&quot; style=&quot;border-collapse: collapse;&quot;&gt;&#x27;;
+  body += &#x27;&lt;tr&gt;&lt;th&gt;کد کالا&lt;/th&gt;&lt;th&gt;نام محصول&lt;/th&gt;&lt;th&gt;موجودی&lt;/th&gt;&lt;th&gt;حداقل موجودی&lt;/th&gt;&lt;/tr&gt;&#x27;;
+  for (const item of lowItems) {
+    body += &#x27;&lt;tr&gt;&lt;td&gt;&#x27; + item.code + &#x27;&lt;/td&gt;&lt;td&gt;&#x27; + item.name + &#x27;&lt;/td&gt;&lt;td&gt;&#x27; +
+      item.stock + &#x27;&lt;/td&gt;&lt;td&gt;&#x27; + item.minStock + &#x27;&lt;/td&gt;&lt;/tr&gt;&#x27;;
+  }
+  body += &#x27;&lt;/table&gt;&#x27;;
+  body += &#x27;&lt;p&gt;این گزارش به‌صورت خودکار از گوگل شیت مدیریت قیمت و موجودی ساخته شده است.&lt;/p&gt;&#x27;;
+
+  // فقط پیش‌نویس ساخته می‌شود؛ ارسال با تأیید دستی کاربر انجام می‌شود.
+  GmailApp.createDraft(
+    CONFIG.REPORT_EMAIL,
+    &#x27;گزارش کمبود موجودی، &#x27; + today + &#x27; (&#x27; + lowItems.length + &#x27; کالا)&#x27;,
+    &#x27;&#x27;,
+    { htmlBody: body }
+  );
+}
+</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="eyebrow">۰۵ · نصب و راه‌اندازی</div>
+  <h2>نصب و راه‌اندازی</h2>
+  <div class="timeline" id="timeline">
+    <div class="tl-line" aria-hidden="true"></div>
+    <div class="tstep"><span class="tnum" aria-hidden="true">۱</span><p>در گوگل شیت، از منوی افزونه‌ها گزینهٔ اپس اسکریپت را باز کنید.</p></div>
+    <div class="tstep"><span class="tnum" aria-hidden="true">۲</span><p>کد کامل همین صفحه را در ویرایشگر جایگذاری کنید.</p></div>
+    <div class="tstep"><span class="tnum" aria-hidden="true">۳</span><p>مقدارهای بخش تنظیمات را با نام برگه‌ها و نشانی گیرندهٔ گزارش خودتان جایگزین کنید.</p></div>
+    <div class="tstep"><span class="tnum" aria-hidden="true">۴</span><p>در بخش راه‌اندازها، یک راه‌انداز زمانی روزانه برای تابع گزارش کمبود موجودی بسازید تا هر روز پیش‌نویس تازه ساخته شود.</p></div>
+  </div>
+  <p>ثبت خودکار تغییر قیمت پس از جایگذاری کد، با هر ویرایش شیت اجرا می‌شود و به راه‌انداز جداگانه نیاز ندارد.</p>
+</section>
+
+<section class="card">
+  <div class="eyebrow">۰۶ · نکته‌های صادقانه</div>
+  <h2>نکته‌های صادقانه</h2>
+  <div class="notes-card">
+  <ul>
+    <li>گزارش کمبود موجودی فقط به‌صورت پیش‌نویس ساخته می‌شود و هرگز خودکار فرستاده نمی‌شود؛ پیش از فرستادن باید آن را ببینید و تأیید کنید.</li>
+    <li>تاریخ‌ها به میلادی ثبت می‌شوند، چون تبدیل به تاریخ جلالی در اپس اسکریپت به کتابخانهٔ جداگانه نیاز دارد.</li>
+    <li>اگر قیمت با فرمول یا با وارد کردن داده عوض شود، ثبت خودکار اجرا نمی‌شود؛ در این حالت ثبت دستی از منو انجام می‌شود.</li>
+    <li>این اسکریپت به هیچ شیت واقعی‌ای متصل نیست؛ نام برگه‌ها، شمارهٔ ستون‌ها و نشانی گیرنده باید با فایل واقعی جایگزین شوند.</li>
+  </ul>
+  </div>
+</section>
+
+<section class="card">
+  <div class="eyebrow">۰۷ · پیوندهای مرتبط</div>
+  <h2>پیوندهای مرتبط</h2>
+  <div class="actions-row">
+    <a class="action primary" href="apps-script-sample.gs" download>دانلود فایل اسکریپت (.gs)</a>
+    <a class="action" href="price-inventory-preview.html" target="_blank" rel="noopener">پیش‌نمایش شیت قیمت و موجودی</a>
+    <a class="action" href="README.md" target="_blank" rel="noopener">راهنمای پوشهٔ شیت‌ها</a>
+  </div>
+</section>
+
+<footer>کد کامل این صفحه با فایل اسکریپت یکسان است.</footer>
+</main>
+<script>
+(function(){
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var codeEl = document.querySelector('.viewer pre code');
+  var scrollEl = document.getElementById('codeScroll');
+  var gutterEl = document.getElementById('codeGutter');
+  var LINE_H = 20.8; /* 13px * 1.6, matches the pre */
+  var lines = [];
+  var anchors = { CONFIG: 'const CONFIG', onOpen: 'function onOpen', onEdit: 'function onEdit', logSelectedPriceChange: 'function logSelectedPriceChange', sendLowStockReport: 'function sendLowStockReport' };
+
+  if(codeEl){
+    var raw = codeEl.textContent;
+    lines = raw.split('\n');
+    /* highlight: function names + CONFIG keys in blue, strings in green.
+       Runs on the text, so the copied code stays byte-identical to the .gs file. */
+    var esc = function(s){ return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+    var KEY_RE = /\b(SHEET_PRODUCTS|SHEET_PRICE_LOG|PRICE_COL|STOCK_COL|MIN_STOCK_COL|FIRST_DATA_ROW|REPORT_EMAIL|TIMEZONE)\b/;
+    var re = new RegExp('(\\bfunction\\s+)(onOpen|onEdit|logSelectedPriceChange|sendLowStockReport)\\b|(\\bCONFIG\\b)|' + KEY_RE.source + "|('(?:[^'\\\\]|\\\\.)*')", 'g');
+    codeEl.innerHTML = lines.map(function(line){
+      return esc(line).replace(re, function(m, fnKw, fnName, cfg, key, str){
+        if(fnName) return fnKw + '<span class="fn">' + fnName + '</span>';
+        if(cfg) return '<span class="fn">CONFIG</span>';
+        if(key) return '<span class="fn">' + key + '</span>';
+        if(str) return '<span class="str">' + str + '</span>';
+        return m;
+      });
+    }).join('\n');
+    /* line-number gutter */
+    if(gutterEl){
+      var nums = [];
+      for(var i = 0; i < lines.length; i++) nums.push('<div>' + (i + 1) + '</div>');
+      gutterEl.innerHTML = nums.join('');
+    }
+  }
+  /* anchor links jump within the code block */
+  document.querySelectorAll('.viewer-links a').forEach(function(a){
+    a.addEventListener('click', function(ev){
+      ev.preventDefault();
+      var needle = anchors[a.dataset.anchor];
+      if(!needle || !scrollEl) return;
+      var idx = -1;
+      for(var i = 0; i < lines.length; i++){ if(lines[i].indexOf(needle) !== -1){ idx = i; break; } }
+      if(idx < 0) return;
+      scrollEl.scrollTo({top: idx * LINE_H, behavior: reduced ? 'auto' : 'smooth'});
+    });
+  });
+  /* copy button: returns the raw code */
+  var copyBtn = document.getElementById('copyCodeBtn');
+  if(copyBtn) copyBtn.addEventListener('click', function(){
+    var text = codeEl ? codeEl.textContent : '';
+    function done(){
+      copyBtn.textContent = '✓ کپی شد';
+      setTimeout(function(){ copyBtn.textContent = 'کپی کد'; }, 1500);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch(e) { /* clipboard unavailable */ }
+      document.body.removeChild(ta);
+    }
+  });
+  /* guards check in + timeline line grows, on scroll into view */
+  function observeOnce(el, fn){
+    if(!el) return;
+    if(reduced || !('IntersectionObserver' in window)){ fn(el); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ fn(en.target); io.unobserve(en.target); } });
+    }, {threshold: .25});
+    io.observe(el);
+  }
+  observeOnce(document.getElementById('guards'), function(el){ el.classList.add('in'); });
+  observeOnce(document.getElementById('timeline'), function(el){ el.classList.add('in'); });
+})();
+</script>
+</body>
+</html>

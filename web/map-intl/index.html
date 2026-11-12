@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wayfinder: Explore the City | Portfolio Sample</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#202124;background:#fff;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+
+/* ---------- map ---------- */
+#map{position:fixed;inset:0;z-index:0}
+.leaflet-container{font-family:inherit}
+.pin{width:30px;height:42px;position:relative}
+.pin svg{display:block;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.pin.sel{transform:scale(1.25);z-index:1000}
+.pin .pin-glyph{position:absolute;left:0;top:0;width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px}
+
+/* ---------- left icon rail ---------- */
+#rail{position:fixed;left:0;top:0;bottom:0;width:60px;background:#fff;z-index:1100;display:flex;flex-direction:column;align-items:center;padding:10px 0;box-shadow:2px 0 8px rgba(0,0,0,.12)}
+#rail .logo{width:40px;height:40px;border-radius:50%;background:#0d7377;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:19px;margin-bottom:14px}
+#rail button{width:44px;height:44px;border:none;background:none;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#5f6368;margin-bottom:6px;position:relative}
+#rail button:hover{background:#f0f4f9;color:#0d7377}
+#rail button.active{background:#e0f2f1;color:#0d7377}
+#rail button svg{width:22px;height:22px}
+#rail button .lbl{font-size:8.5px;margin-top:1px}
+#rail button .dot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:#ea4335;border:1.5px solid #fff}
+#rail .spacer{flex:1}
+#rail .sample-tag{writing-mode:vertical-rl;font-size:10px;color:#80868b;letter-spacing:.5px}
+
+/* ---------- floating search pill ---------- */
+#searchWrap{position:fixed;left:72px;top:12px;z-index:1001;width:400px;max-width:calc(100vw - 84px)}
+#searchPill{display:flex;align-items:center;background:#fff;border-radius:28px;box-shadow:0 2px 10px rgba(0,0,0,.25);height:52px;padding:0 6px 0 16px;gap:6px}
+#searchPill .mag{color:#5f6368;flex:none;display:flex}
+#searchPill input{flex:1;border:none;font-size:16px;min-width:0;background:none;color:#202124}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #0d7377;outline-offset:2px}
+#searchPill input::placeholder{color:#80868b}
+#searchPill .clear{border:none;background:none;color:#80868b;font-size:18px;width:30px;height:30px;border-radius:50%;display:none;flex:none}
+#searchPill .clear:hover{background:#f0f4f9}
+#searchPill .dir-btn{flex:none;background:#0d7377;color:#fff;border:none;border-radius:20px;height:40px;padding:0 16px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:6px}
+#searchPill .dir-btn:hover{background:#0a5c60}
+#searchPill .dir-btn svg{width:16px;height:16px}
+
+/* ---------- filter bar ---------- */
+#filterBar{display:none;gap:8px;margin-top:10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+#filterBar::-webkit-scrollbar{display:none}
+#filterBar.on{display:flex}
+#filterBar .chip{flex:none}
+.chip{border:1px solid #dadce0;background:#fff;border-radius:20px;height:36px;padding:0 14px;font-size:13.5px;color:#3c4043;display:flex;align-items:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.chip:hover{background:#f8f9fa}
+.chip.active{background:#e0f2f1;border-color:#0d7377;color:#0d7377;font-weight:500}
+.chip .caret{font-size:10px}
+.chip .x{font-size:13px;line-height:1}
+#filterPop{position:absolute;top:112px;left:0;width:min(320px,calc(100vw - 24px));background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.25);padding:16px;display:none;z-index:1001}
+#filterPop.on{display:block}
+#filterPop h4{font-size:14px;margin-bottom:10px}
+#filterPop .opt-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+#filterPop .opt{border:1px solid #dadce0;background:#fff;border-radius:18px;padding:6px 13px;font-size:13px}
+#filterPop .opt.active{background:#0d7377;border-color:#0d7377;color:#fff}
+#filterPop label.check{display:flex;align-items:center;gap:8px;font-size:14px;padding:6px 0;color:#3c4043}
+#filterPop .pop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+.btn-ghost{border:1px solid #dadce0;background:#fff;border-radius:20px;padding:8px 16px;font-size:13.5px;color:#0d7377}
+.btn-blue{background:#0d7377;color:#fff;border:none;border-radius:20px;padding:8px 18px;font-size:13.5px;font-weight:500}
+
+/* ---------- results column ---------- */
+#results{position:fixed;left:72px;top:118px;bottom:12px;width:400px;max-width:calc(100vw - 84px);background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.22);z-index:1000;display:none;flex-direction:column;overflow:hidden}
+#results.on{display:flex}
+#resultsHead{padding:12px 16px 8px;border-bottom:1px solid #e8eaed;flex:none}
+#resultsHead .count{font-size:14px;color:#5f6368}
+#resultsHead .count b{color:#202124}
+#areaBtn{display:none;margin-top:8px;border:1px solid #dadce0;background:#fff;border-radius:18px;padding:6px 14px;font-size:13px;color:#0d7377;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+#areaBtn:hover{background:#f8f9fa}
+#resultsList{overflow-y:auto;flex:1}
+.card{padding:16px;border-bottom:1px solid #e8eaed;cursor:pointer}
+.card:focus-visible,.sim-card:focus-visible{outline:2px solid #0d7377;outline-offset:2px}
+.card:hover{background:#f8f9fa}
+.card.sel{background:#e0f2f1}
+.card .thumb{height:110px;border-radius:10px;margin-bottom:10px;display:flex;align-items:flex-end;overflow:hidden;position:relative}
+.card .thumb .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.9}
+.card .thumb .ph svg{width:56px;height:56px;color:rgba(255,255,255,.85)}
+.card .thumb .cat-pill{position:relative;z-index:1;background:rgba(0,0,0,.55);color:#fff;font-size:11.5px;padding:3px 9px;border-radius:12px;margin:8px}
+.card h3{font-size:16px;font-weight:500;color:#202124}
+.card .row{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:13.5px;color:#5f6368;flex-wrap:wrap}
+.stars{color:#fbbc04;letter-spacing:1px;font-size:13px;white-space:nowrap}
+.stars .n{color:#202124;font-weight:500}
+.price{font-weight:500;color:#202124}
+.open{color:#188038;font-weight:500}
+.closed{color:#d93025;font-weight:500}
+.card .quote{font-size:13.5px;color:#5f6368;margin-top:8px;line-height:1.45}
+.card .quote::before{content:"“"}
+.card .quote::after{content:"”"}
+.card .actions{margin-top:10px;display:flex;gap:8px}
+.btn-outline{border:1px solid #0d7377;color:#0d7377;background:#fff;border-radius:18px;padding:7px 16px;font-size:13.5px;font-weight:500}
+.btn-outline:hover{background:#e0f2f1}
+.btn-solid{background:#0d7377;color:#fff;border:none;border-radius:18px;padding:7px 16px;font-size:13.5px;font-weight:500}
+.btn-solid:hover{background:#0a5c60}
+#noResults{padding:28px 20px;text-align:center;color:#5f6368;font-size:14px;line-height:1.6;display:none}
+
+/* ---------- detail panel ---------- */
+#detail{position:fixed;left:484px;top:12px;bottom:12px;width:440px;max-width:calc(100vw - 84px);background:#fff;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,.28);z-index:1000;overflow-y:auto;display:none;transform:translateX(-16px);opacity:0;transition:transform .25s ease,opacity .25s ease}
+#detail.on{display:block;transform:translateX(0);opacity:1}
+#detail .close-x{position:absolute;top:10px;right:10px;z-index:5;width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,.95);font-size:18px;color:#5f6368;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+#detail .close-x:hover{background:#fff;color:#202124}
+.hero{height:220px;position:relative;display:flex;align-items:flex-end}
+.hero .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.hero .ph svg{width:96px;height:96px;color:rgba(255,255,255,.8)}
+.hero .hero-cap{position:relative;z-index:1;padding:16px;width:100%;background:linear-gradient(transparent,rgba(0,0,0,.55));color:#fff}
+.hero .hero-cap h2{font-size:22px;font-weight:500}
+.hero .hero-cap .sub{font-size:13.5px;opacity:.92;margin-top:2px}
+.d-body{padding:16px 18px 24px}
+.d-head h2{font-size:22px;font-weight:500}
+.d-head .meta{font-size:14px;color:#5f6368;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.amen-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.amen-chips span{background:#e6f4ea;color:#137333;font-size:12.5px;border-radius:12px;padding:4px 10px}
+.circle-actions{display:flex;justify-content:space-between;margin:16px 0 4px}
+.circle-actions button{border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;color:#0d7377;width:64px}
+.circle-actions .circ{width:46px;height:46px;border:1px solid #dadce0;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0d7377;background:#fff}
+.circle-actions button:hover .circ{background:#e0f2f1}
+.circle-actions button.saved .circ{background:#fce8e6;border-color:#ea4335;color:#ea4335}
+.circle-actions .circ svg{width:20px;height:20px}
+.tabs{display:flex;border-bottom:1px solid #e8eaed;margin-top:14px;position:sticky;top:0;background:#fff;z-index:3}
+.tabs button{border:none;background:none;padding:11px 14px;font-size:14px;color:#5f6368;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button.active{color:#0d7377;border-bottom-color:#0d7377;font-weight:500}
+.tabpane{display:none;padding-top:16px}
+.tabpane.on{display:block}
+.tabpane h3{font-size:16px;font-weight:500;margin:16px 0 8px}
+.tabpane h3:first-child{margin-top:0}
+.tabpane p{font-size:14.5px;line-height:1.6;color:#3c4043}
+.contact-row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid #f0f4f9;font-size:14px}
+.contact-row .ic{color:#5f6368;flex:none;width:20px;text-align:center}
+.contact-row .txt{flex:1;color:#3c4043;line-height:1.45;word-break:break-word}
+.contact-row .txt .sub2{color:#80868b;font-size:12.5px}
+.contact-row .copy{border:none;background:none;color:#80868b;width:32px;height:32px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center}
+.contact-row .copy:hover{background:#f0f4f9;color:#0d7377}
+.contact-row .copy svg{width:17px;height:17px}
+.hours-table{width:100%;font-size:14px;border-collapse:collapse}
+.hours-table td{padding:5px 0;color:#3c4043}
+.hours-table td:first-child{width:110px}
+.hours-table tr.today td{font-weight:600;color:#202124}
+.hours-table .closed-day{color:#d93025}
+.popular{display:flex;align-items:flex-end;gap:3px;height:90px;margin:8px 0 4px}
+.popular .bar{flex:1;background:#7fc4bd;border-radius:3px 3px 0 0;min-height:3px;position:relative}
+.popular .bar.now{background:#0d7377}
+.popular .bar:hover{background:#0d7377}
+.popular-lbls{display:flex;justify-content:space-between;font-size:11px;color:#80868b}
+.popular-note{font-size:13px;color:#5f6368;margin-top:6px}
+.popular-note b{color:#188038}
+.menu-item{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid #f0f4f9}
+.menu-item .mi-name{font-size:14.5px;font-weight:500}
+.menu-item .mi-desc{font-size:13px;color:#5f6368;margin-top:2px;line-height:1.45}
+.menu-item .mi-price{font-size:14.5px;font-weight:500;white-space:nowrap}
+.hist-row{display:flex;align-items:center;gap:10px;font-size:13px;color:#5f6368;margin:5px 0}
+.hist-row .hn{width:10px;text-align:right}
+.hist-row .track{flex:1;height:8px;background:#f0f4f9;border-radius:4px;overflow:hidden}
+.hist-row .fill{height:100%;background:#fbbc04;border-radius:4px}
+.hist-row .hc{width:34px;text-align:left}
+.rev-summary{display:flex;align-items:center;gap:14px;margin:6px 0 14px}
+.rev-summary .big{font-size:44px;font-weight:400;line-height:1}
+.rev-summary .rs-stars{font-size:16px}
+.rev-summary .rs-count{font-size:13px;color:#5f6368;margin-top:2px}
+.review{padding:14px 0;border-top:1px solid #f0f4f9}
+.review .r-head{display:flex;align-items:center;gap:10px}
+.review .avatar{width:34px;height:34px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;flex:none}
+.review .r-name{font-size:14px;font-weight:500}
+.review .r-meta{font-size:12.5px;color:#80868b}
+.review .r-text{font-size:14px;line-height:1.55;color:#3c4043;margin-top:8px}
+.review .helpful{margin-top:8px;border:1px solid #dadce0;background:#fff;border-radius:16px;padding:5px 12px;font-size:12.5px;color:#5f6368}
+.review .helpful:hover{background:#f8f9fa}
+.review .helpful.voted{color:#0d7377;border-color:#0d7377;background:#e0f2f1}
+.similar{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.sim-card{flex:0 0 150px;border:1px solid #e8eaed;border-radius:10px;overflow:hidden;cursor:pointer}
+.sim-card .sim-ph{height:80px;display:flex;align-items:center;justify-content:center}
+.sim-card .sim-ph svg{width:34px;height:34px;color:rgba(255,255,255,.85)}
+.sim-card .sim-body{padding:8px 10px}
+.sim-card .sim-name{font-size:13.5px;font-weight:500}
+.sim-card .sim-meta{font-size:12px;color:#5f6368;margin-top:2px}
+.photo-tiles{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.photo-tiles .pt{flex:0 0 110px;height:80px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.9);font-size:12px;text-align:center;padding:6px}
+.photo-tiles .pt svg{width:30px;height:30px}
+
+/* ---------- directions panel ---------- */
+#dirPanel{position:fixed;left:72px;top:12px;width:400px;max-width:calc(100vw - 84px);background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.25);z-index:1002;padding:16px;display:none}
+#dirPanel.on{display:block}
+#dirPanel h3{font-size:16px;font-weight:500;margin-bottom:12px}
+.dir-field{display:flex;align-items:center;gap:10px;border:1px solid #dadce0;border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.dir-field .dotc{width:10px;height:10px;border-radius:50%;flex:none}
+.dir-field input{flex:1;border:none;font-size:14.5px;min-width:0}
+.dir-modes{display:flex;gap:6px;margin:10px 0}
+.dir-modes button{flex:1;border:1px solid #dadce0;background:#fff;border-radius:10px;padding:8px 4px;font-size:13px;color:#5f6368}
+.dir-modes button.active{background:#e0f2f1;border-color:#0d7377;color:#0d7377;font-weight:500}
+#dirResult{font-size:14px;color:#3c4043;line-height:1.6;display:none;margin-top:6px}
+#dirResult .big-dist{font-size:20px;font-weight:500;color:#202124}
+#dirSteps{margin:10px 0 0 0;padding-left:18px;font-size:13.5px;color:#5f6368;line-height:1.7}
+.dir-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+
+/* ---------- modals / toast / misc ---------- */
+.modal-back{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-back.on{display:flex}
+.modal{background:#fff;border-radius:16px;width:420px;max-width:100%;padding:22px;box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.modal h3{font-size:18px;font-weight:500;margin-bottom:4px}
+.modal .m-sub{font-size:14px;color:#5f6368;margin-bottom:14px}
+.modal label{display:block;font-size:13px;color:#5f6368;margin:12px 0 4px}
+.modal input,.modal select{width:100%;border:1px solid #dadce0;border-radius:8px;padding:10px 12px;font-size:15px}
+.modal input:focus,.modal select:focus{border-color:#0d7377}
+.modal .m-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.confirm-box{background:#e6f4ea;border-radius:10px;padding:14px;font-size:14px;line-height:1.6;color:#137333;display:none;margin-top:12px}
+.confirm-box b{color:#0d652d}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#202124;color:#fff;padding:11px 20px;border-radius:8px;font-size:14px;z-index:3000;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 4px 14px rgba(0,0,0,.3);max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#sampleBadge{position:fixed;right:12px;top:12px;z-index:1100;background:#f59e0b;color:#fff;font-size:12.5px;font-weight:600;padding:5px 13px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#mapFallback{position:fixed;inset:0;z-index:1;display:none;align-items:center;justify-content:center;background:#e8eaed;color:#5f6368;font-size:15px;text-align:center;padding:20px;line-height:1.6}
+/* ---------- rework: hero band, 240px Spaces sidebar, routes, motion ---------- */
+.hero-band{display:none}
+.map-hint{position:fixed;left:calc(50% + 120px);bottom:16px;transform:translateX(-50%);z-index:900;
+  background:rgba(32,33,36,.85);color:#fff;font-size:12.5px;padding:6px 14px;border-radius:999px;
+  pointer-events:none;transition:opacity .4s;white-space:nowrap}
+.map-hint.hide{opacity:0}
+.band-hide{position:absolute;top:10px;left:14px;z-index:3;border:0;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:5px 13px;font-size:12px;font-weight:500}
+.band-hide:hover{background:rgba(0,0,0,.7)}
+.show-banner{display:none;flex:none;align-items:center;gap:4px;border:1px solid #dadce0;background:#fff;border-radius:20px;height:40px;padding:0 12px;font-size:13.5px;color:#0d7377}
+.show-banner:hover{background:#e0f2f1}
+/* scroll reveals for result cards (rise once as they enter view) */
+.rv{opacity:0;transform:translateY(10px);
+  transition:opacity .5s cubic-bezier(0.23,1,0.32,1),transform .5s cubic-bezier(0.23,1,0.32,1)}
+.rv.in{opacity:1;transform:none}
+/* map area sits right of the sidebar and below the hero (desktop) */
+#map{left:240px;top:190px;transition:top .45s cubic-bezier(0.23,1,0.32,1)}
+#searchWrap{left:252px;top:202px;transition:top .45s cubic-bezier(0.23,1,0.32,1)}
+#results{left:252px;top:308px;transition:top .45s cubic-bezier(0.23,1,0.32,1)}
+#detail{left:664px;top:202px;transition:transform .25s ease,opacity .25s ease,top .45s cubic-bezier(0.23,1,0.32,1)}
+#dirPanel{left:252px;top:202px;transition:top .45s cubic-bezier(0.23,1,0.32,1)}
+@media(min-width:901px){
+  .hero-band{display:block;position:fixed;left:240px;right:0;top:0;height:190px;z-index:5;overflow:hidden;
+    transition:transform .45s cubic-bezier(0.23,1,0.32,1)}
+  .hero-band img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 62%}
+  .hero-band .hero-cap{position:absolute;left:0;right:0;bottom:0;padding:26px 18px 10px;color:#fff;
+    background:linear-gradient(transparent,rgba(0,0,0,.6))}
+  .hero-band .hero-cap b{display:block;font-size:15px;font-weight:600}
+  .hero-band .hero-cap span{font-size:12px;opacity:.9}
+  /* the banner collapses out of the way once the user engages the map */
+  body.banner-collapsed .hero-band{transform:translateY(-101%)}
+  body.banner-collapsed #map{top:0}
+  body.banner-collapsed #searchWrap{top:12px}
+  body.banner-collapsed #results{top:118px}
+  body.banner-collapsed #detail{top:12px}
+  body.banner-collapsed #dirPanel{top:12px}
+  body.banner-collapsed .show-banner{display:inline-flex}
+}
+/* 240px Spaces sidebar (desktop): navigation + named collections + numbered routes */
+#rail{width:240px;padding:14px 12px;overflow-y:auto;align-items:stretch;scrollbar-width:thin}
+.rail-brand{display:flex;align-items:center;gap:10px;padding:2px 6px 8px}
+.rail-brand .logo{margin-bottom:0}
+.wordmark{font-size:19px;font-weight:700;color:#202124}
+#rail .sample-tag{writing-mode:horizontal-tb;font-size:10px;color:#80868b;letter-spacing:.5px;padding:0 8px 10px}
+.rail-nav{display:flex;flex-direction:column;gap:2px}
+#rail button{flex-direction:row;justify-content:flex-start;gap:12px;width:100%;height:44px;
+  padding:0 10px;border-radius:10px;margin-bottom:0}
+#rail button .lbl{font-size:13.5px;margin-top:0}
+#rail button svg{width:20px;height:20px;flex:none}
+#rail button .dot{top:8px;right:auto;left:28px}
+.rail-section{margin-top:18px}
+.rail-section h3{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:#80868b;padding:0 10px 8px}
+.spaces-list,.routes-list{display:flex;flex-direction:column;gap:2px}
+#rail button.space,#rail button.route{height:auto;min-height:44px;padding:8px 10px}
+.mood{width:14px;height:14px;border-radius:4px;flex:none}
+.s-name{font-size:13px;font-weight:600;color:#202124;flex:1;text-align:left}
+.s-count{font-size:12px;color:#80868b}
+.r-num{font-size:12px;font-weight:700;color:#0d7377;font-variant-numeric:tabular-nums;flex:none}
+.r-text{flex:1;text-align:left;min-width:0}
+.r-name{display:block;font-size:13px;font-weight:600;color:#202124;line-height:1.35}
+.r-cap{display:block;font-size:11.5px;color:#80868b;line-height:1.35}
+.space.active,.route.active{background:#e0f2f1}
+/* pin motion: tap scale 250ms, cross-highlight 150ms, fade on filter */
+.pin{transition:transform .25s ease}
+.pin.hl{transform:scale(1.15)}
+.leaflet-marker-icon{transition:opacity .25s ease}
+@media(prefers-reduced-motion:reduce){.pin,.leaflet-marker-icon,.map-hint{transition:none}
+  .hero-band,#map,#searchWrap,#results,#detail,#dirPanel{transition:none}
+  .rv{opacity:1;transform:none;transition:none}}
+@media(max-width:900px){
+  .hero-band{display:none}
+  #map{left:0;top:0}
+  #searchWrap{left:72px;top:12px}
+  #results{left:72px;top:118px}
+  #detail{left:72px;top:auto}
+  #dirPanel{left:72px;top:12px}
+  .map-hint{left:50%}
+  /* sidebar collapses back to the 60px icon rail */
+  #rail{width:60px;padding:10px 0;align-items:center;overflow:visible}
+  .rail-brand{padding:0}
+  .rail-brand .logo{margin-bottom:14px}
+  .wordmark{display:none}
+  #rail .sample-tag{writing-mode:vertical-rl;padding:0}
+  .rail-nav{flex-direction:column}
+  #rail button{flex-direction:column;justify-content:center;gap:0;width:44px;height:44px;
+    padding:0;border-radius:50%}
+  #rail button .lbl{font-size:8.5px;margin-top:1px}
+  #rail button .dot{top:6px;right:7px;left:auto}
+  .rail-section{display:none}
+}
+@media(max-width:900px){
+  #detail{left:72px;right:12px;top:auto;bottom:12px;height:62vh;width:auto;max-width:none;transform:none}
+  #results{top:118px}
+}
+@media(max-width:560px){
+  #searchWrap{left:66px;width:calc(100vw - 78px);max-width:none;z-index:1400}
+  #results{left:66px;width:calc(100vw - 78px);max-width:none}
+  #detail{left:12px;right:12px;width:auto;max-width:none;z-index:1200}
+  #dirPanel{left:66px;width:calc(100vw - 78px);max-width:none;z-index:1300}
+  /* sample badge would cover the search pill / results at this width, the
+     rail's vertical PORTFOLIO SAMPLE tag carries the label on mobile */
+  #sampleBadge{display:none}
+  #filterPop{top:118px}
+  .chip{min-height:44px}
+  .card .actions .btn-solid,.card .actions .btn-outline{min-height:44px;padding:11px 18px}
+  .circle-actions button{width:56px}
+  .tabs button{min-height:44px;padding:13px 8px}
+  #filterPop .opt{min-height:44px;padding:10px 16px;display:inline-flex;align-items:center}
+  .review .helpful{min-height:44px;padding:9px 14px}
+  .dir-modes button{min-height:44px;padding:12px 4px}
+  .circle-actions button{min-height:44px}
+  .modal input,.modal select{min-height:44px}
+  .btn-ghost,.btn-blue{min-height:44px}
+  .contact-row .copy{min-width:44px;min-height:44px}
+}
+</style>
+</head>
+<body>
+<div id="map" role="application" aria-label="Wayfinder map of Seattle"></div>
+<div id="mapFallback"><p><b>Map tiles could not load.</b><br>The place list, search and filters still work below, the map needs internet access to Leaflet and OpenStreetMap tiles.</p></div>
+
+<!-- hero: one destination, one mood -->
+<div class="hero-band">
+  <img src="../assets/graphics/map-intl/city-skyline.jpg" alt="Château Frontenac, Quebec City at dusk with a cruise ship" width="1200" height="568">
+  <button class="band-hide" id="bandHide" type="button">Hide banner</button>
+  <div class="hero-cap"><b>Château Frontenac, Quebec City</b><span>Photo: Wilfredor (CC BY-SA 4.0)</span></div>
+</div>
+<div class="map-hint" id="mapHint">Drag to explore · Scroll to zoom</div>
+
+<!-- left sidebar: navigation, Spaces, Routes -->
+<nav id="rail" aria-label="Wayfinder navigation">
+  <div class="rail-brand">
+    <div class="logo" title="Wayfinder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5" fill="#fff" stroke="none"/></svg></div>
+    <span class="wordmark">Wayfinder</span>
+  </div>
+  <span class="sample-tag">PORTFOLIO SAMPLE</span>
+  <div class="rail-nav">
+  <button type="button" id="railSearch" class="active" title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg><span class="lbl">Search</span></button>
+  <button type="button" id="railSaved" title="Saved places"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg><span class="lbl">Saved</span><span class="dot" id="savedDot" style="display:none"></span></button>
+  <button type="button" id="railDirections" title="Directions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span class="lbl">Directions</span></button>
+  <button type="button" id="railNearby" title="Places near the map centre"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg><span class="lbl">Nearby</span></button>
+  <button type="button" id="railHome" title="Back to the city view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span class="lbl">Home</span></button>
+  </div>
+  <div class="rail-section" id="spacesSection">
+    <h3>Spaces</h3>
+    <div class="spaces-list">
+      <button type="button" class="space" data-ids="1,4,9"><span class="mood" style="background:linear-gradient(135deg,#e2725b,#8a3324)"></span><span class="s-name">Downtown Eats</span><span class="s-count">3</span></button>
+      <button type="button" class="space" data-ids="2,5,8"><span class="mood" style="background:linear-gradient(135deg,#d9a05b,#7a4a12)"></span><span class="s-name">Coffee &amp; Books</span><span class="s-count">3</span></button>
+      <button type="button" class="space" data-ids="3"><span class="mood" style="background:linear-gradient(135deg,#5b8def,#1a3a7a)"></span><span class="s-name">Waterfront</span><span class="s-count">1</span></button>
+      <button type="button" class="space" data-ids="7"><span class="mood" style="background:linear-gradient(135deg,#66bb6a,#1b5e20)"></span><span class="s-name">Parks &amp; Outdoors</span><span class="s-count">1</span></button>
+      <button type="button" class="space" data-ids="6"><span class="mood" style="background:linear-gradient(135deg,#7e57c2,#311b92)"></span><span class="s-name">Nightlife</span><span class="s-count">1</span></button>
+      <button type="button" class="space" data-ids="3,10"><span class="mood" style="background:linear-gradient(135deg,#0d7377,#004d40)"></span><span class="s-name">Places to Stay</span><span class="s-count">2</span></button>
+    </div>
+  </div>
+  <div class="rail-section" id="routesSection">
+    <h3>Routes</h3>
+    <div class="routes-list">
+      <button type="button" class="route" data-ids="7"><span class="r-num">01</span><span class="r-text"><span class="r-name">The 1911 Loop</span><span class="r-cap">Alder Park · 1911</span></span></button>
+      <button type="button" class="route" data-ids="5,2"><span class="r-num">02</span><span class="r-text"><span class="r-name">Market Morning</span><span class="r-cap">North Pier Bakery · 1986</span></span></button>
+      <button type="button" class="route" data-ids="8,2"><span class="r-num">03</span><span class="r-text"><span class="r-name">Books &amp; Brews</span><span class="r-cap">Marlowe&rsquo;s Books &amp; Coffee · 1974</span></span></button>
+      <button type="button" class="route" data-ids="9,6"><span class="r-num">04</span><span class="r-text"><span class="r-name">Tandoor Nights</span><span class="r-cap">Saffron Table · 2008</span></span></button>
+      <button type="button" class="route" data-ids="3,1"><span class="r-num">05</span><span class="r-text"><span class="r-name">Harbour Breakfast</span><span class="r-cap">The Harborlight Inn · 1920s</span></span></button>
+      <button type="button" class="route" data-ids="10,4"><span class="r-num">06</span><span class="r-text"><span class="r-name">Garden Atrium</span><span class="r-cap">The Glasshouse Hotel · 2016</span></span></button>
+      <button type="button" class="route" data-ids="1,4"><span class="r-num">07</span><span class="r-text"><span class="r-name">Wood-Fired Table</span><span class="r-cap">The Copper Kettle · 2019</span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- floating search + filters -->
+<div id="searchWrap">
+  <div id="searchPill">
+    <span class="mag"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></span>
+    <input id="searchInput" type="text" placeholder="Search Wayfinder" aria-label="Search places" autocomplete="off">
+    <button class="clear" id="clearSearch" type="button" title="Clear search">✕</button>
+    <button class="dir-btn" id="pillDirections" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>Directions</button>
+    <button class="show-banner" id="showBanner" type="button">🖼 Banner</button>
+  </div>
+  <div id="filterBar" aria-label="Filters">
+    <button class="chip" type="button" data-pop="price">Price <span class="caret">▾</span></button>
+    <button class="chip" type="button" data-pop="rating">Rating <span class="caret">▾</span></button>
+    <button class="chip" type="button" data-pop="category">Category <span class="caret">▾</span></button>
+    <button class="chip" type="button" id="hoursChip">Open now</button>
+    <button class="chip" type="button" data-pop="all">All filters <span class="caret">▾</span></button>
+    <button class="chip" type="button" id="clearFilters" style="display:none">Clear all <span class="x">✕</span></button>
+  </div>
+  <div id="filterPop" role="dialog" aria-label="Filter options"></div>
+</div>
+
+<!-- results column -->
+<aside id="results" aria-label="Search results">
+  <div id="resultsHead">
+    <div class="count" id="resultsCount"></div>
+    <button id="areaBtn" type="button">Search this area</button>
+  </div>
+  <div id="resultsList"></div>
+  <div id="noResults">No places match those filters.<br><button class="btn-ghost" id="resetFiltersBtn" type="button" style="margin-top:10px">Reset filters</button></div>
+</aside>
+
+<!-- detail panel -->
+<aside id="detail" aria-label="Place details"></aside>
+
+<!-- directions panel -->
+<div id="dirPanel" role="dialog" aria-label="Directions">
+  <h3>Directions</h3>
+  <div class="dir-field"><span class="dotc" style="background:#0d7377"></span><input id="dirFrom" value="Your location, Downtown Seattle" aria-label="Starting point"></div>
+  <div class="dir-field"><span class="dotc" style="background:#ea4335"></span><input id="dirTo" placeholder="Choose destination" aria-label="Destination" list="dirDestList"><datalist id="dirDestList"></datalist></div>
+  <div class="dir-modes" id="dirModes">
+    <button type="button" data-mode="driving" class="active">Driving</button>
+    <button type="button" data-mode="walking">Walking</button>
+    <button type="button" data-mode="cycling">Cycling</button>
+    <button type="button" data-mode="transit">Transit</button>
+  </div>
+  <div id="dirResult"></div>
+  <div class="dir-actions">
+    <button class="btn-ghost" id="dirClose" type="button">Close</button>
+    <button class="btn-blue" id="dirGo" type="button">Get directions</button>
+  </div>
+</div>
+
+<!-- booking modal -->
+<div class="modal-back" id="bookModalBack">
+  <div class="modal" role="dialog" aria-label="Book or order">
+    <h3 id="bookTitle">Reserve a table</h3>
+    <p class="m-sub" id="bookSub"></p>
+    <label for="bookDate">Date</label>
+    <input type="date" id="bookDate">
+    <label for="bookTime">Time</label>
+    <select id="bookTime"></select>
+    <label for="bookParty" id="bookPartyLabel">Party size</label>
+    <select id="bookParty"></select>
+    <label for="bookName">Name for the booking</label>
+    <input type="text" id="bookName" placeholder="e.g. Alex Morgan">
+    <div class="confirm-box" id="bookConfirm"></div>
+    <div class="m-actions">
+      <button class="btn-ghost" id="bookCancel" type="button">Cancel</button>
+      <button class="btn-blue" id="bookSubmit" type="button">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- send-to-phone modal -->
+<div class="modal-back" id="phoneModalBack">
+  <div class="modal" role="dialog" aria-label="Send to phone">
+    <h3>Send to your phone</h3>
+    <p class="m-sub" id="phoneSub"></p>
+    <label for="phoneInput">Mobile number</label>
+    <input type="tel" id="phoneInput" placeholder="+1 206 555 0100">
+    <div class="confirm-box" id="phoneConfirm"></div>
+    <div class="m-actions">
+      <button class="btn-ghost" id="phoneCancel" type="button">Cancel</button>
+      <button class="btn-blue" id="phoneSend" type="button">Send link</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status"></div>
+<div id="sampleBadge">Portfolio sample</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+"use strict";
+
+/* ================= Place data ================= */
+var CATS = {
+  restaurant:{label:'Restaurant', color:'#ea4335', glyph:'🍽'},
+  cafe:{label:'Café', color:'#f29900', glyph:'☕'},
+  bakery:{label:'Bakery', color:'#a142f4', glyph:'🥐'},
+  bar:{label:'Bar', color:'#673ab7', glyph:'🍸'},
+  hotel:{label:'Hotel', color:'#0d7377', glyph:'🛏'},
+  park:{label:'Park', color:'#188038', glyph:'🌳'}
+};
+var GRADIENTS = {
+  restaurant:'linear-gradient(135deg,#e2725b,#8a3324)',
+  cafe:'linear-gradient(135deg,#d9a05b,#7a4a12)',
+  bakery:'linear-gradient(135deg,#b388eb,#5e35b1)',
+  bar:'linear-gradient(135deg,#7e57c2,#311b92)',
+  hotel:'linear-gradient(135deg,#5b8def,#1a3a7a)',
+  park:'linear-gradient(135deg,#66bb6a,#1b5e20)'
+};
+var SVG = {
+  restaurant:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 3v7a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3M6 3v18M20 3c-2 0-3 2-3 5v4h3v9"/></svg>',
+  cafe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8z"/><path d="M17 9h2a2.5 2.5 0 0 1 0 5h-2M7 4c0-1 1-1 1-2M12 4c0-1 1-1 1-2"/></svg>',
+  bakery:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 15a8 8 0 0 1 16 0v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2z"/><path d="M8 15a4 4 0 0 1 8 0M12 7V4"/></svg>',
+  bar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16l-8 9-8-9z"/><path d="M12 13v6M8 21h8"/></svg>',
+  hotel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 18v-8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8M3 18h18M3 18v2M21 18v2M6 10V6h12v4"/><path d="M9 14h6"/></svg>',
+  park:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3L7 10h3l-4 6h12l-4-6h3L12 3z"/><path d="M12 16v5M8 21h8"/></svg>'
+};
+
+/* hours: open/close as 24h numbers; close may exceed 24 (e.g. 26 = 2am next day) */
+var PLACES = [
+ {id:1,name:'The Copper Kettle',cat:'restaurant',cuisine:'American · Brunch',lat:47.6101,lng:-122.3421,rating:4.6,reviews:1284,price:2,open:8,close:22,closedDays:[],phone:'+1 (206) 555-0148',website:'copperkettle.example',address:'214 Pine Street, Downtown Seattle',desc:'A warm, wood-fired American kitchen in the heart of downtown. The copper-clad dining room seats 60, and the weekend brunch queue is part of the ritual.',about:'The Copper Kettle opened in 2019 in a converted print works. The menu changes with the seasons, the bread is baked in-house every morning, and the kitchen is fully open so you can watch the wood oven at work. Families welcome until 8 pm; the bar stays open later.',amenities:['Outdoor seating','Free Wi-Fi','Wheelchair accessible','Takes reservations'],features:{outdoor:true,wifi:true,accessible:true,reservations:true},action:'Reserve a table',quote:{text:'The roast chicken is the best I have had in the city, crisp skin, proper gravy, and the staff remembered us from last time.',author:'Maya R.'},hist:[920,240,70,30,24],popular:[5,3,2,2,4,10,22,38,55,48,40,52,68,74,60,48,55,70,88,95,80,55,30,12],menu:[{n:'Wood-fired roast chicken',d:'Half chicken, pan gravy, roasted carrots, herb butter',p:'$24'},{n:'Copper Kettle burger',d:'Dry-aged beef, aged cheddar, pickled onion, brioche',p:'$19'},{n:'Charred seasonal greens',d:'Greens, smoked almonds, lemon, pecorino',p:'$13'},{n:'Buttermilk pancakes',d:'Brown butter, maple, toasted pecans (brunch only)',p:'$14'}],reviewsList:[{a:'Maya R.',r:5,d:'2 weeks ago',t:'The roast chicken is the best I have had in the city, crisp skin, proper gravy, and the staff remembered us from last time.',h:42},{a:'Daniel K.',r:4,d:'a month ago',t:'Great food and a lovely room. It gets loud on Friday nights, so book the early sitting if you want to talk.',h:18},{a:'Priya S.',r:5,d:'3 months ago',t:'Brunch here is worth the wait. The pancakes alone justify the queue.',h:27}]},
+ {id:2,name:'Bean & Ember Café',cat:'cafe',cuisine:'Café · Specialty coffee',lat:47.6132,lng:-122.3445,rating:4.7,reviews:2031,price:1,open:7,close:18,closedDays:[],phone:'+1 (206) 555-0117',website:'beanandember.example',address:'88 Union Street, Downtown Seattle',desc:'A small roastery café pouring single-origin espresso and baking cardamom buns at 7 am sharp. Laptop-friendly until the afternoon rush.',about:'Bean & Ember roasts its beans two doors down and changes the single-origin menu every month. There are 14 seats inside and a six-seat parklet outside. Pour-over is brewed to order; the house blend is roasted medium-dark for milk drinks.',amenities:['Free Wi-Fi','Wheelchair accessible','Outdoor seating'],features:{outdoor:true,wifi:true,accessible:true,reservations:false},action:'Order ahead',quote:{text:'The flat white is consistently excellent, and the cardamom bun at 7 am is the best reason to be awake in this city.',author:'Tom W.'},hist:[1560,340,80,30,21],popular:[8,6,5,5,8,15,42,78,92,85,70,58,50,48,55,62,58,40,22,8,4,2,1,1],menu:[{n:'Flat white',d:'Double shot, silky steamed milk, house blend',p:'$4.50'},{n:'Cardamom bun',d:'Baked at 7 am, pearl sugar, brown butter glaze',p:'$4'},{n:'Pour-over of the month',d:'Single origin, brewed to order, tasting notes on the board',p:'$5.50'},{n:'Avocado toast',d:'Sourdough, smashed avocado, chilli oil, seed mix',p:'$9'}],reviewsList:[{a:'Tom W.',r:5,d:'a week ago',t:'The flat white is consistently excellent, and the cardamom bun at 7 am is the best reason to be awake in this city.',h:61},{a:'Aisha B.',r:5,d:'2 weeks ago',t:'Quiet in the morning, great Wi-Fi, and the staff actually know coffee. My regular work spot.',h:33},{a:'Leo M.',r:4,d:'2 months ago',t:'Excellent coffee. Gets crowded after 9, so come early if you need a table.',h:12}]},
+ {id:3,name:'The Harborlight Inn',cat:'hotel',cuisine:'Hotel · Waterfront',lat:47.6065,lng:-122.3380,rating:4.5,reviews:876,price:3,open:0,close:24,closedDays:[],phone:'+1 (206) 555-0192',website:'harborlightinn.example',address:'1200 Alaskan Way, Waterfront, Seattle',desc:'A 48-room waterfront inn with harbour views, a rooftop terrace and a famously slow breakfast. Reception is staffed around the clock.',about:'The Harborlight Inn occupies a converted 1920s shipping office on the waterfront. Every room faces the water or the skyline; the rooftop terrace is open to guests from 7 am to 11 pm. Breakfast is cooked to order and included in every rate.',amenities:['Free Wi-Fi','Wheelchair accessible','Free breakfast','Rooftop terrace'],features:{outdoor:true,wifi:true,accessible:true,reservations:true},action:'Reserve a room',quote:{text:'Woke up to ferries crossing the bay and breakfast cooked to order. The staff upgraded us without being asked.',author:'Elena V.'},hist:[590,180,60,26,20],popular:[20,15,10,8,8,12,25,45,60,55,48,50,55,52,50,55,62,70,65,55,45,35,28,22],menu:[{n:'Harbour-view king',d:'King bed, bay view, rainfall shower, breakfast included',p:'$189 / night'},{n:'Skyline queen',d:'Queen bed, city view, work desk, breakfast included',p:'$149 / night'},{n:'Family suite',d:'Two rooms, sleeps four, harbour view, breakfast included',p:'$249 / night'}],reviewsList:[{a:'Elena V.',r:5,d:'3 weeks ago',t:'Woke up to ferries crossing the bay and breakfast cooked to order. The staff upgraded us without being asked.',h:38},{a:'Marcus T.',r:4,d:'a month ago',t:'Clean, quiet, great location on the waterfront. Rooms are on the small side but well designed.',h:15},{a:'Sofia L.',r:5,d:'2 months ago',t:'The rooftop at sunset is the best seat in the city. Breakfast is genuinely cooked, not a buffet tray.',h:22}]},
+ {id:4,name:'Juniper & Thyme',cat:'restaurant',cuisine:'Vegetarian · Seasonal',lat:47.6180,lng:-122.3501,rating:4.8,reviews:942,price:2,open:11,close:21,closedDays:[1],phone:'+1 (206) 555-0163',website:'juniperandthyme.example',address:'45 Belltown Lane, Belltown, Seattle',desc:'A plant-led restaurant where the menu is written each morning from what the market brings. Ten tables, one long counter, no reservations after 6 pm.',about:'Juniper & Thyme cooks entirely without meat and mostly without a fixed menu, the board is written each morning around the market delivery. The dining room seats 30 and the chef\'s counter seats eight. Wine is natural and mostly local.',amenities:['Outdoor seating','Free Wi-Fi','Wheelchair accessible'],features:{outdoor:true,wifi:true,accessible:true,reservations:false},action:'Reserve a table',quote:{text:'I am not vegetarian and I did not miss meat once. The mushroom dish alone is worth crossing town for.',author:'Jonas P.'},hist:[780,120,28,8,6],popular:[3,2,1,1,2,5,12,20,30,28,32,48,66,72,58,45,52,68,90,96,82,60,35,15],menu:[{n:'Roasted mushroom plate',d:'King oyster, miso butter, barley, herb oil',p:'$22'},{n:'Market board (for two)',d:'Five small plates from the morning market',p:'$38'},{n:'Charred leek & hazelnut',d:'Leeks, hazelnut cream, pickled shallot',p:'$16'},{n:'Burnt honey panna cotta',d:'Honey, bay leaf, oat crumble',p:'$10'}],reviewsList:[{a:'Jonas P.',r:5,d:'a week ago',t:'I am not vegetarian and I did not miss meat once. The mushroom dish alone is worth crossing town for.',h:54},{a:'Nadia F.',r:5,d:'3 weeks ago',t:'The market board changes every visit and has never disappointed. Book ahead, it fills up fast.',h:29},{a:'Chris D.',r:4,d:'a month ago',t:'Beautiful food, small room, worth the price. Closed Mondays, which caught me out once.',h:9}]},
+ {id:5,name:'North Pier Bakery',cat:'bakery',cuisine:'Bakery · Sourdough',lat:47.6089,lng:-122.3410,rating:4.6,reviews:1507,price:1,open:7,close:15,closedDays:[0],phone:'+1 (206) 555-0129',website:'northpierbakery.example',address:'312 Pike Place, Pike Place Market, Seattle',desc:'A market bakery built around a wood oven and a 40-year-old starter. Sourdough sells out most days by 1 pm; the morning buns rarely last past 9.',about:'North Pier Bakery has baked at the market since 1986. The sourdough starter is older than most of the staff. Bread comes out of the wood oven in three bakes a day; pastries are made in small batches and never held overnight.',amenities:['Outdoor seating','Wheelchair accessible'],features:{outdoor:true,wifi:false,accessible:true,reservations:false},action:'Order ahead',quote:{text:'The country loaf is the real thing, crackling crust, open crumb, and it still tastes of the wood oven two days later.',author:'Grace H.'},hist:[1120,280,60,25,22],popular:[10,6,4,3,5,12,38,82,95,88,70,55,48,55,60,45,20,8,4,2,1,1,1,1],menu:[{n:'Country sourdough loaf',d:'Wood-fired, 48-hour ferment, 900 g',p:'$11'},{n:'Morning bun',d:'Cinnamon, brown sugar, orange glaze',p:'$4.50'},{n:'Seeded rye',d:'Rye, sunflower, flax, molasses',p:'$9'},{n:'Chocolate babka',d:'Dark chocolate, hazelnut, baked twice a week',p:'$8'}],reviewsList:[{a:'Grace H.',r:5,d:'2 weeks ago',t:'The country loaf is the real thing, crackling crust, open crumb, and it still tastes of the wood oven two days later.',h:47},{a:'Omar A.',r:5,d:'a month ago',t:'Come before 9 for the morning buns. The queue moves fast and it is worth it.',h:21},{a:'Beth C.',r:4,d:'3 months ago',t:'Superb bread. Sells out early most days, so do not leave it until the afternoon.',h:14}]},
+ {id:6,name:'The Foxglove Bar',cat:'bar',cuisine:'Cocktail bar',lat:47.6145,lng:-122.3478,rating:4.4,reviews:689,price:2,open:17,close:26,closedDays:[],phone:'+1 (206) 555-0174',website:'foxglovebar.example',address:'19 Lenora Street, Belltown, Seattle',desc:'A low-lit cocktail bar in a former florist\'s shop. Twelve seats at the bar, a short menu that changes monthly, and no standing room after 9 pm.',about:'The Foxglove Bar keeps its menu to eight drinks and changes them with the seasons. The room is small on purpose, twelve bar seats, four tables, and the bartenders build every drink to order. No food after 11 pm; the kitchen closes with the last table.',amenities:['Free Wi-Fi','Wheelchair accessible'],features:{outdoor:false,wifi:true,accessible:true,reservations:false},action:'Reserve a table',quote:{text:'The smoked old fashioned is a small piece of theatre, and the bartenders remember what you drank last time.',author:'Sam O.'},hist:[420,170,55,25,19],popular:[2,1,1,1,1,2,3,5,8,10,12,15,18,20,22,25,30,48,72,90,96,88,70,45],menu:[{n:'Smoked old fashioned',d:'Bourbon, demerara, bitters, applewood smoke',p:'$16'},{n:'Foxglove martini',d:'Gin, dry vermouth, orange bitters, olive',p:'$15'},{n:'Garden spritz',d:'Aperitif, sparkling wine, cucumber, mint',p:'$13'},{n:'Bar snacks',d:'Marinated olives, spiced nuts, sourdough',p:'$9'}],reviewsList:[{a:'Sam O.',r:5,d:'a week ago',t:'The smoked old fashioned is a small piece of theatre, and the bartenders remember what you drank last time.',h:25},{a:'Rita M.',r:4,d:'2 weeks ago',t:'Lovely room and serious drinks. It is small, so arrive before 8 or expect a wait.',h:11},{a:'Ben T.',r:4,d:'2 months ago',t:'Great cocktails, fair prices for the quality. Gets loud late, go early for a quiet drink.',h:8}]},
+ {id:7,name:'Alder Park',cat:'park',cuisine:'Park · Gardens',lat:47.6220,lng:-122.3300,rating:4.7,reviews:3412,price:0,open:6,close:22,closedDays:[],phone:'+1 (206) 555-0100',website:'alderpark.example',address:'1400 Eastlake Avenue, Eastlake, Seattle',desc:'Twelve acres of lawns, old alder trees and a pond, with a playground, a dog area and a loop trail that takes about twenty minutes to walk.',about:'Alder Park was laid out in 1911 around a natural pond and has kept its original loop trail and tree collection. Facilities include a playground, a fenced dog area, picnic tables, public restrooms and a small café kiosk open in summer. Dogs on leash except in the fenced area.',amenities:['Wheelchair accessible','Playground','Dog area','Picnic tables'],features:{outdoor:true,wifi:false,accessible:true,reservations:false},action:'Plan a visit',quote:{text:'The loop trail is the perfect twenty-minute reset, herons on the pond in the morning, families on the lawn by noon.',author:'Karen D.'},hist:[2560,620,150,45,37],popular:[5,4,3,3,4,8,25,45,60,55,48,52,65,72,68,60,66,78,82,70,55,38,20,10],menu:[{n:'Loop trail',d:'1.1 km gravel loop around the pond, about 20 minutes',p:'Free'},{n:'Playground',d:'Swings, climbing frame and sand area, ages 2–10',p:'Free'},{n:'Dog area',d:'Fenced off-leash area with water station',p:'Free'},{n:'Picnic tables',d:'Eight tables near the pond; first come, first served',p:'Free'}],reviewsList:[{a:'Karen D.',r:5,d:'a week ago',t:'The loop trail is the perfect twenty-minute reset, herons on the pond in the morning, families on the lawn by noon.',h:88},{a:'Mike J.',r:5,d:'3 weeks ago',t:'Great playground, clean restrooms, and the dog area is well kept. Our weekend default.',h:41},{a:'Lena W.',r:4,d:'a month ago',t:'Beautiful in spring when the alders leaf out. The kiosk is only open in summer, so bring water.',h:17}]},
+ {id:8,name:"Marlowe's Books & Coffee",cat:'cafe',cuisine:'Bookshop café',lat:47.6168,lng:-122.3360,rating:4.5,reviews:1120,price:1,open:9,close:20,closedDays:[],phone:'+1 (206) 555-0155',website:'marlowesbooks.example',address:'501 Madison Street, First Hill, Seattle',desc:'A second-hand bookshop with a coffee counter in the back. Browse the shelves, take a book to a window seat, and stay as long as you like.',about:"Marlowe's has sold second-hand books on First Hill since 1974. The stock is about 40,000 volumes, strong on fiction, poetry and local history. The coffee counter serves espresso and filter; window seats are first come, first served and there is no time limit.",amenities:['Free Wi-Fi','Wheelchair accessible'],features:{outdoor:false,wifi:true,accessible:true,reservations:false},action:'Order ahead',quote:{text:'Found a first edition I had hunted for years, then drank the best filter coffee in the neighbourhood at the back counter.',author:'Henry L.'},hist:[760,250,70,22,18],popular:[4,3,2,2,3,6,15,28,45,55,62,60,58,55,60,66,70,62,48,35,22,12,6,3],menu:[{n:'Filter coffee',d:'Rotating single origin, brewed in small batches',p:'$3.50'},{n:'Espresso',d:'Double shot, house blend',p:'$3'},{n:'Bookshop tea',d:'Black tea, honey, lemon',p:'$3.50'},{n:'Biscotti',d:'Almond, baked in-house',p:'$2.50'}],reviewsList:[{a:'Henry L.',r:5,d:'2 weeks ago',t:'Found a first edition I had hunted for years, then drank the best filter coffee in the neighbourhood at the back counter.',h:36},{a:'June P.',r:5,d:'a month ago',t:'The kind of bookshop that rewards an unhurried hour. Staff recommendations are always good.',h:19},{a:'Alex N.',r:4,d:'2 months ago',t:'Wonderful shelves, fair prices. The coffee counter is small, so mornings are best.',h:10}]},
+ {id:9,name:'Saffron Table',cat:'restaurant',cuisine:'Indian · North Indian',lat:47.6090,lng:-122.3320,rating:4.7,reviews:1764,price:2,open:11,close:23,closedDays:[],phone:'+1 (206) 555-0136',website:'saffrontable.example',address:'720 3rd Avenue, Downtown Seattle',desc:'A family-run North Indian restaurant with a tandoor you can see from the dining room. Lunch thali until 3 pm; the dining room fills by 7 most nights.',about:'Saffron Table is run by the same family since 2008. The tandoor runs all day, the breads are made to order, and the lunch thali is the fastest way to taste the menu. Vegetarian and vegan dishes are marked on the menu; spice levels can be adjusted on request.',amenities:['Outdoor seating','Free Wi-Fi','Wheelchair accessible','Takes reservations'],features:{outdoor:true,wifi:true,accessible:true,reservations:true},action:'Reserve a table',quote:{text:'The lamb rogan josh tastes like it cooked all day, and the garlic naan comes off the tandoor still blistered.',author:'Anita G.'},hist:[1350,300,70,24,20],popular:[4,3,2,2,3,6,14,25,40,38,42,55,70,78,62,50,58,75,92,98,86,62,40,18],menu:[{n:'Lamb rogan josh',d:'Slow-braised lamb, Kashmiri chilli, tomato, garam masala',p:'$21'},{n:'Butter chicken',d:'Tandoor chicken, tomato makhani, fenugreek',p:'$19'},{n:'Garlic naan',d:'Tandoor-baked, garlic butter, coriander',p:'$4'},{n:'Lunch thali',d:'Three curries, dal, rice, naan, raita (until 3 pm)',p:'$16'}],reviewsList:[{a:'Anita G.',r:5,d:'a week ago',t:'The lamb rogan josh tastes like it cooked all day, and the garlic naan comes off the tandoor still blistered.',h:63},{a:'David R.',r:5,d:'2 weeks ago',t:'Best Indian food downtown by a clear margin. The thali at lunch is excellent value.',h:34},{a:'Meera K.',r:4,d:'a month ago',t:'Consistently good. Book for Friday and Saturday, walk-ins wait 30 minutes or more.',h:16}]},
+ {id:10,name:'The Glasshouse Hotel',cat:'hotel',cuisine:'Hotel · Boutique',lat:47.6195,lng:-122.3405,rating:4.3,reviews:512,price:3,open:0,close:24,closedDays:[],phone:'+1 (206) 555-0181',website:'glasshousehotel.example',address:'900 Stewart Street, Downtown Seattle',desc:'A 120-room boutique hotel behind a glass atrium, with a lobby bar, a small gym and rooms that all face the courtyard garden.',about:'The Glasshouse Hotel was built in 2016 around a planted atrium that gives the building its name. Rooms are quiet and face the courtyard; the lobby bar serves until midnight and the gym is open 24 hours to guests. Valet parking is available.',amenities:['Free Wi-Fi','Wheelchair accessible','Gym','Lobby bar'],features:{outdoor:false,wifi:true,accessible:true,reservations:true},action:'Reserve a room',quote:{text:'The atrium is genuinely lovely at breakfast, and the room was the quietest I have slept in downtown.',author:'Paula N.'},hist:[300,130,45,20,17],popular:[18,14,10,8,8,10,22,38,52,48,45,48,52,50,48,52,58,64,60,52,44,36,28,20],menu:[{n:'Courtyard king',d:'King bed, garden view, atrium access',p:'$169 / night'},{n:'Atrium queen',d:'Queen bed, atrium view, work desk',p:'$139 / night'},{n:'Corner suite',d:'Separate living room, skyline view, soaking tub',p:'$279 / night'}],reviewsList:[{a:'Paula N.',r:5,d:'2 weeks ago',t:'The atrium is genuinely lovely at breakfast, and the room was the quietest I have slept in downtown.',h:24},{a:'George F.',r:4,d:'a month ago',t:'Smart, modern, well run. The gym is small but the lobby bar makes up for it.',h:9},{a:'Tina W.',r:4,d:'2 months ago',t:'Good value for downtown. Ask for a high floor, the atrium can carry sound.',h:12}]}
+];
+var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+/* ================= helpers ================= */
+function $(id){return document.getElementById(id);}
+function el(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+function fmtHour(h){h=((h%24)+24)%24;var ap=h>=12?'PM':'AM';var hh=h%12;if(hh===0)hh=12;return hh+':00 '+ap;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function abbr(n){return n>=1000?(Math.round(n/100)/10).toString().replace(/\.0$/,'')+'k':String(n);}
+function starsHtml(r){var full=Math.floor(r),half=(r-full)>=0.5;var s='';for(var i=0;i<full;i++)s+='★';if(half)s+='⯨';for(var j=s.length;j<5;j++)s+='☆';return '<span class="stars" title="'+r.toFixed(1)+' out of 5">'+s+' <span class="n">'+r.toFixed(1)+'</span></span>';}
+function priceLabel(p){return p===0?'Free':(p===1?'$':p===2?'$$':'$$$');}
+function openStatus(p,now){
+  now=now||new Date();
+  if(p.closedDays.indexOf(now.getDay())!==-1)return{open:false,label:'Closed today',detail:'Closed today'};
+  var h=now.getHours()+now.getMinutes()/60, o=p.open, c=p.close;
+  var isOpen = c>24 ? (h>=o||h<c-24) : (h>=o&&h<c);
+  if(p.open===0&&p.close===24)return{open:true,label:'Open 24 hours',detail:'Open 24 hours'};
+  if(isOpen){
+    var closeLbl = c>24 ? fmtHour(c-24)+' tomorrow' : fmtHour(c);
+    return{open:true,label:'Open now',detail:'Open now · Closes '+closeLbl};
+  }
+  var openLbl = h<o ? fmtHour(o)+' today' : fmtHour(o)+' tomorrow';
+  if(c>24&&h>=c-24&&h<o) openLbl=fmtHour(o)+' today';
+  return{open:false,label:'Closed',detail:'Closed · Opens '+openLbl};
+}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove('on');},2600);}
+function copyText(text,msg){
+  function done(){toast(msg||'Copied to clipboard');}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,function(){fallback();});}
+  else fallback();
+  function fallback(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){toast('Copy failed, select and copy manually');}document.body.removeChild(ta);}
+}
+
+/* ================= state ================= */
+var state={query:'',prices:{},minRating:0,cats:{},openNow:false,features:{},sort:'relevance',boundsOnly:false,saved:{},selectedId:null,detailTab:'overview',searched:false,listMode:'all'};
+var map=null,markers={},routeLine=null,routeFrom=null;
+
+/* ================= hero banner: collapse on engagement ================= */
+var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function bannerCollapsed(){ return document.body.classList.contains('banner-collapsed'); }
+function setBanner(collapsed){
+  if(window.innerWidth < 901) return;
+  var was = bannerCollapsed();
+  document.body.classList.toggle('banner-collapsed', !!collapsed);
+  if(collapsed !== was){
+    var done = function(){ if(map) map.invalidateSize(); };
+    if(REDUCED) done(); else setTimeout(done, 480);
+  }
+}
+function collapseBanner(){ setBanner(true); }
+function expandBanner(){ setBanner(false); }
+
+/* ================= map ================= */
+function pinIcon(p,selected){
+  var c=CATS[p.cat].color;
+  var html='<div class="pin'+(selected?' sel':'')+'"><svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1C7 1 1 7 1 14c0 9 14 27 14 27S29 23 29 14C29 7 23 1 15 1z" fill="'+c+'" stroke="#fff" stroke-width="1.5"/></svg><span class="pin-glyph">'+CATS[p.cat].glyph+'</span></div>';
+  return L.divIcon({className:'',html:html,iconSize:[30,42],iconAnchor:[15,42],popupAnchor:[0,-40]});
+}
+function initMap(){
+  if(typeof L==='undefined'){$('mapFallback').style.display='flex';return;}
+  map=L.map('map',{zoomControl:false}).setView([47.6135,-122.3410],14);
+  L.control.zoom({position:'bottomright'}).addTo(map);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'&copy; Esri &mdash; Source: Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}).addTo(map);
+  PLACES.forEach(function(p){
+    var m=L.marker([p.lat,p.lng],{icon:pinIcon(p,false)}).addTo(map);
+    m.bindPopup('<b>'+esc(p.name)+'</b><br>'+esc(CATS[p.cat].label)+' · '+starsHtml(p.rating)+' · '+priceLabel(p.price));
+    m.on('click',function(){selectPlace(p.id,true);});
+    markers[p.id]=m;
+  });
+  window.__mapReady=true; window.__placeCount=PLACES.length;
+  map.on('moveend',function(){
+    /* offer a re-search after any move, including after a bounds search,
+       so the list never goes stale relative to the visible area */
+    if(state.searched){$('areaBtn').style.display='inline-block';}
+  });
+  map.on('dragstart',function(){ var h=$('mapHint'); if(h) h.classList.add('hide'); collapseBanner(); });
+  map.on('movestart', collapseBanner);
+  map.on('zoomstart', collapseBanner);
+}
+function refreshPins(){
+  PLACES.forEach(function(p){if(markers[p.id])markers[p.id].setIcon(pinIcon(p,state.selectedId===p.id));});
+}
+
+/* ================= filtering / results ================= */
+function filteredPlaces(){
+  var q=state.query.trim().toLowerCase();
+  var list=PLACES.filter(function(p){
+    if(q){
+      var hay=(p.name+' '+p.cuisine+' '+CATS[p.cat].label+' '+p.address+' '+p.desc).toLowerCase();
+      if(hay.indexOf(q)===-1)return false;
+    }
+    var anyPrice=Object.keys(state.prices).length>0;
+    if(anyPrice&&!state.prices[p.price])return false;
+    if(state.minRating&&p.rating<state.minRating)return false;
+    var anyCat=Object.keys(state.cats).length>0;
+    if(anyCat&&!state.cats[p.cat])return false;
+    if(state.openNow&&!openStatus(p).open)return false;
+    for(var f in state.features){if(state.features[f]&&!p.features[f])return false;}
+    if(state.boundsOnly&&map){if(!map.getBounds().contains([p.lat,p.lng]))return false;}
+    return true;
+  });
+  if(state.sort==='rating')list.sort(function(a,b){return b.rating-a.rating;});
+  else if(state.sort==='reviews')list.sort(function(a,b){return b.reviews-a.reviews;});
+  else if(state.sort==='priceLow')list.sort(function(a,b){return a.price-b.price;});
+  else if(state.sort==='priceHigh')list.sort(function(a,b){return b.price-a.price;});
+  return list;
+}
+/* Pins follow the list: filtered-out places fade out, matching ones fade in.
+   Removal is delayed 240ms and cancelled if the pin is re-added first. */
+function syncPinsToList(list){
+  if(!map) return;
+  var ids={}; list.forEach(function(p){ids[p.id]=true;});
+  PLACES.forEach(function(p){
+    var m=markers[p.id]; if(!m) return;
+    if(ids[p.id]){
+      m._fadeToken=null;
+      if(!map.hasLayer(m)){
+        m.addTo(map);
+        var el=m.getElement();
+        if(el){ el.style.opacity='0'; requestAnimationFrame(function(){ requestAnimationFrame(function(){ el.style.opacity='1'; }); }); }
+      } else { var el2=m.getElement(); if(el2) el2.style.opacity='1'; }
+    } else if(map.hasLayer(m)){
+      var token={}; m._fadeToken=token;
+      var el3=m.getElement(); if(el3) el3.style.opacity='0';
+      setTimeout(function(){ if(m._fadeToken===token) map.removeLayer(m); }, 240);
+    }
+  });
+}
+/* ================= scroll reveals for result cards ================= */
+var revealObs = null;
+function initReveals(){
+  if(REDUCED || !('IntersectionObserver' in window)) return;
+  revealObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting) return;
+      en.target.classList.add('in');
+      revealObs.unobserve(en.target);
+    });
+  }, {root: $('resultsList'), rootMargin: '0px 0px -6% 0px', threshold: 0.08});
+}
+function observeReveals(container){
+  if(!revealObs || !container) return;
+  container.querySelectorAll('.card:not(.rv)').forEach(function(card, i){
+    card.classList.add('rv');
+    card.style.transitionDelay = Math.min(i, 5) * 60 + 'ms';
+    revealObs.observe(card);
+  });
+}
+function showResults(){
+  closeDirections();
+  document.querySelectorAll('#rail .space.active, #rail .route.active').forEach(function(x){x.classList.remove('active');});
+  state.searched=true;
+  state.listMode='all';
+  $('filterBar').classList.add('on');
+  $('results').classList.add('on');
+  $('areaBtn').style.display='none';
+  renderList();
+}
+function renderList(){
+  var list=filteredPlaces();
+  var box=$('resultsList');box.innerHTML='';
+  /* restore the default empty-state (showSaved may have replaced it) */
+  $('noResults').innerHTML='No places match those filters.<br><button class="btn-ghost" id="resetFiltersBtn" type="button" style="margin-top:10px">Reset filters</button>';
+  $('noResults').style.display=list.length?'none':'block';
+  var q=state.query.trim();
+  $('resultsCount').innerHTML='<b>'+list.length+' place'+(list.length===1?'':'s')+'</b>'+(q?' for “'+esc(q)+'”':'')+(state.boundsOnly?' in this area':'')+' · Seattle';
+  refreshPins();
+  list.forEach(function(p){box.appendChild(buildCard(p));});
+  observeReveals(box);
+  syncPinsToList(list);
+}
+/* One card builder for every list (main results, Nearby, Saved) so every card
+   answers how good / how much / can I go now, quotes one review and offers
+   the Reserve/Order + Directions actions. */
+function buildCard(p){
+  var st=openStatus(p);
+  var card=el('div','card'+(state.selectedId===p.id?' sel':''));
+  card.setAttribute('data-id',p.id);
+  /* Cards are divs, not <button>s (the whole card selects the place, and the
+     card contains its own Reserve/Directions buttons), so they are custom
+     controls: keyboard-operable with a visible focus indicator (R-32/R-39). */
+  card.setAttribute('tabindex','0');
+  card.setAttribute('role','button');
+  card.setAttribute('aria-label', p.name);
+  card.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectPlace(p.id,true); }
+  });
+  card.innerHTML=
+    '<div class="thumb" style="background:'+GRADIENTS[p.cat]+'"><div class="ph">'+SVG[p.cat]+'</div><span class="cat-pill">'+esc(CATS[p.cat].label)+' · '+esc(p.cuisine)+'</span></div>'+
+    '<h3>'+esc(p.name)+'</h3>'+
+    '<div class="row">'+starsHtml(p.rating)+'<span>('+abbr(p.reviews)+')</span><span>·</span><span class="price">'+priceLabel(p.price)+'</span><span>·</span><span class="'+(st.open?'open':'closed')+'">'+esc(st.detail)+'</span></div>'+
+    '<div class="row"><span>'+esc(p.address)+'</span></div>'+
+    '<p class="quote">'+esc(p.quote.text)+' · '+esc(p.quote.author)+'</p>'+
+    '<div class="actions"><button type="button" class="btn-solid act-book">'+esc(p.action)+'</button><button type="button" class="btn-outline act-dir">Directions</button></div>';
+  card.addEventListener('click',function(){selectPlace(p.id,true);});
+  /* list ↔ map cross-highlight: hovering a card grows its pin 1.15× for 150ms */
+  card.addEventListener('mouseenter',function(){ var m=markers[p.id], el=m&&m.getElement(), pin=el&&el.querySelector('.pin'); if(pin) pin.classList.add('hl'); });
+  card.addEventListener('mouseleave',function(){ var m=markers[p.id], el=m&&m.getElement(), pin=el&&el.querySelector('.pin'); if(pin) pin.classList.remove('hl'); });
+  card.querySelector('.act-book').addEventListener('click',function(e){e.stopPropagation();openBooking(p);});
+  card.querySelector('.act-dir').addEventListener('click',function(e){e.stopPropagation();openDirections(p);});
+  return card;
+}
+function anyFilterActive(){
+  return Object.keys(state.prices).length||Object.keys(state.cats).length||Object.keys(state.features).length||state.minRating||state.openNow||state.sort!=='relevance';
+}
+function syncFilterChips(){
+  document.querySelectorAll('#filterBar .chip[data-pop]').forEach(function(ch){
+    var k=ch.getAttribute('data-pop');
+    var on=false;
+    if(k==='price')on=Object.keys(state.prices).length>0;
+    if(k==='rating')on=!!state.minRating;
+    if(k==='category')on=Object.keys(state.cats).length>0;
+    if(k==='all')on=Object.keys(state.features).length>0||state.sort!=='relevance';
+    ch.classList.toggle('active',on);
+  });
+  $('hoursChip').classList.toggle('active',state.openNow);
+  $('clearFilters').style.display=anyFilterActive()?'flex':'none';
+}
+function clearAllFilters(){
+  state.prices={};state.cats={};state.features={};state.minRating=0;state.openNow=false;state.sort='relevance';state.boundsOnly=false;
+  /* a reset must also clear the search text, or a no-match search can never be escaped from this button */
+  state.query='';$('searchInput').value='';$('clearSearch').style.display='none';
+  syncFilterChips();renderList();toast('Filters cleared');
+}
+
+/* ================= filter popover ================= */
+var popFor=null;
+function closePop(){$('filterPop').classList.remove('on');popFor=null;}
+function openPop(kind){
+  var pop=$('filterPop');
+  if(popFor===kind){closePop();return;}
+  popFor=kind;pop.innerHTML='';
+  function optRow(values,current,toggle){
+    var row=el('div','opt-row');
+    values.forEach(function(v){
+      var b=el('button','opt'+(current(v)?' active':''),v.label);
+      b.type='button';
+      b.addEventListener('click',function(){toggle(v);openPopRefresh();});
+      row.appendChild(b);
+    });
+    return row;
+  }
+  function openPopRefresh(){closePop();openPop(kind);}
+  if(kind==='price'){
+    pop.appendChild(el('h4',null,'Price'));
+    pop.appendChild(optRow([{label:'$',v:1},{label:'$$',v:2},{label:'$$$',v:3},{label:'Free',v:0}],function(v){return !!state.prices[v.v];},function(v){if(state.prices[v.v])delete state.prices[v.v];else state.prices[v.v]=true;}));
+  }else if(kind==='rating'){
+    pop.appendChild(el('h4',null,'Rating'));
+    pop.appendChild(optRow([{label:'Any',v:0},{label:'4.0+',v:4},{label:'4.5+',v:4.5},{label:'4.7+',v:4.7}],function(v){return state.minRating===v.v;},function(v){state.minRating=v.v;}));
+  }else if(kind==='category'){
+    pop.appendChild(el('h4',null,'Category'));
+    pop.appendChild(optRow(Object.keys(CATS).map(function(k){return{label:CATS[k].label,v:k};}),function(v){return !!state.cats[v.v];},function(v){if(state.cats[v.v])delete state.cats[v.v];else state.cats[v.v]=true;}));
+  }else if(kind==='all'){
+    pop.appendChild(el('h4',null,'All filters'));
+    pop.appendChild(el('h4',null,'Amenities'));
+    [['outdoor','Outdoor seating'],['wifi','Free Wi-Fi'],['accessible','Wheelchair accessible'],['reservations','Takes reservations']].forEach(function(f){
+      var lab=el('label','check');
+      var cb=document.createElement('input');cb.type='checkbox';cb.checked=!!state.features[f[0]];
+      cb.addEventListener('change',function(){if(cb.checked)state.features[f[0]]=true;else delete state.features[f[0]];syncFilterChips();renderList();});
+      lab.appendChild(cb);lab.appendChild(document.createTextNode(f[1]));pop.appendChild(lab);
+    });
+    pop.appendChild(el('h4',null,'Sort by'));
+    var sel=document.createElement('select');
+    sel.style.cssText='width:100%;border:1px solid #dadce0;border-radius:8px;padding:9px 10px;font-size:14px;margin-bottom:6px';
+    [['relevance','Relevance'],['rating','Highest rated'],['reviews','Most reviewed'],['priceLow','Price: low to high'],['priceHigh','Price: high to low']].forEach(function(o){
+      var op=document.createElement('option');op.value=o[0];op.textContent=o[1];if(state.sort===o[0])op.selected=true;sel.appendChild(op);
+    });
+    sel.addEventListener('change',function(){state.sort=sel.value;syncFilterChips();renderList();});
+    pop.appendChild(sel);
+  }
+  var acts=el('div','pop-actions');
+  var done=el('button','btn-blue','Done');done.type='button';
+  done.addEventListener('click',function(){closePop();});
+  acts.appendChild(done);pop.appendChild(acts);
+  pop.classList.add('on');
+  syncFilterChips();renderList();
+}
+
+/* ================= detail panel ================= */
+function placeById(id){return PLACES.find(function(p){return p.id===id;});}
+function selectPlace(id,fly){
+  collapseBanner();
+  state.selectedId=id;
+  var p=placeById(id);if(!p)return;
+  if(fly&&map){map.flyTo([p.lat,p.lng],16,{duration:0.8});}
+  refreshPins();
+  document.querySelectorAll('#resultsList .card').forEach(function(c){c.classList.toggle('sel',Number(c.getAttribute('data-id'))===id);});
+  renderDetail(p);
+}
+function closeDetail(){
+  state.selectedId=null;$('detail').classList.remove('on');refreshPins();
+  document.querySelectorAll('#resultsList .card').forEach(function(c){c.classList.remove('sel');});
+}
+function contactRow(icon,main,sub,copyVal){
+  var row=el('div','contact-row');
+  row.innerHTML='<span class="ic">'+icon+'</span><div class="txt">'+main+(sub?'<div class="sub2">'+sub+'</div>':'')+'</div>';
+  var btn=el('button','copy','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>');
+  btn.type='button';btn.title='Copy';btn.setAttribute('aria-label','Copy '+esc(copyVal));
+  btn.addEventListener('click',function(){copyText(copyVal,'Copied: '+copyVal);});
+  row.appendChild(btn);
+  return row;
+}
+function renderDetail(p){
+  var d=$('detail');
+  var st=openStatus(p);
+  var today=new Date().getDay();
+  var saved=!!state.saved[p.id];
+  var histTotal=p.hist.reduce(function(a,b){return a+b;},0);
+  var nowH=new Date().getHours();
+  var peak=p.popular.indexOf(Math.max.apply(null,p.popular));
+  var html='';
+  html+='<button class="close-x" id="dClose" type="button" title="Close details">✕</button>';
+  html+='<div class="hero" style="background:'+GRADIENTS[p.cat]+'"><div class="ph">'+SVG[p.cat]+'</div><div class="hero-cap"><h2>'+esc(p.name)+'</h2><div class="sub">'+esc(CATS[p.cat].label)+' · '+esc(p.cuisine)+' · '+esc(p.address)+'</div></div></div>';
+  html+='<div class="d-body">';
+  html+='<div class="d-head"><h2>'+esc(p.name)+'</h2><div class="meta">'+starsHtml(p.rating)+'<span>'+abbr(p.reviews)+' reviews</span><span>·</span><span class="price">'+priceLabel(p.price)+'</span><span>·</span><span class="'+(st.open?'open':'closed')+'">'+esc(st.detail)+'</span></div></div>';
+  html+='<div class="amen-chips">'+p.amenities.map(function(a){return '<span>✓ '+esc(a)+'</span>';}).join('')+'</div>';
+  html+='<div class="circle-actions">'+
+    '<button type="button" data-act="directions"><span class="circ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>Directions</button>'+
+    '<button type="button" data-act="save" class="'+(saved?'saved':'')+'"><span class="circ"><svg viewBox="0 0 24 24" fill="'+(saved?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span>'+(saved?'Saved':'Save')+'</button>'+
+    '<button type="button" data-act="nearby"><span class="circ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg></span>Nearby</button>'+
+    '<button type="button" data-act="phone"><span class="circ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>Send to phone</button>'+
+    '<button type="button" data-act="share"><span class="circ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg></span>Share</button>'+
+    '</div>';
+  html+='<div class="tabs" role="tablist">'+
+    ['overview','menu','reviews','about'].map(function(t){
+      return '<button type="button" role="tab" data-tab="'+t+'" class="'+(state.detailTab===t?'active':'')+'">'+t.charAt(0).toUpperCase()+t.slice(1)+'</button>';
+    }).join('')+'</div>';
+
+  /* Overview */
+  html+='<div class="tabpane'+(state.detailTab==='overview'?' on':'')+'" data-pane="overview">';
+  html+='<p>'+esc(p.desc)+'</p>';
+  html+='<h3>Photos</h3><div class="photo-tiles">'+
+    ['Exterior','Interior','Signature dish','Details'].map(function(lbl,i){
+      return '<div class="pt" style="background:'+GRADIENTS[p.cat]+';filter:hue-rotate('+(i*35)+'deg)">'+SVG[p.cat]+'<br>'+lbl+'</div>';
+    }).join('')+'</div>';
+  html+='<h3>Contact</h3><div id="contactRows"></div>';
+  html+='<h3>Hours</h3><table class="hours-table">'+DAYS.map(function(day,i){
+    var closed=p.closedDays.indexOf(i)!==-1;
+    var hrs=closed?'<span class="closed-day">Closed</span>':(p.open===0&&p.close===24?'Open 24 hours':fmtHour(p.open)+' – '+fmtHour(p.close>24?p.close-24:p.close)+(p.close>24?' (next day)':''));
+    return '<tr class="'+(i===today?'today':'')+'"><td>'+day+(i===today?' (today)':'')+'</td><td>'+hrs+'</td></tr>';
+  }).join('')+'</table>';
+  html+='<h3>Popular times</h3><div class="popular">'+p.popular.map(function(v,h){
+    return '<div class="bar'+(h===nowH?' now':'')+'" style="height:'+Math.max(4,v)+'%" title="'+fmtHour(h)+': '+v+'% busy"></div>';
+  }).join('')+'</div><div class="popular-lbls"><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>'+
+  '<p class="popular-note">Usually busiest around <b>'+fmtHour(peak)+'</b>'+(p.popular[nowH]>=70?', it is <b>busy right now</b>.':p.popular[nowH]>=40?', moderately busy right now.':', quiet right now.')+'</p>';
+  var sim=PLACES.filter(function(x){return x.id!==p.id&&x.cat===p.cat;}).concat(PLACES.filter(function(x){return x.id!==p.id&&x.cat!==p.cat;})).slice(0,4);
+  html+='<h3>Similar places</h3><div class="similar">'+sim.map(function(s){
+    return '<div class="sim-card" data-sim="'+s.id+'" tabindex="0" role="button" aria-label="'+esc(s.name)+'"><div class="sim-ph" style="background:'+GRADIENTS[s.cat]+'">'+SVG[s.cat]+'</div><div class="sim-body"><div class="sim-name">'+esc(s.name)+'</div><div class="sim-meta">'+s.rating.toFixed(1)+' ★ · '+priceLabel(s.price)+' · '+esc(CATS[s.cat].label)+'</div></div></div>';
+  }).join('')+'</div>';
+  html+='</div>';
+
+  /* Menu / rooms */
+  var menuTitle=p.cat==='hotel'?'Rooms & rates':p.cat==='park'?'Trails & facilities':'Menu';
+  html+='<div class="tabpane'+(state.detailTab==='menu'?' on':'')+'" data-pane="menu"><h3>'+menuTitle+'</h3>'+
+    p.menu.map(function(m){return '<div class="menu-item"><div><div class="mi-name">'+esc(m.n)+'</div><div class="mi-desc">'+esc(m.d)+'</div></div><div class="mi-price">'+esc(m.p)+'</div></div>';}).join('')+
+    '<p style="margin-top:12px"><button type="button" class="btn-solid" id="menuBook">'+esc(p.action)+'</button></p></div>';
+
+  /* Reviews */
+  html+='<div class="tabpane'+(state.detailTab==='reviews'?' on':'')+'" data-pane="reviews"><h3>Reviews</h3>'+
+    '<div class="rev-summary"><div class="big">'+p.rating.toFixed(1)+'</div><div><div class="rs-stars">'+starsHtml(p.rating)+'</div><div class="rs-count">'+abbr(p.reviews)+' reviews (demo data)</div></div></div>'+
+    p.hist.map(function(c,i){var star=5-i;return '<div class="hist-row"><span class="hn">'+star+'</span><div class="track"><div class="fill" style="width:'+Math.round(c/histTotal*100)+'%"></div></div><span class="hc">'+c.toLocaleString()+'</span></div>';}).join('')+
+    p.reviewsList.map(function(r,idx){
+      return '<div class="review"><div class="r-head"><div class="avatar" style="background:'+GRADIENTS[p.cat]+'">'+esc(r.a.charAt(0))+'</div><div><div class="r-name">'+esc(r.a)+'</div><div class="r-meta">'+starsHtml(r.r)+' · '+esc(r.d)+'</div></div></div><p class="r-text">'+esc(r.t)+'</p><button type="button" class="helpful" data-helpful="'+idx+'">Helpful (<span>'+r.h+'</span>)</button></div>';
+    }).join('')+'</div>';
+
+  /* About */
+  html+='<div class="tabpane'+(state.detailTab==='about'?' on':'')+'" data-pane="about"><h3>About</h3><p>'+esc(p.about)+'</p>'+
+    '<h3>Amenities</h3><p>'+p.amenities.map(function(a){return '✓ '+esc(a);}).join('<br>')+'</p>'+
+    '<h3>Good to know</h3><p>Payments: cards and cash accepted. Prices in US dollars.</p></div>';
+  html+='</div>';
+  d.innerHTML=html;
+  d.classList.add('on');
+
+  /* wire up detail interactions */
+  $('dClose').addEventListener('click',closeDetail);
+  d.querySelectorAll('[data-tab]').forEach(function(b){
+    b.addEventListener('click',function(){state.detailTab=b.getAttribute('data-tab');renderDetail(p);});
+  });
+  d.querySelectorAll('[data-act]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var act=b.getAttribute('data-act');
+      if(act==='directions')openDirections(p);
+      else if(act==='save')toggleSave(p);
+      else if(act==='nearby')showNearby(p);
+      else if(act==='phone')openPhoneModal(p);
+      else if(act==='share')copyText(location.href.split('#')[0]+'#place-'+p.id,'Link copied, share it anywhere');
+    });
+  });
+  var mb=$('menuBook');if(mb)mb.addEventListener('click',function(){openBooking(p);});
+  d.querySelectorAll('[data-sim]').forEach(function(c){
+    c.addEventListener('click',function(){selectPlace(Number(c.getAttribute('data-sim')),true);});
+    c.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectPlace(Number(c.getAttribute('data-sim')),true); }
+    });
+  });
+  d.querySelectorAll('[data-helpful]').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.classList.contains('voted'))return;
+      b.classList.add('voted');
+      var n=b.querySelector('span');n.textContent=Number(n.textContent)+1;
+      toast('Thanks, marked as helpful');
+    });
+  });
+  /* contact rows with copy affordance (typographic marks, no icon set) */
+  var cr=$('contactRows');
+  cr.appendChild(contactRow('◎',esc(p.address),'',p.address));
+  cr.appendChild(contactRow('☎',esc(p.phone),'Call this place',p.phone));
+  cr.appendChild(contactRow('↗',esc(p.website),'Website',p.website));
+  cr.appendChild(contactRow('◷',esc(st.detail),p.closedDays.length?'Closed '+p.closedDays.map(function(i){return DAYS[i];}).join(', '):'Open daily',st.detail));
+}
+function toggleSave(p){
+  if(state.saved[p.id]){delete state.saved[p.id];toast('Removed from Saved');}
+  else{state.saved[p.id]=true;toast('Saved, find it under Saved in the left rail');}
+  $('savedDot').style.display=Object.keys(state.saved).length?'block':'none';
+  /* unsaving from the detail panel while the Saved list is showing must
+     refresh that list, or the removed place stays visible */
+  if(state.listMode==='saved')showSaved();
+  if(state.selectedId===p.id)renderDetail(p);
+}
+function showNearby(p){
+  state.query='';state.cats={};state.prices={};state.features={};state.minRating=0;state.openNow=false;state.boundsOnly=false;
+  $('searchInput').value='';
+  var R=0.02;
+  var near=PLACES.filter(function(x){return x.id!==p.id&&Math.abs(x.lat-p.lat)<R&&Math.abs(x.lng-p.lng)<R;});
+  showResults();
+  $('resultsCount').innerHTML='<b>'+near.length+' places near '+esc(p.name)+'</b> · Seattle';
+  var box=$('resultsList');box.innerHTML='';
+  $('noResults').style.display=near.length?'none':'block';
+  near.forEach(function(x){box.appendChild(buildCard(x));});
+  observeReveals(box);
+  syncPinsToList(near);
+  state.listMode='nearby';
+  if(map)map.flyTo([p.lat,p.lng],15,{duration:0.8});
+  toast('Showing places near '+p.name);
+}
+function showSaved(){
+  var ids=Object.keys(state.saved).map(Number);
+  showResults();
+  $('resultsCount').innerHTML='<b>'+ids.length+' saved place'+(ids.length===1?'':'s')+'</b> · Seattle';
+  var box=$('resultsList');box.innerHTML='';
+  $('noResults').style.display=ids.length?'none':'block';
+  if(!ids.length){$('noResults').innerHTML='Nothing saved yet.<br>Tap <b>Save</b> on any place to keep it here.';$('noResults').style.display='block';}
+  else{$('noResults').innerHTML='No places match those filters.<br><button class="btn-ghost" id="resetFiltersBtn" type="button" style="margin-top:10px">Reset filters</button>';}
+  ids.forEach(function(id){
+    var x=placeById(id);if(!x)return;
+    box.appendChild(buildCard(x));
+  });
+  observeReveals(box);
+  syncPinsToList(ids.map(placeById).filter(function(x){return !!x;}));
+  state.listMode='saved';
+}
+/* Spaces & Routes: a named collection from the sidebar, shown as a list */
+function showCollection(title, ids){
+  collapseBanner();
+  closeDirections();
+  state.searched=true; state.listMode='collection';
+  $('filterBar').classList.add('on');
+  $('results').classList.add('on');
+  $('areaBtn').style.display='none';
+  var list=ids.map(placeById).filter(function(x){return !!x;});
+  $('resultsCount').innerHTML='<b>'+list.length+' place'+(list.length===1?'':'s')+'</b> · '+esc(title)+' · Seattle';
+  var box=$('resultsList'); box.innerHTML='';
+  $('noResults').style.display='none';
+  list.forEach(function(p){box.appendChild(buildCard(p));});
+  observeReveals(box);
+  refreshPins();
+  syncPinsToList(list);
+  if(map&&list.length){ map.flyTo([list[0].lat,list[0].lng],15,{duration:0.8}); }
+}
+
+/* ================= directions ================= */
+var dirMode='driving',dirDest=null,dirSpeeds={driving:30,walking:5,cycling:15,transit:22};
+function openDirections(p){
+  collapseBanner();
+  if(p){dirDest=p;$('dirTo').value=p.name;}
+  $('results').classList.remove('on');
+  $('dirPanel').classList.add('on');
+  $('searchWrap').style.visibility='hidden';
+}
+function closeDirections(){
+  $('dirPanel').classList.remove('on');
+  $('searchWrap').style.visibility='visible';
+  $('dirResult').style.display='none';
+  if(routeLine&&map){map.removeLayer(routeLine);routeLine=null;}
+}
+function haversineKm(a,b){
+  var R=6371,dLat=(b[0]-a[0])*Math.PI/180,dLng=(b[1]-a[1])*Math.PI/180;
+  var s=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return 2*R*Math.asin(Math.sqrt(s));
+}
+function computeDirections(){
+  var toName=$('dirTo').value.trim();
+  var dest=dirDest&&dirDest.name===toName?dirDest:PLACES.find(function(p){return p.name.toLowerCase()===toName.toLowerCase();});
+  if(!dest){toast('Choose a destination from the list');return;}
+  dirDest=dest;
+  var from=routeFrom||[47.6101,-122.3421]; /* downtown starting point */
+  var km=haversineKm(from,[dest.lat,dest.lng]);
+  var mins=Math.max(2,Math.round(km/dirSpeeds[dirMode]*60));
+  var res=$('dirResult');
+  res.style.display='block';
+  var modeLbl={driving:'Driving',walking:'Walking',cycling:'Cycling',transit:'Transit'}[dirMode];
+  res.innerHTML='<div class="big-dist">'+km.toFixed(1)+' km · about '+mins+' min</div><div>'+modeLbl+' to <b>'+esc(dest.name)+'</b> · '+esc(dest.address)+'</div>'+
+    '<ol id="dirSteps"><li>Head '+(dest.lat>=from[0]?'north':'south')+' toward '+esc(dest.address.split(',')[0])+'</li><li>Continue for '+(km*0.6).toFixed(1)+' km, then turn '+(dest.lng>=from[1]?'east':'west')+'</li><li>Your destination is on the '+(dest.lng>=from[1]?'right':'left')+'</li></ol>'+
+    '<div style="font-size:12.5px;color:#80868b;margin-top:6px">Straight-line route.</div>';
+  if(map){
+    if(routeLine){try{map.removeLayer(routeLine);}catch(e){} routeLine=null;}
+    try{
+      routeLine=L.polyline([from,[dest.lat,dest.lng]],{color:'#0d7377',weight:5,dashArray:'8 6'}).addTo(map);
+      map.fitBounds(routeLine.getBounds().pad(0.25));
+    }catch(e){ /* renderer unavailable (e.g. headless DOM), text result above still stands */ }
+  }
+}
+
+/* ================= booking modal ================= */
+var bookingPlace=null;
+function openBooking(p){
+  bookingPlace=p;
+  $('bookTitle').textContent=p.action;
+  $('bookSub').textContent=p.name+' · '+p.address;
+  $('bookConfirm').style.display='none';
+  $('bookSubmit').style.display='inline-block';
+  var times=$('bookTime');times.innerHTML='';
+  var start=p.cat==='hotel'?14:p.open, end=p.cat==='hotel'?22:Math.min(p.close,23);
+  for(var h=start;h<=end;h++){var o=document.createElement('option');o.value=h;o.textContent=fmtHour(h);times.appendChild(o);}
+  var party=$('bookParty');party.innerHTML='';
+  if(p.cat==='hotel'){
+    $('bookPartyLabel').textContent='Guests';
+    [1,2,3,4].forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n+' guest'+(n>1?'s':'');party.appendChild(o);});
+  }else if(p.cat==='park'){
+    $('bookPartyLabel').textContent='Group size';
+    [1,2,4,6,8,10].forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n+' people';party.appendChild(o);});
+  }else{
+    $('bookPartyLabel').textContent='Party size';
+    [1,2,3,4,5,6,8].forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n+' '+(n===1?'person':'people');party.appendChild(o);});
+  }
+  var d=new Date();$('bookDate').value=d.toISOString().slice(0,10);
+  $('bookDate').min=d.toISOString().slice(0,10);
+  $('bookModalBack').classList.add('on');
+}
+function submitBooking(){
+  var name=$('bookName').value.trim();
+  if(!name){toast('Add a name for the booking');$('bookName').focus();return;}
+  var ref='WF-'+Math.random().toString(36).slice(2,6).toUpperCase();
+  var conf=$('bookConfirm');
+  conf.innerHTML='<b>✓ '+esc(bookingPlace.action)+' confirmed</b><br>'+esc(bookingPlace.name)+' · '+esc($('bookDate').value)+' at '+esc($('bookTime').selectedOptions[0].textContent)+' · '+esc($('bookParty').selectedOptions[0].textContent)+'<br>Booked for <b>'+esc(name)+'</b> · Reference <b>'+ref+'</b>';
+  conf.style.display='block';
+  $('bookSubmit').style.display='none';
+  toast('Booking confirmed, '+ref);
+}
+
+/* ================= send to phone ================= */
+var phonePlace=null;
+function openPhoneModal(p){
+  phonePlace=p;
+  $('phoneSub').textContent='We will text a link to '+p.name+' ('+p.address+').';
+  $('phoneConfirm').style.display='none';$('phoneSend').style.display='inline-block';$('phoneInput').value='';
+  $('phoneModalBack').classList.add('on');
+}
+
+/* ================= wiring ================= */
+function doSearch(){
+  collapseBanner();
+  state.query=$('searchInput').value;
+  state.boundsOnly=false;
+  $('clearSearch').style.display=state.query?'block':'none';
+  showResults();
+  if(state.query)toast('Showing results for “'+state.query+'”');
+}
+function init(){
+  initMap();
+  initReveals();
+  $('bandHide').addEventListener('click', collapseBanner);
+  $('showBanner').addEventListener('click', expandBanner);
+  $('searchInput').addEventListener('focus', collapseBanner);
+  var dl=$('dirDestList');
+  PLACES.forEach(function(p){var o=document.createElement('option');o.value=p.name;dl.appendChild(o);});
+
+  $('searchInput').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch();});
+  $('searchInput').addEventListener('input',function(){$('clearSearch').style.display=this.value?'block':'none';});
+  /* Spaces & Routes in the sidebar */
+  document.querySelectorAll('#rail .space, #rail .route').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#rail .space.active, #rail .route.active').forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+      var ids=b.getAttribute('data-ids').split(',').map(function(s){return Number(s);});
+      var titleEl=b.querySelector('.s-name')||b.querySelector('.r-name');
+      showCollection(titleEl?titleEl.textContent:'Collection', ids);
+    });
+  });
+  $('clearSearch').addEventListener('click',function(){$('searchInput').value='';state.query='';$('clearSearch').style.display='none';showResults();});
+  $('pillDirections').addEventListener('click',function(){openDirections(state.selectedId?placeById(state.selectedId):null);});
+  $('railDirections').addEventListener('click',function(){openDirections(state.selectedId?placeById(state.selectedId):null);});
+  $('railSearch').addEventListener('click',function(){$('searchInput').focus();});
+  $('railSaved').addEventListener('click',function(){showSaved();});
+  $('railHome').addEventListener('click',function(){state.query='';$('searchInput').value='';state.boundsOnly=false;closeDetail();if(map)map.flyTo([47.6135,-122.3410],14,{duration:0.8});showResults();});
+  $('railNearby').addEventListener('click',function(){
+    if(!map)return;
+    var c=map.getCenter();
+    var near=PLACES.filter(function(x){return Math.abs(x.lat-c.lat)<0.02&&Math.abs(x.lng-c.lng)<0.02;});
+    showResults();
+    $('resultsCount').innerHTML='<b>'+near.length+' places near the map centre</b> · Seattle';
+    var box=$('resultsList');box.innerHTML='';
+    $('noResults').style.display=near.length?'none':'block';
+    near.forEach(function(x){box.appendChild(buildCard(x));});
+    state.listMode='nearby';
+  });
+  $('areaBtn').addEventListener('click',function(){state.boundsOnly=true;$('areaBtn').style.display='none';renderList();toast('Showing places in this area');});
+  $('hoursChip').addEventListener('click',function(){state.openNow=!state.openNow;syncFilterChips();renderList();});
+  $('clearFilters').addEventListener('click',clearAllFilters);
+  /* delegated: showSaved replaces the empty-state HTML, which would orphan a
+     direct listener on the Reset button */
+  document.addEventListener('click',function(e){if(e.target&&e.target.id==='resetFiltersBtn')clearAllFilters();});
+  document.querySelectorAll('#filterBar .chip[data-pop]').forEach(function(ch){
+    ch.addEventListener('click',function(e){e.stopPropagation();openPop(ch.getAttribute('data-pop'));});
+  });
+  document.addEventListener('click',function(e){
+    if(popFor&&!e.target.closest('#filterPop')&&!e.target.closest('#filterBar'))closePop();
+  });
+  $('dirClose').addEventListener('click',closeDirections);
+  $('dirGo').addEventListener('click',computeDirections);
+  $('dirTo').addEventListener('change',function(){var m=PLACES.find(function(p){return p.name.toLowerCase()===$('dirTo').value.trim().toLowerCase();});if(m)dirDest=m;});
+  document.querySelectorAll('#dirModes button').forEach(function(b){
+    b.addEventListener('click',function(){document.querySelectorAll('#dirModes button').forEach(function(x){x.classList.remove('active');});b.classList.add('active');dirMode=b.getAttribute('data-mode');if($('dirResult').style.display==='block')computeDirections();});
+  });
+  $('bookCancel').addEventListener('click',function(){$('bookModalBack').classList.remove('on');});
+  $('bookSubmit').addEventListener('click',submitBooking);
+  $('bookModalBack').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+  $('phoneCancel').addEventListener('click',function(){$('phoneModalBack').classList.remove('on');});
+  $('phoneSend').addEventListener('click',function(){
+    var num=$('phoneInput').value.trim();
+    if(num.replace(/\D/g,'').length<7){toast('Enter a valid mobile number');$('phoneInput').focus();return;}
+    var conf=$('phoneConfirm');
+    conf.innerHTML='<b>✓ Link sent</b><br>A link to <b>'+esc(phonePlace.name)+'</b> was sent to '+esc(num)+'.';
+    conf.style.display='block';$('phoneSend').style.display='none';
+    toast('Link sent to '+num);
+  });
+  $('phoneModalBack').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePop();closeDirections();$('bookModalBack').classList.remove('on');$('phoneModalBack').classList.remove('on');}});
+  /* default view: show all places so the list is useful immediately */
+  showResults();
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+</script>
+</body>
+</html>

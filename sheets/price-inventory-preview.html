@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>پیش‌نمایش کاربرگ قیمت و موجودی · نمونه کار</title>
+<style>
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../web/assets/fonts/vazirmatn-arabic.woff2) format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../web/assets/fonts/vazirmatn-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+:root { --ink: #171717; --muted: #525252; --faint: #A3A3A3; --blue: #2563EB; --green: #16A34A; --red: #DC2626; --amber: #D97706; --line: #E5E5E5; }
+* { box-sizing: border-box; }
+body { font-family: Vazirmatn, Tahoma, sans-serif; background: #FAFAFA; color: var(--ink);
+  margin: 0; padding: 0 16px 48px; direction: rtl; font-size: 14px; line-height: 1.9; }
+main { max-width: 1120px; margin: 0 auto; }
+.num { direction: ltr; unicode-bidi: embed; font-variant-numeric: tabular-nums; }
+header.page { padding: 28px 4px 16px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+h1 { font-size: 28px; font-weight: 700; margin: 0 0 6px; }
+.sub { color: var(--muted); margin: 0 0 10px; }
+.eyebrow { font-size: 12px; font-weight: 600; color: #64748B; letter-spacing: .04em; margin-bottom: 4px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; font-size: 12px; color: var(--faint); }
+.meta .badge { margin-inline-start: 0; }
+.badge { display: inline-block; background: #fef3c7; color: #92400e; border-radius: 999px;
+  padding: 2px 10px; font-size: 12px; margin-inline-start: 8px; }
+section.card { background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  padding: 20px; margin-bottom: 24px; animation: fadeUp .32s cubic-bezier(.22,1,.36,1) both; scroll-margin-top: 16px; }
+section.card:nth-of-type(1) { animation-delay: 0ms; }
+section.card:nth-of-type(2) { animation-delay: 60ms; }
+section.card:nth-of-type(3) { animation-delay: 120ms; }
+section.card:nth-of-type(4) { animation-delay: 180ms; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
+h3 { font-size: 17px; margin: 0 0 10px; }
+p { line-height: 1.9; }
+table.stats { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.stats th, table.stats td { padding: 9px 10px; border-bottom: 1px solid #e5e7eb; text-align: right; }
+table.stats tbody tr:nth-child(even) { background: #f9fafb; }
+table.stats tfoot td { font-weight: bold; background: #f9fafb; }
+.table-wrap { overflow-x: auto; }
+.pill { font-size: 12px; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.pill.best { background: #dcfce7; color: #166534; }
+.pill.plain { background: #f3f4f6; color: #4b5563; }
+.pill.low { background: #fee2e2; color: #991b1b; }
+.pill.near { background: #fef3c7; color: #92400e; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+.primary { display: inline-block; background: #16a34a; color: #fff; border-radius: 8px;
+  padding: 11px 20px; font-family: inherit; font-size: 15px; text-decoration: none; }
+.secondary { display: inline-block; border: 1px solid #d1d5db; background: #fff; color: #111827;
+  border-radius: 8px; padding: 11px 20px; font-family: inherit; font-size: 15px; text-decoration: none; }
+/* ---- §R3 rework ---- */
+html { scroll-behavior: smooth; }
+table.stats th, table.stats td { font-variant-numeric: tabular-nums; }
+/* KPI grid */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.kpi-row { margin-bottom: 12px; }
+.kpi-row:last-child { margin-bottom: 0; }
+.kpi { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: #FAFAFA; }
+.kpi-label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 2px; }
+.kpi-val { display: block; font-size: 22px; font-weight: 700; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.kpi-val.hero { font-size: 32px; line-height: 1.25; }
+.kpi-sub { display: block; font-size: 12px; color: var(--faint); margin-top: 2px; }
+.kpi.red .kpi-val { color: var(--red); }
+.kpi.amber .kpi-val { color: var(--amber); }
+.kpi.green .kpi-val { color: var(--green); }
+.health-bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 14px; }
+.health-bar i { display: block; height: 100%; }
+.health-bar .hb-green { width: 60%; background: var(--green); }
+.health-bar .hb-amber { width: 20%; background: var(--amber); }
+.health-bar .hb-red { width: 20%; background: var(--red); }
+.health-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12px; color: var(--muted); margin-top: 8px; }
+.health-legend .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-inline-end: 5px; }
+/* sheet chrome */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 0; }
+.tab { border: 0; background: none; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--muted); padding: 10px 16px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s ease-out, border-color .15s ease-out; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--blue); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0; }
+.seg { display: inline-flex; background: #F3F4F6; border-radius: 999px; padding: 3px; }
+.fbtn { border: 0; background: transparent; border-radius: 999px; padding: 6px 14px; font-family: inherit; font-size: 13px; color: #374151; cursor: pointer; transition: background .15s ease-out, color .15s ease-out; }
+.fbtn[aria-pressed="true"] { background: #111827; color: #fff; }
+.search { font-family: inherit; font-size: 14px; border: 1px solid #D1D5DB; border-radius: 999px; padding: 7px 14px; min-width: 200px; background: #fff; }
+.active-chip { display: none; align-items: center; gap: 6px; background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; border-radius: 999px; padding: 4px 8px 4px 12px; font-size: 13px; }
+.active-chip.show { display: inline-flex; }
+.active-chip button { border: 0; background: none; font-size: 15px; line-height: 1; cursor: pointer; color: #1E40AF; padding: 2px 4px; }
+.count { font-size: 13px; color: var(--muted); margin-inline-start: auto; font-variant-numeric: tabular-nums; }
+.table-wrap.sheet-wrap { overflow: auto; max-height: 520px; border: 1px solid var(--line); border-radius: 12px; }
+table.sheet { border-collapse: separate; border-spacing: 0; }
+table.sheet thead th { position: sticky; top: 0; z-index: 3; background: #F9FAFB; font-size: 12px; font-weight: 600; }
+table.sheet thead th:first-child, table.sheet tbody td:first-child, table.sheet tfoot td:first-child { position: sticky; right: 0; z-index: 2; background: #fff; }
+table.sheet thead th:first-child { z-index: 4; background: #F9FAFB; }
+table.sheet tfoot td { position: sticky; bottom: 0; z-index: 2; background: #F9FAFB; }
+table.sheet tbody tr { transition: opacity .18s ease-out, transform .18s ease-out; }
+table.sheet tbody tr:hover td { background: #F9FAFB; }
+table.sheet tbody tr:hover td:first-child { background: #F9FAFB; }
+table.sheet tbody tr.flash td { background: #EFF6FF; }
+table.sheet tbody tr.row-hide { opacity: 0; transform: scale(.98); }
+table.sheet tbody tr.gone { display: none; }
+table.sheet td:first-child { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; direction: ltr; unicode-bidi: embed; font-size: 13px; }
+table.sheet td:nth-child(4), table.sheet td:nth-child(5), table.sheet td:nth-child(6), table.sheet td:nth-child(7), table.sheet td:nth-child(9),
+table.sheet th:nth-child(4), table.sheet th:nth-child(5), table.sheet th:nth-child(6), table.sheet th:nth-child(7), table.sheet th:nth-child(9) { text-align: left; direction: ltr; unicode-bidi: embed; }
+table.sheet tbody tr.low td:first-child { box-shadow: inset -3px 0 0 var(--red); }
+.pill::before { content: "●"; margin-inline-end: 5px; font-size: 9px; vertical-align: middle; }
+/* stock mini-bars */
+.stockbar { direction: ltr; height: 5px; background: #F3F4F6; border-radius: 3px; margin-top: 6px; min-width: 90px; overflow: hidden; }
+.stockbar i { display: block; height: 100%; border-radius: 3px; width: 0; transition: width .5s cubic-bezier(.22,1,.36,1); transition-delay: calc(var(--i) * 40ms); }
+.stockbar.ok i { background: var(--green); }
+.stockbar.near i { background: var(--amber); }
+.stockbar.low i { background: var(--red); }
+table.sheet.in .stockbar i { width: var(--w); }
+/* price history direction colour */
+.summary { font-size: 14px; font-weight: 600; color: var(--ink); margin: 0 0 12px; }
+.chg.up { color: var(--blue); font-weight: 600; }
+.chg.down { color: var(--red); font-weight: 600; }
+table.stats td.chg { text-align: left; direction: ltr; unicode-bidi: embed; }
+/* competitor table */
+.verdict { font-size: 14px; font-weight: 600; margin: 0 0 12px; }
+table.comp td:nth-child(5) { font-weight: 700; }
+table.comp td:nth-child(2), table.comp td:nth-child(3), table.comp td:nth-child(4), table.comp td:nth-child(5), table.comp td:nth-child(6),
+table.comp th:nth-child(2), table.comp th:nth-child(3), table.comp th:nth-child(4), table.comp th:nth-child(5), table.comp th:nth-child(6) { text-align: left; direction: ltr; unicode-bidi: embed; }
+.gap-val { color: var(--amber); font-weight: 600; }
+.gap-bar { display: block; direction: ltr; height: 4px; background: #F3F4F6; border-radius: 2px; margin-top: 5px; min-width: 70px; overflow: hidden; }
+.gap-bar i { display: block; height: 100%; background: var(--amber); }
+@media (max-width: 640px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi-val.hero { font-size: 26px; }
+  .search { min-width: 0; flex: 1; }
+  .count { margin-inline-start: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+  .stockbar i { width: var(--w); }
+  table.sheet tbody tr { opacity: 1; transform: none; }
+}
+footer { color: #6b7280; font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+<header class="page">
+  <div class="eyebrow">پیش‌نمایش کاربرگ · آریا موبایل</div>
+  <h1>کاربرگ قیمت و موجودی: فروشگاه «آریا موبایل»</h1>
+  <p class="sub">پیش‌نمایش خواندنیِ مقدارهای کاربرگ؛ همهٔ عددهای این صفحه از همان فایل خوانده شده‌اند و فرمول‌ها در فایل اصلی‌اند.</p>
+  <div class="meta"><span>فایل: price-inventory-sample.xlsx</span><span>۱۵ قلم · ۱٬۵۲۰ واحد</span><span>۸ تغییر قیمت ثبت‌شده</span><span class="badge">نمونه کار</span></div>
+</header>
+
+<div class="actions">
+  <a class="primary" href="price-inventory-sample.xlsx" target="_blank" rel="noopener">دریافت فایل کاربرگ (price-inventory-sample.xlsx)</a>
+  <a class="secondary" href="README.md" target="_blank" rel="noopener">توضیحات این نمونه (README.md)</a>
+</div>
+
+<div class="note">
+  <p>برای دیدن فرمول‌ها یا تغییر قیمت و موجودی، فایل کاربرگ را باز کنید؛ عددهای داشبورد در همان فایل با فرمول از برگه‌های دیگر محاسبه می‌شوند.</p>
+</div>
+
+<section class="card">
+  <div class="eyebrow">۰۱ · داشبورد</div>
+  <h2>داشبورد</h2>
+  <div class="kpi-grid kpi-row">
+    <div class="kpi"><span class="kpi-label">ارزش کل موجودی</span><span class="kpi-val hero num" data-target="206405000" data-suffix=" تومان">۲۰۶٬۴۰۵٬۰۰۰ تومان</span><span class="kpi-sub">ارزش فروش موجودی انبار</span></div>
+    <div class="kpi"><span class="kpi-label">تعداد واحدها</span><span class="kpi-val num" data-target="1520" data-suffix=" واحد">۱٬۵۲۰ واحد</span><span class="kpi-sub">در انبار</span></div>
+    <div class="kpi"><span class="kpi-label">تعداد اقلام</span><span class="kpi-val num" data-target="15" data-suffix=" قلم">۱۵ قلم</span><span class="kpi-sub">در کاربرگ</span></div>
+    <div class="kpi"><span class="kpi-label">میانگین قیمت فروش</span><span class="kpi-val num" data-target="347800" data-suffix=" تومان">۳۴۷٬۸۰۰ تومان</span><span class="kpi-sub">خرید ۲۳۴٬۲۰۰ · گران‌ترین ۱٬۶۵۰٬۰۰۰ · ارزان‌ترین ۴۵٬۰۰۰</span></div>
+  </div>
+  <div class="kpi-grid kpi-row">
+    <div class="kpi red"><span class="kpi-label">کمبود موجودی</span><span class="kpi-val num" data-target="3" data-suffix=" قلم">۳ قلم</span><span class="kpi-sub">C002 · C003 · F001</span></div>
+    <div class="kpi amber"><span class="kpi-label">نزدیک به حداقل</span><span class="kpi-val num" data-target="3" data-suffix=" قلم">۳ قلم</span><span class="kpi-sub">A004 · B002 · D001</span></div>
+    <div class="kpi green"><span class="kpi-label">موجودی کافی</span><span class="kpi-val num" data-target="9" data-suffix=" قلم">۹ قلم</span><span class="kpi-sub">بیش از دو برابر حداقل</span></div>
+    <div class="kpi"><span class="kpi-label">تغییر قیمت ثبت‌شده</span><span class="kpi-val num" data-target="8" data-suffix=" مورد">۸ مورد</span><span class="kpi-sub">۶ قلم مقایسه‌شده با رقبا</span></div>
+  </div>
+  <div class="health-bar" aria-hidden="true"><i class="hb-green"></i><i class="hb-amber"></i><i class="hb-red"></i></div>
+  <div class="health-legend"><span><i class="dot" style="background:#16A34A"></i>۹ موجودی کافی</span><span><i class="dot" style="background:#D97706"></i>۳ نزدیک به حداقل</span><span><i class="dot" style="background:#DC2626"></i>۳ کمبود موجودی</span></div>
+</section>
+
+<section class="card" id="sec-products">
+  <div class="eyebrow">۰۲ · محصولات</div>
+  <h2>محصولات</h2>
+  <div class="tabs" role="tablist" aria-label="برگه‌های کاربرگ">
+    <button type="button" class="tab" role="tab" aria-selected="true" data-target="sec-products">محصولات</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-target="sec-history">تاریخچهٔ تغییر قیمت</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-target="sec-competitors">مقایسه با رقبا</button>
+  </div>
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="فیلتر وضعیت">
+      <button type="button" class="fbtn" data-filter="all" aria-pressed="true">همه</button>
+      <button type="button" class="fbtn" data-filter="low" aria-pressed="false">کمبود</button>
+      <button type="button" class="fbtn" data-filter="near" aria-pressed="false">نزدیک به حداقل</button>
+      <button type="button" class="fbtn" data-filter="ok" aria-pressed="false">موجود</button>
+    </div>
+    <input type="search" class="search" id="prodSearch" placeholder="جستجو با نام یا کد کالا…" aria-label="جستجو با نام یا کد کالا">
+    <span class="active-chip" id="activeChip"><span id="activeChipLabel"></span><button type="button" id="clearFilter" aria-label="حذف فیلتر">×</button></span>
+    <span class="count" id="prodCount">۱۵ قلم</span>
+  </div>
+  <div class="table-wrap sheet-wrap">
+  <table class="stats sheet" id="productsTable">
+    <thead><tr><th>کد کالا</th><th>نام محصول</th><th>دسته</th><th>قیمت خرید (تومان)</th><th>قیمت فروش (تومان)</th><th>موجودی</th><th>حداقل موجودی</th><th>وضعیت</th><th>ارزش موجودی (تومان)</th></tr></thead>
+    <tbody>
+<tr><td>A001</td><td>گلس تمام‌صفحه سامسونگ گلکسی A55</td><td>گلس</td><td>۴۵٬۰۰۰</td><td>۶۸٬۰۰۰</td><td>۲۴۰</td><td>۵۰</td><td><span class="pill best">موجود</span></td><td>۱۶٬۳۲۰٬۰۰۰</td></tr>
+<tr><td>A002</td><td>گلس تمام‌صفحه آیفون ۱۵</td><td>گلس</td><td>۵۲٬۰۰۰</td><td>۷۹٬۰۰۰</td><td>۱۸۰</td><td>۵۰</td><td><span class="pill best">موجود</span></td><td>۱۴٬۲۲۰٬۰۰۰</td></tr>
+<tr><td>A003</td><td>گلس لنز دوربین آیفون ۱۵ پرو</td><td>گلس</td><td>۲۸٬۰۰۰</td><td>۴۵٬۰۰۰</td><td>۳۲۰</td><td>۸۰</td><td><span class="pill best">موجود</span></td><td>۱۴٬۴۰۰٬۰۰۰</td></tr>
+<tr><td>A004</td><td>گلس تبلت سامسونگ تب A9</td><td>گلس</td><td>۹۵٬۰۰۰</td><td>۱۴۵٬۰۰۰</td><td>۴۵</td><td>۳۰</td><td><span class="pill near">نزدیک به حداقل</span></td><td>۶٬۵۲۵٬۰۰۰</td></tr>
+<tr><td>B001</td><td>قاب سیلیکونی سامسونگ گلکسی A55</td><td>قاب</td><td>۸۵٬۰۰۰</td><td>۱۳۵٬۰۰۰</td><td>۱۲۰</td><td>۴۰</td><td><span class="pill best">موجود</span></td><td>۱۶٬۲۰۰٬۰۰۰</td></tr>
+<tr><td>B002</td><td>قاب چرمی آیفون ۱۵</td><td>قاب</td><td>۲۱۰٬۰۰۰</td><td>۳۲۰٬۰۰۰</td><td>۳۵</td><td>۲۰</td><td><span class="pill near">نزدیک به حداقل</span></td><td>۱۱٬۲۰۰٬۰۰۰</td></tr>
+<tr><td>B003</td><td>قاب شفاف ضدضربه شیائومی نوت ۱۳</td><td>قاب</td><td>۷۸٬۰۰۰</td><td>۱۲۰٬۰۰۰</td><td>۹۵</td><td>۳۰</td><td><span class="pill best">موجود</span></td><td>۱۱٬۴۰۰٬۰۰۰</td></tr>
+<tr><td>C001</td><td>شارژر دیواری ۲۵ وات سامسونگ</td><td>شارژر</td><td>۳۱۰٬۰۰۰</td><td>۴۶۰٬۰۰۰</td><td>۶۰</td><td>۲۵</td><td><span class="pill best">موجود</span></td><td>۲۷٬۶۰۰٬۰۰۰</td></tr>
+<tr><td>C002</td><td>کابل تایپ‌سی به تایپ‌سی، ۱ متری</td><td>کابل و شارژر</td><td>۹۵٬۰۰۰</td><td>۱۵۰٬۰۰۰</td><td>۱۲</td><td>۳۰</td><td><span class="pill low">کمبود موجودی</span></td><td>۱٬۸۰۰٬۰۰۰</td></tr>
+<tr><td>C003</td><td>شارژر فندکی دو پورت</td><td>شارژر</td><td>۱۲۰٬۰۰۰</td><td>۱۸۵٬۰۰۰</td><td>۸</td><td>۲۰</td><td><span class="pill low">کمبود موجودی</span></td><td>۱٬۴۸۰٬۰۰۰</td></tr>
+<tr><td>D001</td><td>هندزفری بلوتوثی مدل TWS</td><td>هندزفری</td><td>۴۲۰٬۰۰۰</td><td>۶۵۰٬۰۰۰</td><td>۲۸</td><td>۱۵</td><td><span class="pill near">نزدیک به حداقل</span></td><td>۱۸٬۲۰۰٬۰۰۰</td></tr>
+<tr><td>D002</td><td>هدفون سیمی تایپ‌سی</td><td>هندزفری</td><td>۱۱۰٬۰۰۰</td><td>۱۷۵٬۰۰۰</td><td>۱۵۰</td><td>۴۰</td><td><span class="pill best">موجود</span></td><td>۲۶٬۲۵۰٬۰۰۰</td></tr>
+<tr><td>E001</td><td>پاوربانک ۱۰٬۰۰۰ میلی‌آمپر</td><td>پاوربانک</td><td>۶۸۰٬۰۰۰</td><td>۹۸۰٬۰۰۰</td><td>۲۲</td><td>۱۰</td><td><span class="pill best">موجود</span></td><td>۲۱٬۵۶۰٬۰۰۰</td></tr>
+<tr><td>F001</td><td>ساعت هوشمند مدل اولترا</td><td>ساعت هوشمند</td><td>۱٬۱۵۰٬۰۰۰</td><td>۱٬۶۵۰٬۰۰۰</td><td>۵</td><td>۱۰</td><td><span class="pill low">کمبود موجودی</span></td><td>۸٬۲۵۰٬۰۰۰</td></tr>
+<tr><td>G001</td><td>اسپری تمیزکنندهٔ صفحه‌نمایش</td><td>جانبی</td><td>۳۵٬۰۰۰</td><td>۵۵٬۰۰۰</td><td>۲۰۰</td><td>۵۰</td><td><span class="pill best">موجود</span></td><td>۱۱٬۰۰۰٬۰۰۰</td></tr>
+    </tbody>
+    <tfoot><tr><td></td><td>جمع کل</td><td></td><td></td><td></td><td>۱٬۵۲۰</td><td></td><td></td><td>۲۰۶٬۴۰۵٬۰۰۰</td></tr></tfoot>
+  </table>
+  </div>
+  <p style="font-size:13px;color:#4b5563">ستون «وضعیت» در کاربرگ با فرمول پر می‌شود: اگر موجودی به حداقل یا کمتر از آن برسد، «کمبود موجودی» است؛ اگر تا دو برابر حداقل باشد، «نزدیک به حداقل» است؛ و در غیر این صورت «موجود» است.</p>
+</section>
+
+<section class="card" id="sec-history">
+  <div class="eyebrow">۰۳ · تاریخچهٔ تغییر قیمت</div>
+  <h2>تاریخچهٔ تغییر قیمت</h2>
+  <p class="summary">۸ تغییر · ۶ افزایش · ۲ کاهش · بزرگ‌ترین افزایش ‎+۱۰۰٬۰۰۰ تومان (ساعت هوشمند)</p>
+  <div class="table-wrap">
+  <table class="stats" id="historyTable">
+    <thead><tr><th>تاریخ</th><th>کد کالا</th><th>نام محصول</th><th>قیمت قبلی (تومان)</th><th>قیمت جدید (تومان)</th><th>تغییر (تومان)</th><th>تغییر (٪)</th><th>دلیل تغییر</th></tr></thead>
+    <tbody>
+<tr><td>۱۴۰۵/۰۸/۰۲</td><td>A001</td><td>گلس تمام‌صفحه سامسونگ گلکسی A55</td><td>۶۲٬۰۰۰</td><td>۶۸٬۰۰۰</td><td>+۶٬۰۰۰</td><td>+۹٫۷٪</td><td>افزایش قیمت خرید از تأمین‌کننده</td></tr>
+<tr><td>۱۴۰۵/۰۸/۰۵</td><td>C001</td><td>شارژر دیواری ۲۵ وات سامسونگ</td><td>۴۳۰٬۰۰۰</td><td>۴۶۰٬۰۰۰</td><td>+۳۰٬۰۰۰</td><td>+۷٫۰٪</td><td>افزایش نرخ ارز و هزینهٔ واردات</td></tr>
+<tr><td>۱۴۰۵/۰۸/۰۷</td><td>B002</td><td>قاب چرمی آیفون ۱۵</td><td>۳۴۰٬۰۰۰</td><td>۳۲۰٬۰۰۰</td><td>−۲۰٬۰۰۰</td><td>−۵٫۹٪</td><td>کاهش قیمت برای رقابت با فروشگاه‌های هم‌رده</td></tr>
+<tr><td>۱۴۰۵/۰۸/۰۹</td><td>D001</td><td>هندزفری بلوتوثی مدل TWS</td><td>۵۹۰٬۰۰۰</td><td>۶۵۰٬۰۰۰</td><td>+۶۰٬۰۰۰</td><td>+۱۰٫۲٪</td><td>افزایش قیمت خرید از تأمین‌کننده</td></tr>
+<tr><td>۱۴۰۵/۰۸/۱۱</td><td>E001</td><td>پاوربانک ۱۰٬۰۰۰ میلی‌آمپر</td><td>۱٬۰۵۰٬۰۰۰</td><td>۹۸۰٬۰۰۰</td><td>−۷۰٬۰۰۰</td><td>−۶٫۷٪</td><td>تخفیف جشنوارهٔ فروش پاییزه</td></tr>
+<tr><td>۱۴۰۵/۰۸/۱۲</td><td>C002</td><td>کابل تایپ‌سی به تایپ‌سی، ۱ متری</td><td>۱۳۵٬۰۰۰</td><td>۱۵۰٬۰۰۰</td><td>+۱۵٬۰۰۰</td><td>+۱۱٫۱٪</td><td>اصلاح قیمت پس از بررسی قیمت رقبا</td></tr>
+<tr><td>۱۴۰۵/۰۸/۱۴</td><td>F001</td><td>ساعت هوشمند مدل اولترا</td><td>۱٬۵۵۰٬۰۰۰</td><td>۱٬۶۵۰٬۰۰۰</td><td>+۱۰۰٬۰۰۰</td><td>+۶٫۵٪</td><td>افزایش قیمت خرید از تأمین‌کننده</td></tr>
+<tr><td>۱۴۰۵/۰۸/۱۶</td><td>G001</td><td>اسپری تمیزکنندهٔ صفحه‌نمایش</td><td>۵۰٬۰۰۰</td><td>۵۵٬۰۰۰</td><td>+۵٬۰۰۰</td><td>+۱۰٫۰٪</td><td>افزایش جزئی هماهنگ با تورم عمومی</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:13px;color:#4b5563">ستون‌های «تغییر (تومان)» و «تغییر (٪)» در کاربرگ با فرمول محاسبه می‌شوند. اسکریپت ضمیمه در همین پوشه (apps-script-sample.gs) نشان می‌دهد که ثبت هر تغییر قیمت در این برگه چگونه خودکار می‌شود.</p>
+</section>
+
+<section class="card" id="sec-competitors">
+  <div class="eyebrow">۰۴ · مقایسه با رقبا</div>
+  <h2>مقایسهٔ قیمت با رقبا</h2>
+  <p class="verdict">۲ از ۶ کالا ارزان‌ترین‌اند؛ بقیه تا ۲۰٬۰۰۰ تومان بالاترند.</p>
+  <div class="table-wrap">
+  <table class="stats comp" id="compTable">
+    <thead><tr><th>نام محصول</th><th>قیمت فروش ما (تومان)</th><th>قیمت رقیب ۱ (تومان)</th><th>قیمت رقیب ۲ (تومان)</th><th>ارزان‌ترین قیمت (تومان)</th><th>اختلاف ما با ارزان‌ترین (تومان)</th><th>وضعیت رقابتی</th></tr></thead>
+    <tbody>
+<tr><td>گلس تمام‌صفحه سامسونگ گلکسی A55</td><td>۶۸٬۰۰۰</td><td>۷۲٬۰۰۰</td><td>۶۵٬۰۰۰</td><td>۶۵٬۰۰۰</td><td>+۳٬۰۰۰</td><td><span class="pill near">نزدیک به ارزان‌ترین</span></td></tr>
+<tr><td>گلس تمام‌صفحه آیفون ۱۵</td><td>۷۹٬۰۰۰</td><td>۸۵٬۰۰۰</td><td>۷۹٬۰۰۰</td><td>۷۹٬۰۰۰</td><td>۰</td><td><span class="pill best">ارزان‌ترین</span></td></tr>
+<tr><td>قاب سیلیکونی سامسونگ گلکسی A55</td><td>۱۳۵٬۰۰۰</td><td>۱۲۹٬۰۰۰</td><td>۱۴۰٬۰۰۰</td><td>۱۲۹٬۰۰۰</td><td>+۶٬۰۰۰</td><td><span class="pill near">نزدیک به ارزان‌ترین</span></td></tr>
+<tr><td>شارژر دیواری ۲۵ وات سامسونگ</td><td>۴۶۰٬۰۰۰</td><td>۴۷۵٬۰۰۰</td><td>۴۵۰٬۰۰۰</td><td>۴۵۰٬۰۰۰</td><td>+۱۰٬۰۰۰</td><td><span class="pill near">نزدیک به ارزان‌ترین</span></td></tr>
+<tr><td>هندزفری بلوتوثی مدل TWS</td><td>۶۵۰٬۰۰۰</td><td>۶۹۰٬۰۰۰</td><td>۶۳۰٬۰۰۰</td><td>۶۳۰٬۰۰۰</td><td>+۲۰٬۰۰۰</td><td><span class="pill near">نزدیک به ارزان‌ترین</span></td></tr>
+<tr><td>پاوربانک ۱۰٬۰۰۰ میلی‌آمپر</td><td>۹۸۰٬۰۰۰</td><td>۹۹۰٬۰۰۰</td><td>۱٬۰۲۰٬۰۰۰</td><td>۹۸۰٬۰۰۰</td><td>۰</td><td><span class="pill best">ارزان‌ترین</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:13px;color:#4b5563">«ارزان‌ترین قیمت» و «اختلاف» در کاربرگ با فرمول محاسبه می‌شوند. نام رقبا در فایل عمداً عمومی نوشته شده است («رقیب ۱»، «رقیب ۲») تا هیچ فروشگاه واقعی‌ای به‌اشتباه معرفی نشود.</p>
+</section>
+
+<footer>این صفحه پیش‌نمایشی خواندنی از مقدارهای کاربرگ است؛ فرمول‌ها و داده‌ها در فایل price-inventory-sample.xlsx اند.</footer>
+</main>
+<script>
+(function(){
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FA = '۰۱۲۳۴۵۶۷۸۹';
+  function fa2en(s){ return String(s).replace(/[۰-۹]/g, function(d){ return FA.indexOf(d); }).replace(/[٬,]/g, ''); }
+  function faNum(n){ return n.toLocaleString('en-US').replace(/\d/g, function(d){ return FA[+d]; }).replace(/,/g, '٬'); }
+
+  /* KPI count-up, 700ms, on load */
+  document.querySelectorAll('.kpi-val[data-target]').forEach(function(el){
+    var target = +el.dataset.target, suffix = el.dataset.suffix || '';
+    if(reduced){ el.textContent = faNum(target) + suffix; return; }
+    var t0 = null;
+    function step(ts){
+      if(!t0) t0 = ts;
+      var k = Math.min(1, (ts - t0) / 700);
+      var e = 1 - Math.pow(1 - k, 3);
+      el.textContent = faNum(Math.round(target * e)) + suffix;
+      if(k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+
+  /* products table: status + stock bars derived from the real stock/min cells */
+  var pTable = document.getElementById('productsTable');
+  var rows = pTable ? Array.prototype.slice.call(pTable.querySelectorAll('tbody tr')) : [];
+  rows.forEach(function(tr, idx){
+    var stock = parseInt(fa2en(tr.cells[5].textContent), 10);
+    var min = parseInt(fa2en(tr.cells[6].textContent), 10);
+    var status = stock <= min ? 'low' : (stock <= 2 * min ? 'near' : 'ok');
+    tr.dataset.status = status;
+    if(status === 'low') tr.classList.add('low');
+    var pct = Math.min(100, Math.round(stock / (2 * min) * 100));
+    tr.cells[5].innerHTML += '<div class="stockbar ' + status + '"><i style="--i:' + idx + '; --w:' + pct + '%"></i></div>';
+  });
+  function growBars(){ if(pTable) pTable.classList.add('in'); }
+  if(reduced || !('IntersectionObserver' in window)){ growBars(); }
+  else {
+    var bio = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ growBars(); bio.disconnect(); } });
+    }, {threshold: .2});
+    if(pTable) bio.observe(pTable);
+  }
+
+  /* price history: direction colour + glyph */
+  var hTable = document.getElementById('historyTable');
+  if(hTable){
+    hTable.querySelectorAll('tbody tr').forEach(function(tr){
+      [5, 6].forEach(function(ci){
+        var cell = tr.cells[ci];
+        if(!cell) return;
+        var t = cell.textContent.trim();
+        if(t.charAt(0) === '+'){ cell.classList.add('chg', 'up'); cell.textContent = '▲ ' + t; }
+        else if(t.charAt(0) === '−'){ cell.classList.add('chg', 'down'); cell.textContent = '▼ ' + t; }
+      });
+    });
+  }
+
+  /* competitor table: 0 -> green pill, gaps -> amber value + proportional bar */
+  var cTable = document.getElementById('compTable');
+  if(cTable){
+    cTable.querySelectorAll('tbody tr').forEach(function(tr){
+      var cell = tr.cells[5];
+      if(!cell) return;
+      var t = cell.textContent.trim();
+      if(t === '۰'){
+        cell.innerHTML = '<span class="pill best">ارزان‌ترین</span>';
+      } else {
+        var n = parseInt(fa2en(t).replace(/[^0-9]/g, ''), 10) || 0;
+        var pct = Math.min(100, Math.round(n / 20000 * 100));
+        cell.innerHTML = '<span class="gap-val">' + t + '</span><span class="gap-bar"><i style="width:' + pct + '%"></i></span>';
+      }
+    });
+  }
+
+  /* filter + search */
+  var search = document.getElementById('prodSearch');
+  var count = document.getElementById('prodCount');
+  var chip = document.getElementById('activeChip');
+  var chipLabel = document.getElementById('activeChipLabel');
+  var filterNames = { low: 'کمبود موجودی', near: 'نزدیک به حداقل', ok: 'موجود' };
+  var currentFilter = 'all';
+  function applyFilters(){
+    var q = search ? search.value.trim() : '';
+    var shown = 0;
+    rows.forEach(function(tr){
+      var okStatus = currentFilter === 'all' || tr.dataset.status === currentFilter;
+      var hay = tr.cells[0].textContent + ' ' + tr.cells[1].textContent;
+      var okSearch = !q || hay.indexOf(q) !== -1;
+      var show = okStatus && okSearch;
+      tr._show = show;
+      if(show){
+        shown++;
+        var wasHidden = tr.classList.contains('gone') || tr.classList.contains('row-hide');
+        tr.classList.remove('gone', 'row-hide');
+        if(wasHidden && !reduced){
+          tr.classList.add('flash');
+          setTimeout(function(){ tr.classList.remove('flash'); }, 400);
+        }
+      } else {
+        if(reduced){ tr.classList.add('gone'); }
+        else {
+          tr.classList.add('row-hide');
+          setTimeout(function(){ if(!tr._show) tr.classList.add('gone'); }, 180);
+        }
+      }
+    });
+    if(count) count.textContent = shown === rows.length ? faNum(rows.length) + ' قلم' : faNum(rows.length) + ' قلم ← ' + faNum(shown) + ' قلم';
+    if(chip){
+      if(currentFilter === 'all'){ chip.classList.remove('show'); }
+      else { chip.classList.add('show'); chipLabel.textContent = filterNames[currentFilter]; }
+    }
+  }
+  document.querySelectorAll('.fbtn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      currentFilter = btn.dataset.filter;
+      document.querySelectorAll('.fbtn').forEach(function(b){ b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+      applyFilters();
+    });
+  });
+  if(search) search.addEventListener('input', applyFilters);
+  var clearBtn = document.getElementById('clearFilter');
+  if(clearBtn) clearBtn.addEventListener('click', function(){
+    currentFilter = 'all';
+    document.querySelectorAll('.fbtn').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.filter === 'all' ? 'true' : 'false'); });
+    if(search) search.value = '';
+    applyFilters();
+  });
+
+  /* tabs scroll to sections */
+  document.querySelectorAll('.tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(t){ t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
+      var sec = document.getElementById(tab.dataset.target);
+      if(sec) sec.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block: 'start'});
+    });
+  });
+})();
+</script>
+</body>
+</html>

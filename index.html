@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نمونه‌کارها · رضا محمدرضایی | مترجم انگلیسی–فارسی</title>
+<style>
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(web/assets/fonts/vazirmatn-arabic.woff2) format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(web/assets/fonts/vazirmatn-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+  body { font-family: Vazirmatn, Tahoma, 'Segoe UI', sans-serif; background: #f7f7f5; color: #222; margin: 0; padding: 0; line-height: 1.9; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 64px; }
+  header { background: #1f3a5f; color: #fff; padding: 28px 20px; }
+  header .wrap { padding-top: 0; padding-bottom: 0; }
+  h1 { margin: 0 0 6px; font-size: 24px; }
+  header p { margin: 0; opacity: .9; }
+  .badge { display: inline-block; background: #b7791f; color: #fff; font-size: 12px; padding: 2px 10px; border-radius: 20px; margin-inline-start: 8px; vertical-align: middle; }
+  .badge.real { background: #2e7d32; }
+  h2 { color: #1f3a5f; border-bottom: 2px solid #1f3a5f; padding-bottom: 6px; margin-top: 40px; }
+  .item { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 14px 18px; margin: 12px 0; }
+  .item h3 { margin: 0 0 4px; font-size: 17px; }
+  .item p { margin: 0; color: #444; }
+  .item a { color: #1f3a5f; font-weight: bold; }
+  .mirrors { font-size: 13px; color: #777; }
+  .note { background: #fff8e1; border: 1px solid #f0d48a; border-radius: 8px; padding: 14px 18px; margin-top: 32px; font-size: 14px; }
+  footer { color: #888; font-size: 13px; margin-top: 40px; }
+  /* ---- rework: sticky nav, type-led hero (no cover photo, dropped per Marshall 2026-11-10), trust band, numbered index, reveals ---- */
+  .topnav { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1px solid #e5e5e5; }
+  .nav-in { display: flex; align-items: center; gap: 20px; max-width: 860px; margin: 0 auto; padding: 10px 20px; }
+  .wordmark { font-weight: 800; color: #1f3a5f; text-decoration: none; font-size: 16px; }
+  .nav-links { display: flex; gap: 18px; margin-inline-start: auto; }
+  .nav-links a { color: #444; text-decoration: none; font-size: 14.5px; }
+  .nav-links a:hover { color: #1f3a5f; }
+  .menu-btn { display: none; background: none; border: 0; font-size: 22px; cursor: pointer; color: #1f3a5f; padding: 6px; line-height: 1; margin-inline-start: auto; }
+  header .wrap.hero { padding-top: 40px; padding-bottom: 40px; }
+  .hero-text { max-width: 640px; }
+  .hero-text::before { content: ""; display: block; width: 56px; height: 4px; background: #b7791f; border-radius: 2px; margin-bottom: 16px; }
+  .hero-text h1 { font-size: 32px; }
+  .hero-text p { font-size: 17px; }
+  .trust { background: #fff; border-bottom: 1px solid #e5e5e5; }
+  .trust-in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; text-align: center; padding: 20px; max-width: 860px; margin: 0 auto; }
+  .trust-in b { font-size: 28px; color: #1f3a5f; display: block; line-height: 1.3; }
+  .trust-in span { font-size: 13px; color: #555; }
+  .item-top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .item-top .num { font-size: 15px; font-weight: 800; color: #1f3a5f; }
+  .item-top .type { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 11px; letter-spacing: .12em; color: #1f3a5f; }
+  .item { transition: transform .2s ease, box-shadow .2s ease; }
+  .item:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.10); }
+  .item h3 a::after { content: ' ←'; display: inline-block; transition: transform .2s ease; }
+  .item:hover h3 a::after { transform: translateX(-4px); }
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .55s ease var(--d,0ms), transform .55s ease var(--d,0ms); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+  @media (max-width: 760px) {
+    .trust-in { grid-template-columns: repeat(2, 1fr); }
+    .menu-btn { display: block; }
+    .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; flex-direction: column; gap: 0; padding: 8px 20px 14px; border-bottom: 1px solid #e5e5e5; box-shadow: 0 12px 24px rgba(0,0,0,.08); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 10px 0; border-bottom: 1px solid #eee; font-size: 15px; }
+    .nav-links a:last-child { border-bottom: 0; }
+    .topnav { position: sticky; }
+    .nav-in { position: relative; }
+  }
+</style>
+</head>
+<body id="top">
+<nav class="topnav"><div class="nav-in">
+  <a class="wordmark" href="#top">رضا محمدرضایی · نمونه‌کارها</a>
+  <button class="menu-btn" aria-expanded="false" aria-controls="navLinks" aria-label="باز کردن منو">☰</button>
+  <div class="nav-links" id="navLinks">
+    <a href="#resume">رزومه</a>
+    <a href="#samples">نمونه کارها</a>
+    <a href="resume.html" target="_blank" rel="noopener">رزومه طراحی‌شده</a>
+  </div>
+</div></nav>
+<header><div class="wrap hero">
+  <div class="hero-text reveal">
+    <h1>نمونه‌کارها · رضا محمدرضایی</h1>
+    <p>مترجم انگلیسی–فارسی، ۱۱ سال سابقه ترجمه</p>
+  </div>
+</div></header>
+<div class="trust"><div class="trust-in reveal">
+  <div><b>۸</b><span>نمونهٔ وب</span></div>
+  <div><b>۱۳</b><span>محصول واقعی</span></div>
+  <div><b>۲</b><span>زبان: فارسی و انگلیسی</span></div>
+  <div><b>۴</b><span>گزارش و نمونهٔ کد</span></div>
+</div></div>
+<div class="wrap">
+
+  <h2 id="resume" class="reveal">رزومه</h2>
+  <div class="item reveal">
+    <div class="item-top"><span class="type">RESUME</span></div>
+    <h3><a href="resume-drafts/resume-polished.md" target="_blank" rel="noopener">رزومه نهایی: نسخه ۳ (دوزبانه)</a> <span class="badge">رزومه</span></h3>
+    <p>بازنویسی ۱۲ نوامبر با چارچوب یکپارچه: وب‌سایت کامل دوزبانه — محتوا و کد، یکجا. سابقه به ۱۱ سال ترجمه اصلاح شد و پاراگراف توانایی وب به «درباره من» اضافه شد. «درباره من» با لنز مشتری کوتاه و عدد-محور شد و بخش «ابزارها» اضافه شد.</p>
+    <p class="mirrors">کار واقعی: <a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">پروفایل عمومی زیرنویس رضا محمدرضایی</a>، بیش از ۲۰۰ زیرنویس از ۱۳۹۴.</p>
+    <p class="mirrors"><a href="resume.html" target="_blank" rel="noopener">resume.html</a>، با عکس پروفایل و اطلاعات تماس.</p>
+  </div>
+
+  <h2 id="samples" class="reveal">نمونه کارها</h2>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۰۱</span><span class="type">TRANSLATION</span></div>
+    <h3><a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">پروفایل عمومی زیرنویس</a> <span class="badge real">کار واقعی</span></h3>
+    <p>بیش از ۲۰۰ زیرنویس از ۱۳۹۴، همه ژانرها.</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۰۲</span><span class="type">CORPORATE</span></div>
+    <h3><a href="web/corporate/index.html" target="_blank" rel="noopener">نمونه وب‌سایت شرکتی</a> <span class="badge">نمونه کار</span></h3>
+    <p>سایت فارسی ۶ صفحه‌ای برای یک شرکت توزیع‌کننده تجهیزات صنعتی؛ کاتالوگ ۱۵ مدل واقعی (زیمنس، ای‌بی‌بی، مگر، فلوک و…) با برگه مشخصات قابل دانلود، جدول مقایسه، فرم استعلام با کد پیگیری و بخش جذب نماینده.</p>
+    <p class="mirrors">مشابه بریف شاخص پونیشا برای سایت صنعتی (۴۰ میلیون تومان، ۶۶ پیشنهاد): کاتالوگ با دیتاشیت، جدول مقایسه، فرم استعلام، سئوی پایه.</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۰۳</span><span class="type">FINTECH</span></div>
+    <h3><a href="web/corporate-intl/index.html" target="_blank" rel="noopener">نمونه وب‌سایت شرکتی</a> <span class="badge">نمونه کار</span></h3>
+    <p>سایت برای یک شرکت فناوری مالی؛ پیش‌نمایش زنده تسویه با محاسبه‌گر کارمزد، تب‌های مخاطب با مطالعه موردی، پرسش‌های پرتکرار و فرم تماس با اعتبارسنجی.</p>
+    <p class="mirrors">مشابه سایت‌های شرکتی مدرن بین‌المللی: عددها و نمونه‌های مشخص، بخش‌بندی بر اساس مخاطب، قیمت شفاف.</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۰۴</span><span class="type">STORE</span></div>
+    <h3><a href="web/store/index.html" target="_blank" rel="noopener">نمونه فروشگاه اینترنتی</a> <span class="badge">نمونه کار</span></h3>
+    <p>فروشگاه فارسی «آریا استور» با ۱۳ محصول واقعی؛ انتخاب رنگ تصویر کالا را همان رنگ نشان می‌دهد، حافظه قیمت و قسط را عوض می‌کند و سبد خرید بر اساس نوع کالا (مدل + حافظه + رنگ) جدا می‌شود؛ بخش پیشنهادهای شگفت‌انگیز با شمارش معکوس زنده، خرید بر اساس بودجه، جعبه اعتماد فروشنده و مقایسه چندفروشنده.</p>
+    <p class="mirrors">مشابه فروشگاه‌های بزرگ ایرانی: پیشنهادهای زمان‌دار، برچسب تخفیف، سرعت ارسال روی کارت، اعتماد فروشنده.</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۰۵</span><span class="type">STORE</span></div>
+    <h3><a href="web/store-intl/index.html" target="_blank" rel="noopener">نمونه فروشگاه اینترنتی</a> <span class="badge">نمونه کار</span></h3>
+    <p>فروشگاه «نورث‌لایت» با طراحی مینیمال؛ پیکربندی مرحله‌ای آیفون ۱۸ پرو و پرو مکس واقعی (مدل، رنگ، حافظه، اپراتور)، انتخاب رنگ گوشی را همان رنگ نشان می‌دهد، با دکمه فعال‌شونده پس از تکمیل، قیمت کامل و ماهانه، کیف خرید کشویی، جدول مقایسه و پرسش‌های پرتکرار.</p>
+    <p class="mirrors">مشابه فروشگاه‌های مدرن بین‌المللی: فضای خالی زیاد، کارت‌های رنگی ملایم، پیکربندی مرحله‌ای، قیمت ماهانه.</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۰۶</span><span class="type">CALCULATOR</span></div>
+    <h3><a href="web/diet/index.html" target="_blank" rel="noopener">نمونه محاسبه‌گر رژیم غذایی</a> <span class="badge">نمونه کار</span></h3>
+    <p>محاسبه‌گر کالری و درشت‌مغذی‌ها (فرمول میفلین–سنت ژور) با خروجی واقعی: هدف کالری روزانه، پیش‌بینی تغییر وزن در ۴/۸/۱۲ هفته، منوی نمونه یک‌روزه با کالری هر غذا، آب روزانه و پیشنهادهای بعدی؛ دکمه‌های برنامه رژیمی همه خروجی‌ها را با هم به‌روز می‌کنند.</p>
+    <p class="mirrors">مشابه پروژه «سیستم هوشمند رژیم‌نویسی» پونیشا (۴۰ میلیون تومان، استفاده از هوش مصنوعی صراحتاً مجاز).</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۰۷</span><span class="type">CALCULATOR</span></div>
+    <h3><a href="web/diet-intl/index.html" target="_blank" rel="noopener">نمونه محاسبه‌گر رژیم غذایی</a> <span class="badge">نمونه کار</span></h3>
+    <p>اپلیکیشن «پلیت‌وایز» برای شمارش کالری؛ محاسبه‌گر عمومی بدون ثبت‌نام با خروجی واقعی (هدف کالری، پیش‌بینی ۴/۸/۱۲ هفته، منوی نمونه با کالری، ماکروها به گرم، آب روزانه)، ردیف‌های ویژگی با موکاپ گوشی، نوار آمار و بخش همگام‌سازی با دستگاه‌ها.</p>
+    <p class="mirrors">مشابه اپلیکیشن‌های بین‌المللی شمارش کالری: یک دکمه اصلی تکرارشونده، اثبات اجتماعی زیر دکمه، محاسبه‌گر عمومی.</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۰۸</span><span class="type">MAP</span></div>
+    <h3><a href="web/map/index.html" target="_blank" rel="noopener">نمونه وب‌اپ نقشه و دایرکتوری</a> <span class="badge">نمونه کار</span></h3>
+    <p>نقشه تعاملی «نقشه‌یار» با ۱۳ مکان در تهران؛ چیپ‌های دسته‌بندی با شمارش، نشانگرها و فهرست با هم فیلتر می‌شوند، کلید «فقط مکان‌های باز»، جزئیات مکان با جدول ساعات و وضعیت باز/بسته، نمودار امتیاز و مکان‌های مشابه (نیازمند اینترنت برای لایه نقشه).</p>
+    <p class="mirrors">مشابه وب‌اپ نقشه نکست‌جی‌اس و سوپابیس پونیشا (۲۰ میلیون تومان).</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۰۹</span><span class="type">MAP</span></div>
+    <h3><a href="web/map-intl/index.html" target="_blank" rel="noopener">نمونه وب‌اپ نقشه و دایرکتوری</a> <span class="badge">نمونه کار</span></h3>
+    <p>نقشه تعاملی «وی‌فایندر» با ۱۰ مکان؛ نوار فیلتر شناور (قیمت، امتیاز، ساعت کاری)، «جستجو در این ناحیه» بعد از جابه‌جایی نقشه، کارت‌های یکپارچه با نقل‌قول و دکمه رزرو، پنل جزئیات کنار فهرست، مسیریابی با ۴ حالت سفر و نمودار ساعات شلوغی.</p>
+    <p class="mirrors">مشابه نقشه‌های بین‌المللی: فیلتر شناور، کارت سه‌سؤالی، پنل جزئیات بدون از دست دادن فهرست.</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۱۰</span><span class="type">BOT</span></div>
+    <h3><a href="https://t.me/Sepehrstoredemo_bot" target="_blank" rel="noopener">نمونه ربات تلگرام (پایتون)</a> <span class="badge">نمونه کار</span></h3>
+    <p>ربات فروش اشتراک با کتابخانه تلگرام پایتون؛ جدول قیمت درون‌چتی، خرید راهنمایی‌شده با تحویل فوری کانفیگ و لینک اشتراک، تمدید، اشتراک‌های من با انقضا، و پنل مدیریت. <a href="code/telegram-bot/README.md" target="_blank" rel="noopener">نحوه کار ←</a></p>
+    <p class="mirrors">مشابه پروژه‌های ربات فروش اشتراک کارلنسر و پارسکدرز (خرید و تمدید اشتراک، ۲٫۵ تا ۱۰ میلیون تومان).</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۱۱</span><span class="type">CODE</span></div>
+    <h3><a href="code/price-monitor/report.html" target="_blank" rel="noopener">نمونه ربات مانیتور قیمت (پایتون)</a> <span class="badge">نمونه کار</span></h3>
+    <p>مانیتور قیمت از یک ای‌پی‌آی عمومی قیمت ارز (کوین‌گکو) + حالت نمایشی با داده نمایشی؛ هشدار عبور از آستانه؛ گزارش اچ‌تی‌ام‌ال با نمودار تاریخچه قیمت، جدول آمار و پنل «قیمت دلخواه». <a href="code/price-monitor/README.md" target="_blank" rel="noopener">درباره نمونه ←</a></p>
+    <p class="mirrors">مشابه پروژه ربات مانیتورینگ بازار پارسکدرز، بدون اسکرپینگ و بدون هدف ناقض قوانین.</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۱۲</span><span class="type">DATA</span></div>
+    <h3><a href="code/pandas-decision-tree/report.html" target="_blank" rel="noopener">نمونه تحلیل داده، درخت تصمیم (پایتون)</a> <span class="badge">نمونه کار</span></h3>
+    <p>پانداس و سایکیت‌لرن روی داده مشتری؛ دقت، گزارش طبقه‌بندی و پیش‌بینی نمونه. <a href="code/pandas-decision-tree/README.md" target="_blank" rel="noopener">درباره نمونه ←</a></p>
+    <p class="mirrors">مشابه پروژه‌های پایتون/داده پارسکدرز؛ تقاضای زنده برای اسکریپت پایتون + شیتز در پونیشا (۴۰ میلیون تومان).</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۱۳</span><span class="type">SHEETS</span></div>
+    <h3><a href="sheets/price-inventory-preview.html" target="_blank" rel="noopener">نمونه مدیریت قیمت و موجودی</a> <span class="badge">نمونه کار</span></h3>
+    <p>فروشگاه با محصولات؛ شیت‌های محصولات، تاریخچه تغییر قیمت، قیمت رقبا و داشبورد با فرمول و قالب‌بندی شرطی. <a href="sheets/price-inventory-sample.xlsx" target="_blank" rel="noopener">دانلود فایل اکسل ←</a></p>
+    <p class="mirrors">مشابه پروژه مدیریت قیمت و موجودی در گوگل شیتز پونیشا (۴۰ میلیون تومان) و سیستم ۷ شیتی به‌هم‌پیوسته پارسکدرز.</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۱۴</span><span class="type">CODE</span></div>
+    <h3><a href="sheets/apps-script-sample.html" target="_blank" rel="noopener">نمونه کد اپس اسکریپت</a> <span class="badge">نمونه کار</span></h3>
+    <p>ثبت خودکار تغییر قیمت در لاگ + گزارش کمبود موجودی به‌صورت پیش‌نویس ایمیل (هرگز ارسال نمی‌شود)؛ توضیحات فارسی. <a href="sheets/apps-script-sample.gs" target="_blank" rel="noopener">فایل کد ←</a></p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۱۵</span><span class="type">UX AUDIT</span></div>
+    <h3><a href="ux-audit/tehranjanebi-ux-audit-sample.html" target="_blank" rel="noopener">نمونه تحلیل تجربه کاربری فروشگاه تهران‌جانبی</a> <span class="badge">نمونه کار</span></h3>
+    <p>تحلیل و پیشنهادهای اولویت‌دار بر اساس سایت عمومی؛ بدون دسترسی به آمار یا پنل مدیریت. نسخه مارک‌داون هم موجود است.</p>
+    <p class="mirrors">مشابه بریف تحلیل تجربه کاربری فروشگاه تهران‌جانبی در پونیشا (۴۰ میلیون تومان): گزارش برای هر صفحه با علت، اثر، راه‌حل و اولویت، بدون تغییر کد.</p>
+  </div>
+  <div class="item reveal">
+    <div class="item-top"><span class="num">۱۶</span><span class="type">WORDPRESS</span></div>
+    <h3><a href="web/wordpress/index.html" target="_blank" rel="noopener">قالب وردپرس «دوزبانه»</a> <span class="badge">نمونه کار</span></h3>
+    <p>قالب تجاری کامل دوزبانه: راست‌به‌چپ درست، تاریخ جلالی (الگوریتم تبدیل با ۶ تاریخ مرجع آزمون شد)، نوع‌های محتوای خدمات و نمونه‌کار، تنظیمات تماس و هیرو در کاستومایزر، پشتیبانی پایه ووکامرس. پیش‌نمایش فارسی و انگلیسی با همان استایل قالب. <a href="code/wordpress-theme/dozabaneh/readme.txt" target="_blank" rel="noopener">درباره قالب ←</a></p>
+    <p class="mirrors">مشابه پروژه‌های وردپرس کارلنسر (سایت آزمایشگاه دارویی، ۲۰ میلیون تومان)؛ پروفایل‌های برتر وردپرس را در مهارت‌ها اول می‌گذارند.</p>
+  </div>
+
+
+  <footer>ساخته‌شده در شب ۹ نوامبر ۲۰۲۶، نمونه‌ها در ۱۰ نوامبر ۲۰۲۶ بر اساس تحقیق زنده بازار بازسازی و با بازخورد رضا محمدرضایی بازبینی شدند (محصولات واقعی، خروجی‌های واقعی محاسبه‌گر، تعامل زنده کنترل‌ها)؛ قالب وردپرس «دوزبانه» در ۱۲ نوامبر ۲۰۲۶ اضافه شد؛ فایل‌ها فقط به‌صورت محلی نگهداری می‌شوند؛ چیزی منتشر یا ارسال نشده است.</footer>
+</div>
+<script>
+(function(){
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var btn = document.querySelector('.menu-btn');
+  var links = document.getElementById('navLinks');
+  if(btn && links){
+    btn.addEventListener('click', function(){
+      var open = links.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? 'بستن منو' : 'باز کردن منو');
+      btn.textContent = open ? '✕' : '☰';
+    });
+    links.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        links.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'باز کردن منو');
+        btn.textContent = '☰';
+      });
+    });
+  }
+  var els = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduced){
+    var counts = new Map();
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        var parent = en.target.parentElement;
+        var n = counts.get(parent) || 0;
+        counts.set(parent, n + 1);
+        if(n < 6) en.target.style.setProperty('--d', (n * 60) + 'ms');
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      });
+    }, {threshold: .12, rootMargin: '0px 0px -8% 0px'});
+    els.forEach(function(el){ io.observe(el); });
+  } else {
+    els.forEach(function(el){ el.classList.add('in'); });
+  }
+})();
+</script>
+</body>
+</html>

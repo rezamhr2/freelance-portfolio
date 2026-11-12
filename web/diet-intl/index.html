@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platewise: Nutrition Tracking App | Portfolio Sample</title>
+<meta name="description" content="Platewise is a nutrition tracking app: meal scan, voice log, barcode scan, progress tracking and a free BMR calculator.">
+<style>
+  :root{
+    --blue:#0f6fec; --blue-dark:#0b5bc7; --blue-soft:#e8f1fe; --ink:#111827;
+    --grey:#5b6472; --line:#e5e9f0; --bg:#ffffff; --bg-soft:#f6f8fb;
+    --gold:#f5a623; --green:#1f9d55; --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55}
+  a{color:var(--blue);text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  .btn{display:inline-block;background:var(--blue);color:#fff;font-weight:700;font-size:15px;
+    padding:14px 30px;border-radius:999px;border:0;cursor:pointer;letter-spacing:.04em;
+    transition:background .15s,transform .15s}
+  .btn:hover{background:var(--blue-dark);transform:translateY(-1px)}
+  .btn.small{padding:12px 22px;font-size:14px}
+  .btn.ghost{background:#fff;color:var(--blue);border:2px solid var(--blue)}
+  .btn.ghost:hover{background:var(--blue-soft)}
+  .pill-cta{white-space:nowrap}
+
+  /* ---- sample badge ---- */
+  .sample-bar{background:#fff8e1;color:#7a5b00;font-size:13px;text-align:center;padding:8px 16px;border-bottom:1px solid #f0dfa8}
+  .sample-bar b{font-weight:700}
+
+  /* ---- header ---- */
+  header.site{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:50}
+  .header-in{display:flex;align-items:center;gap:28px;height:64px}
+  .logo{display:flex;align-items:center;gap:9px;font-size:22px;font-weight:800;color:var(--blue);letter-spacing:-.02em}
+  .logo svg{flex:none}
+  nav.main{display:flex;gap:26px;margin-left:8px}
+  nav.main a{color:var(--ink);font-size:15px;font-weight:600}
+  nav.main a:hover{color:var(--blue)}
+  .header-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .header-right .signin{font-size:15px;font-weight:600;color:var(--ink)}
+  .header-right .signin:hover{color:var(--blue)}
+
+  /* ---- hero ---- */
+  .hero{padding:72px 0 56px;background:linear-gradient(180deg,#fff 0%,#f2f7ff 100%)}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  .hero h1{font-size:52px;line-height:1.08;letter-spacing:-.02em;font-weight:800;margin-bottom:18px}
+  .hero h1 span{color:var(--blue)}
+  .hero p.lede{font-size:19px;color:var(--grey);margin-bottom:28px;max-width:520px}
+  .hero-cta-row{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+  .stars{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--grey)}
+  .stars .star-row{color:var(--gold);letter-spacing:2px;font-size:19px}
+  .stars b{color:var(--ink)}
+  .store-row{display:flex;gap:12px;margin-top:6px}
+  .store-badge{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--ink);border-radius:10px;
+    padding:10px 14px;color:var(--ink);font-size:13px;line-height:1.2;font-weight:600;background:#fff}
+  .store-badge small{display:block;font-size:10px;font-weight:400;color:var(--grey)}
+  .hero-art{position:relative}
+  .bowl-card{background:#fff;border-radius:28px;box-shadow:0 24px 60px rgba(15,111,236,.16);padding:26px;overflow:hidden}
+  .bowl-card svg{display:block;width:100%;height:auto}
+  .hero-chip{position:absolute;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.12);
+    padding:12px 16px;font-size:14px;font-weight:700;display:flex;gap:10px;align-items:center}
+  .hero-chip small{display:block;font-weight:400;color:var(--grey);font-size:12px}
+  .hero-chip .dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+  .chip-a{top:18px;left:-18px}.chip-a .dot{background:#e6f7ec}
+  .chip-b{bottom:22px;right:-10px}.chip-b .dot{background:#e8f1fe}
+
+  /* ---- review carousel ---- */
+  .reviews{padding:44px 0 8px}
+  .reviews h2,.section h2{text-align:center;font-size:32px;font-weight:800;letter-spacing:-.01em;margin-bottom:8px}
+  .reviews .sub,.section .sub{text-align:center;color:var(--grey);font-size:17px;margin-bottom:28px}
+  .carousel{max-width:760px;margin:0 auto;background:var(--bg-soft);border-radius:20px;padding:36px 40px 28px;text-align:center;position:relative}
+  .carousel .q{font-size:20px;font-weight:600;line-height:1.5;margin:14px 0 18px;min-height:90px}
+  .carousel .who{color:var(--grey);font-size:15px}
+  .carousel .who b{color:var(--ink)}
+  .carousel .cstars{color:var(--gold);letter-spacing:3px;font-size:18px}
+  .car-nav{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:22px}
+  .car-btn{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:17px;color:var(--ink)}
+  .car-btn:hover{border-color:var(--blue);color:var(--blue)}
+  .car-dots{display:flex;gap:8px;align-items:center}
+  .car-dots button{width:12px;height:12px;border-radius:50%;border:0;background:#c9d3e0;cursor:pointer;padding:0}
+  .car-dots button.active{background:var(--blue);width:30px;border-radius:999px}
+
+  /* ---- feature rows ---- */
+  .section{padding:72px 0}
+  .feature{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;padding:44px 0}
+  .feature + .feature{border-top:1px solid var(--line)}
+  .feature.flip .f-text{order:2}
+  .feature.flip .f-phone{order:1}
+  .f-icon{width:52px;height:52px;border-radius:14px;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:18px}
+  .f-text h3{font-size:28px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
+  .f-text p{font-size:17px;color:var(--grey);margin-bottom:18px}
+  .f-text .benefit{font-size:16px;font-weight:700;color:var(--ink);border-left:4px solid var(--blue);padding-left:14px}
+  .f-phone{display:flex;justify-content:center}
+
+  /* CSS phone mockup */
+  .phone{width:250px;border:10px solid #1b2430;border-radius:38px;background:#fff;overflow:hidden;
+    box-shadow:0 24px 50px rgba(0,0,0,.18);flex:none}
+  .phone .notch{height:22px;background:#1b2430;display:flex;justify-content:center}
+  .phone .notch i{width:74px;height:7px;background:#1b2430;border-radius:0 0 8px 8px;display:block}
+  .phone .screen{padding:16px 16px 20px;min-height:430px}
+  .phone .appbar{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:15px;margin-bottom:14px}
+  .phone .appbar span{color:var(--blue)}
+  .phone .ring-wrap{display:flex;justify-content:center;margin:6px 0 14px}
+  .phone .ring{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--blue) 0 62%,#e3e9f2 62% 100%);
+    display:flex;align-items:center;justify-content:center}
+  .phone .ring-in{width:92px;height:92px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .phone .ring-in b{font-size:22px}
+  .phone .ring-in small{color:var(--grey);font-size:11px}
+  .phone .macro{display:flex;gap:8px;margin-bottom:14px}
+  .phone .macro div{flex:1;background:var(--bg-soft);border-radius:10px;padding:8px 4px;text-align:center;font-size:12px}
+  .phone .macro b{display:block;font-size:15px}
+  .phone .food-row{display:flex;justify-content:space-between;align-items:center;padding:10px 2px;border-top:1px solid var(--line);font-size:14px}
+  .phone .food-row b{font-weight:700}
+  .phone .food-row span{color:var(--grey);font-size:12px;display:block}
+  .phone .food-row em{font-style:normal;font-weight:700;color:var(--blue)}
+  .phone .scan-box{border:2px dashed var(--blue);border-radius:14px;padding:18px 12px;text-align:center;margin:8px 0 14px;background:var(--blue-soft)}
+  .phone .scan-box .big{font-size:30px}
+  .phone .scan-box p{font-size:13px;color:var(--grey);margin-top:6px}
+  .phone .mic{width:64px;height:64px;border-radius:50%;background:var(--blue);color:#fff;font-size:26px;
+    display:flex;align-items:center;justify-content:center;margin:14px auto 8px}
+  .phone .wave{display:flex;gap:3px;justify-content:center;align-items:flex-end;height:34px;margin:10px 0}
+  .phone .wave i{width:5px;background:var(--blue);border-radius:3px;display:block}
+  .phone .bar-chart{display:flex;gap:8px;align-items:flex-end;height:110px;margin:14px 4px 6px}
+  .phone .bar-chart i{flex:1;background:var(--blue);border-radius:6px 6px 0 0;display:block;opacity:.85}
+  .phone .bar-chart i.dim{background:#c9d3e0}
+  .phone .chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .phone .chip-row span{background:var(--blue-soft);color:var(--blue);font-size:12px;font-weight:700;border-radius:999px;padding:5px 10px}
+  .phone .coach-msg{background:var(--bg-soft);border-radius:12px;padding:12px;font-size:13.5px;line-height:1.5;margin-top:10px}
+  .phone .coach-msg b{color:var(--blue)}
+  .phone .goal{font-size:13px;color:var(--grey);text-align:center;margin-top:10px}
+
+  /* ---- stats band ---- */
+  .stats{background:var(--blue);color:#fff;padding:56px 0}
+  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;text-align:center}
+  .stats b{font-size:46px;font-weight:800;display:block;letter-spacing:-.02em}
+  .stats span{font-size:16px;opacity:.9}
+  .stats .note{grid-column:1/-1;font-size:13px;opacity:.75;margin-top:8px}
+
+  /* ---- device sync ---- */
+  .sync{padding:64px 0;text-align:center}
+  .sync h2{font-size:26px;font-weight:800;margin-bottom:8px}
+  .sync p{color:var(--grey);font-size:16px;margin-bottom:30px}
+  .sync-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}
+  .sync-item{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:999px;
+    padding:12px 20px;font-weight:600;font-size:15px;background:#fff}
+  .sync-item .ic{font-size:20px}
+
+  /* ---- calculator ---- */
+  .calc-section{background:var(--bg-soft);padding:72px 0}
+  .calc-card{max-width:880px;margin:0 auto;background:#fff;border-radius:24px;box-shadow:0 18px 50px rgba(0,0,0,.08);
+    display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+  .calc-form{padding:36px 34px}
+  .calc-form h3{font-size:24px;font-weight:800;margin-bottom:6px}
+  .calc-form .hint{color:var(--grey);font-size:14.5px;margin-bottom:22px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
+  .field input,.field select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;font-family:inherit}
+  .field input:focus,.field select:focus{outline:2px solid var(--blue);border-color:var(--blue)}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .seg{display:flex;gap:8px}
+  .seg label{flex:1;text-align:center;border:1.5px solid var(--line);border-radius:12px;padding:13px 0;font-weight:700;cursor:pointer;font-size:15px}
+  .seg input{display:none}
+  .seg input:checked + label{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .calc-result{background:var(--blue);color:#fff;padding:36px 34px;display:flex;flex-direction:column;justify-content:center}
+  .calc-result h3{font-size:20px;font-weight:800;margin-bottom:18px}
+  .calc-result .empty{opacity:.85;font-size:15px;line-height:1.6}
+  .res-line{display:flex;justify-content:space-between;align-items:baseline;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.25)}
+  .res-line:last-child{border-bottom:0}
+  .res-line b{font-size:30px}
+  .res-line span{font-size:15px;opacity:.9}
+  .res-note{font-size:13px;opacity:.8;margin-top:16px;line-height:1.5}
+  .calc-error{color:#b00020;font-size:14px;font-weight:600;margin-top:4px;display:none}
+
+  /* ---- calculator results: your plan ---- */
+  .calc-result .res-sec{margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.25)}
+  .calc-result .res-sec h4{font-size:14px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;opacity:.85;margin-bottom:12px}
+  .res-target{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .res-target b{font-size:40px}
+  .res-target span{font-size:15px;opacity:.9}
+  .res-delta{font-size:15px;font-weight:700;margin-top:6px;line-height:1.5}
+  .proj{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+  .proj div{background:rgba(255,255,255,.12);border-radius:12px;padding:12px 6px}
+  .proj b{display:block;font-size:19px}
+  .proj span{font-size:12.5px;opacity:.85;line-height:1.35;display:block}
+  .macro-row{margin-bottom:12px}
+  .macro-row .m-top{display:flex;justify-content:space-between;font-size:14.5px;font-weight:700}
+  .macro-row .m-top span{opacity:.9;font-weight:400}
+  .macro-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.22);margin-top:6px;overflow:hidden}
+  .macro-bar i{display:block;height:100%;background:#fff;border-radius:99px}
+  .menu-meal{margin-bottom:14px}
+  .menu-meal h5{font-size:15px;font-weight:800;margin-bottom:4px}
+  .menu-meal .m-line{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.14)}
+  .menu-meal .m-line span{opacity:.92}
+  .menu-meal .m-sub{display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding-top:6px}
+  .menu-total{display:flex;justify-content:space-between;gap:12px;font-weight:800;font-size:16px;padding-top:10px;border-top:2px solid rgba(255,255,255,.4)}
+  .menu-note{font-size:13px;opacity:.8;margin-top:10px;line-height:1.5}
+  .tip-list{list-style:none}
+  .tip-list li{font-size:14.5px;line-height:1.55;padding-left:22px;position:relative;margin-bottom:10px}
+  .tip-list li:before{content:"✓";position:absolute;left:0;font-weight:800}
+  .tip-list li:last-child{margin-bottom:0}
+
+  /* ---- FAQ ---- */
+  .faq{max-width:760px;margin:0 auto}
+  .faq-item{border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden;background:#fff}
+  .faq-q{width:100%;background:none;border:0;padding:18px 20px;font-size:16.5px;font-weight:700;text-align:left;
+    cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:inherit;color:var(--ink)}
+  .faq-q .pm{font-size:22px;color:var(--blue);flex:none;font-weight:400}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease}
+  .faq-a p{padding:0 20px 18px;color:var(--grey);font-size:15.5px}
+  .faq-item.open .faq-a{max-height:220px}
+  .faq-item.open .pm{transform:rotate(45deg)}
+
+  /* ---- final CTA + footer ---- */
+  .final-cta{background:linear-gradient(135deg,#0f6fec,#0a4fb0);color:#fff;text-align:center;padding:64px 24px}
+  .final-cta h2{font-size:34px;font-weight:800;margin-bottom:10px}
+  .final-cta p{font-size:17px;opacity:.92;margin-bottom:26px}
+  .final-cta .btn{background:#fff;color:var(--blue)}
+  .final-cta .btn:hover{background:var(--blue-soft)}
+  footer.site{padding:40px 0 28px;color:var(--grey);font-size:14px}
+  .foot-grid{display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap;padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:20px}
+  .foot-grid .col h4{color:var(--ink);font-size:15px;margin-bottom:10px}
+  .foot-grid .col a{display:block;color:var(--grey);margin-bottom:7px}
+  .foot-grid .col a:hover{color:var(--blue)}
+
+  /* ---- rework: warm neutrals, photo hero, verb cards, day-log, week path ---- */
+  :root{ --bg-soft:#f6f5f4; --warm:#fbf8f1; }
+  .hero{background:linear-gradient(180deg,#fff 0%,var(--warm) 100%)}
+  .hero h1{font-size:56px;letter-spacing:-.038em}
+  .eyebrow{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+  .reviews .eyebrow,.section .eyebrow,.sync .eyebrow{text-align:center}
+  .calc-section .eyebrow{text-align:left}
+  .menu-btn{display:none;background:none;border:0;font-size:22px;cursor:pointer;color:var(--ink);padding:8px;line-height:1}
+  /* hero photo (replaces the SVG bowl) */
+  .hero-photo{border-radius:8px;overflow:hidden;box-shadow:0 24px 60px rgba(15,111,236,.16);background:#fff}
+  .hero-photo img{display:block;width:100%;height:auto}
+  .hero-photo figcaption{padding:14px 18px;font-size:14px;color:var(--grey);background:#fff}
+  .hero-photo figcaption b{color:var(--ink)}
+  .hero-chip .dot{font-size:13px;font-weight:800;color:var(--blue)}
+  /* features photo: one human moment */
+  .features-photo{max-width:880px;margin:0 auto 36px;border-radius:8px;overflow:hidden}
+  .features-photo img{display:block;width:100%;height:340px;object-fit:cover;object-position:center 38%}
+  .features-photo figcaption{padding:10px 14px;font-size:13px;color:var(--grey);background:var(--bg-soft)}
+  /* verb cards: no icons, just the verb + a tiny caption */
+  .verb-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:12px}
+  .verb-card{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff}
+  .verb-card .v-num{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--blue)}
+  .verb-card h3{font-size:19px;font-weight:800;margin:8px 0 4px}
+  .verb-card p{font-size:14.5px;color:var(--grey);margin:0}
+  .f-icon{font-size:15px;font-weight:800;letter-spacing:.06em;color:var(--blue)}
+  /* populated day-log mockup (sync band) */
+  .daylog{max-width:680px;margin:34px auto 0;background:#fff;border:1px solid var(--line);border-radius:16px;
+    box-shadow:0 14px 40px rgba(0,0,0,.07);overflow:hidden;text-align:left}
+  .daylog-head{display:flex;justify-content:space-between;align-items:baseline;padding:18px 22px;border-bottom:1px solid var(--line)}
+  .daylog-head b{font-size:16px}
+  .daylog-head span{font-size:13.5px;color:var(--grey)}
+  .daylog-row{display:flex;justify-content:space-between;gap:16px;padding:13px 22px;border-bottom:1px solid var(--line);font-size:15px}
+  .daylog-row span{color:var(--grey);font-size:13.5px;display:block}
+  .daylog-row em{font-style:normal;font-weight:700;color:var(--blue);white-space:nowrap}
+  .daylog-total{display:flex;justify-content:space-between;gap:16px;padding:16px 22px;font-weight:800;font-size:15px;background:var(--bg-soft)}
+  .daylog-total span{color:var(--grey);font-weight:400;font-size:13.5px}
+  /* FAQ accordion: fade + scale, content a beat after the container */
+  .faq-a{opacity:0;transform:scale(.95);transform-origin:top center;
+    transition:max-height .25s ease,opacity .3s ease .05s,transform .3s ease}
+  .faq-a p{transition:opacity .2s ease .12s;opacity:0}
+  .faq-item.open .faq-a{opacity:1;transform:scale(1)}
+  .faq-item.open .faq-a p{opacity:1}
+  /* 7-day path in the final CTA */
+  .week-path{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:760px;margin:0 auto 30px;text-align:left}
+  .week-day{display:flex;gap:14px;align-items:baseline;background:rgba(255,255,255,.12);border-radius:12px;padding:14px 18px}
+  .week-day .w-num{font-size:13px;font-weight:800;letter-spacing:.08em;opacity:.85;flex:none}
+  .week-day b{font-size:15.5px;display:block}
+  .week-day span{font-size:13.5px;opacity:.85;line-height:1.45;display:block}
+  .week-path .week-day:last-child{grid-column:1/-1}
+  /* macro bars grow on Calculate */
+  .macro-bar i{transform-origin:left center}
+  .calc-result.anim .macro-bar i{animation:macrogrow .5s ease both}
+  @keyframes macrogrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  /* scroll reveals: fade + 16px rise, once-only */
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease var(--d,0ms),transform .55s ease var(--d,0ms)}
+  .reveal.in{opacity:1;transform:none}
+  .photo-credits{font-size:12.5px;color:var(--grey);margin-top:14px;line-height:1.6}
+  .photo-credits a{color:var(--grey);text-decoration:underline}
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    .faq-a,.faq-a p{transition:none}
+    .calc-result.anim .macro-bar i{animation:none}
+  }
+  @media (max-width:900px){
+    .hero-grid,.feature,.calc-card{grid-template-columns:1fr}
+    .feature.flip .f-text{order:1}.feature.flip .f-phone{order:2}
+    .hero h1{font-size:38px}
+    nav.main{display:none}
+    .stats-grid{grid-template-columns:1fr;gap:24px}
+    .hero-chip{display:none}
+    .carousel{padding:28px 20px}
+    .verb-cards{grid-template-columns:1fr}
+    .week-path{grid-template-columns:1fr}
+    .menu-btn{display:block}
+    nav.main.open{display:flex;position:absolute;top:64px;left:0;right:0;background:#fff;flex-direction:column;
+      gap:0;padding:8px 24px 16px;border-bottom:1px solid var(--line);box-shadow:0 16px 30px rgba(0,0,0,.08);z-index:60}
+    nav.main.open a{padding:12px 0;border-bottom:1px solid var(--line);font-size:16px}
+    nav.main.open a:last-child{border-bottom:0}
+  }
+  @media (max-width:480px){
+    .wrap{padding:0 16px}
+    .hero{padding:52px 0 40px}
+    .hero h1{font-size:34px}
+    .hero p.lede{font-size:17px}
+    .header-right .signin{display:none}
+    .field-row{grid-template-columns:1fr}
+    .calc-form,.calc-result{padding:26px 20px}
+    .res-line b{font-size:24px}
+    .res-target b{font-size:32px}
+    .proj b{font-size:16px}
+    .section{padding:52px 0}
+    .stats b{font-size:38px}
+    .carousel .q{font-size:18px;min-height:0}
+    .final-cta{padding:52px 16px}
+    .final-cta h2{font-size:28px}
+    .sample-bar{font-size:12px}
+    .features-photo img{height:220px}
+  }
+</style>
+</head>
+<body>
+
+<div class="sample-bar"><b>نمونه کار · Portfolio sample</b></div>
+
+<header class="site">
+  <div class="wrap header-in">
+    <a class="logo" href="#top" aria-label="Platewise home">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#0f6fec"/><path d="M8 18a8 8 0 0 0 16 0H8z" fill="#fff"/><path d="M11 12c1-2 3-3 5-3s4 1 5 3" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="13" cy="9" r="1.4" fill="#7fc4a8"/><circle cx="19" cy="8" r="1.4" fill="#f5a623"/></svg>
+      Platewise
+    </a>
+    <nav class="main" id="navMain" aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#calculator">BMR Calculator</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <button class="menu-btn" aria-expanded="false" aria-controls="navMain" aria-label="Open menu">☰</button>
+    <div class="header-right">
+      <a class="signin" href="#calculator">Sign in</a>
+      <a class="btn small pill-cta" href="#calculator">START TODAY</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Know what you eat.<br><span>Reach the weight<br>you want.</span></h1>
+        <p class="lede">Platewise turns every meal into a clear number. Log food in seconds, see your macros at a glance, and let your coach keep you on track, one plate at a time.</p>
+        <div class="hero-cta-row">
+          <a class="btn pill-cta" href="#calculator">START FOR FREE</a>
+          <div class="stars">
+            <span class="star-row" aria-label="4.8 out of 5 stars">★★★★★</span>
+            <span><b>4.8 out of 5</b> · 2.4 Million 5-Star Reviews</span>
+          </div>
+          <div class="store-row">
+            <a class="store-badge" href="#calculator"><span>↓</span><span><small>Download</small>Platewise app</span></a>
+            <a class="store-badge" href="#calculator"><span>▶</span><span><small>Get the app</small>for your phone</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-art">
+        <figure class="hero-photo">
+          <img src="../assets/graphics/diet-intl/buddha-bowl.jpg" alt="A vibrant buddha bowl with avocado, tempeh, edamame, radish and rice" width="1200" height="900" fetchpriority="high">
+          <figcaption><b>Buddha bowl</b> · 512 kcal · 38 g protein</figcaption>
+        </figure>
+        <div class="hero-chip chip-a"><span class="dot">01</span><span>Avocado toast<small>320 kcal · logged in 3 s</small></span></div>
+        <div class="hero-chip chip-b"><span class="dot">02</span><span>1,240 kcal left<small>of 2,100 daily goal</small></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews" id="reviews">
+    <div class="wrap">
+      <p class="eyebrow reveal">01 · Reviews</p>
+      <h2 class="reveal">Loved by people getting healthier</h2>
+      <div class="carousel" aria-live="polite">
+        <div class="cstars" aria-hidden="true">★★★★★</div>
+        <p class="q" id="reviewText"></p>
+        <p class="who" id="reviewWho"></p>
+        <div class="car-nav">
+          <button class="car-btn" id="prevReview" aria-label="Previous review">‹</button>
+          <div class="car-dots" id="reviewDots" role="tablist" aria-label="Choose review"></div>
+          <button class="car-btn" id="nextReview" aria-label="Next review">›</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="wrap">
+      <p class="eyebrow reveal">02 · Features</p>
+      <h2 class="reveal">Everything you need, in your pocket</h2>
+      <p class="sub reveal">Five tools that make logging food feel easy, not like homework.</p>
+
+      <figure class="features-photo reveal">
+        <img src="../assets/graphics/diet-intl/gym-dumbbells.jpg" alt="A hand gripping a dumbbell in the gym" width="1200" height="1797" loading="lazy">
+        <figcaption>Exercise is half the story, workouts sync in and adjust your daily target.</figcaption>
+      </figure>
+
+      <div class="verb-cards">
+        <div class="verb-card reveal"><span class="v-num">01</span><h3>Log a meal</h3><p>Snap it, say it, or scan it, under 10 seconds, hands-free when you need it.</p></div>
+        <div class="verb-card reveal"><span class="v-num">02</span><h3>Scan a barcode</h3><p>One scan and the whole label is there: calories, macros, sugar and salt.</p></div>
+        <div class="verb-card reveal"><span class="v-num">03</span><h3>Hit your protein</h3><p>A daily protein target that fits your goal, with a coach nudge when you drift.</p></div>
+      </div>
+
+      <!-- 1 Meal Scan -->
+      <div class="feature">
+        <div class="f-text">
+          <div class="f-icon">01</div>
+          <h3>Meal Scan</h3>
+          <p>Point your camera at a plate and Platewise recognises the foods, estimates portions and fills in the calories for you.</p>
+          <p class="benefit">Log a whole meal in under 10 seconds.</p>
+        </div>
+        <div class="f-phone">
+          <div class="phone" aria-hidden="true">
+            <div class="notch"><i></i></div>
+            <div class="screen">
+              <div class="appbar">Meal Scan <span>● Live</span></div>
+              <div class="scan-box"><div class="big">SCAN</div><p>Align your plate inside the frame</p></div>
+              <div class="food-row"><div><b>Grilled salmon</b><span>150 g · recognised</span></div><em>310 kcal</em></div>
+              <div class="food-row"><div><b>Brown rice</b><span>120 g · recognised</span></div><em>134 kcal</em></div>
+              <div class="food-row"><div><b>Green salad</b><span>80 g · recognised</span></div><em>28 kcal</em></div>
+              <div class="food-row"><div><b>Total for this plate</b><span>3 foods detected</span></div><em>472 kcal</em></div>
+              <p class="goal">Tap a row to adjust the portion</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 Voice Log -->
+      <div class="feature flip">
+        <div class="f-text">
+          <div class="f-icon">02</div>
+          <h3>Voice Log</h3>
+          <p>Just say what you ate, “two eggs and toast with butter”, and your diary fills itself in, hands-free, while you cook or drive.</p>
+          <p class="benefit">Log food without typing a single word.</p>
+        </div>
+        <div class="f-phone">
+          <div class="phone" aria-hidden="true">
+            <div class="notch"><i></i></div>
+            <div class="screen">
+              <div class="appbar">Voice Log <span>● Listening</span></div>
+              <div class="mic" aria-hidden="true">●</div>
+              <div class="wave"><i style="height:12px"></i><i style="height:26px"></i><i style="height:18px"></i><i style="height:32px"></i><i style="height:22px"></i><i style="height:30px"></i><i style="height:14px"></i></div>
+              <p style="text-align:center;font-size:14px;color:var(--grey)">“Two eggs and toast with butter…”</p>
+              <div class="food-row"><div><b>Eggs, boiled ×2</b><span>heard &amp; matched</span></div><em>156 kcal</em></div>
+              <div class="food-row"><div><b>Toast with butter</b><span>heard &amp; matched</span></div><em>190 kcal</em></div>
+              <div class="food-row"><div><b>Breakfast total</b><span>logged 08:12</span></div><em>346 kcal</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Barcode Scan -->
+      <div class="feature">
+        <div class="f-text">
+          <div class="f-icon">03</div>
+          <h3>Barcode Scan</h3>
+          <p>Scan any packaged food and get its full nutrition label instantly, calories, macros, sugar and salt, from a database of millions of products.</p>
+          <p class="benefit">One scan, the whole label, no typing.</p>
+        </div>
+        <div class="f-phone">
+          <div class="phone" aria-hidden="true">
+            <div class="notch"><i></i></div>
+            <div class="screen">
+              <div class="appbar">Barcode Scan <span>● Ready</span></div>
+              <div class="scan-box"><div class="big">▮▮▮▮▮</div><p>Point at the barcode</p></div>
+              <div class="food-row"><div><b>Greek yoghurt 0% fat</b><span>170 g pot</span></div><em>97 kcal</em></div>
+              <div class="macro"><div><b>17 g</b>Protein</div><div><b>6 g</b>Carbs</div><div><b>0 g</b>Fat</div></div>
+              <div class="food-row"><div><b>Sugar</b><span>per pot</span></div><em>6 g</em></div>
+              <div class="food-row"><div><b>Salt</b><span>per pot</span></div><em>0.2 g</em></div>
+              <p class="goal">Saved to your recent foods</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Progress Tracking -->
+      <div class="feature flip">
+        <div class="f-text">
+          <div class="f-icon">04</div>
+          <h3>Progress Tracking</h3>
+          <p>Weight, measurements and photos in one clean chart. See your trend, not just today’s number, and know exactly when to adjust your goal.</p>
+          <p class="benefit">Your trend line, not a single weigh-in, tells the story.</p>
+        </div>
+        <div class="f-phone">
+          <div class="phone" aria-hidden="true">
+            <div class="notch"><i></i></div>
+            <div class="screen">
+              <div class="appbar">Progress <span>12 weeks</span></div>
+              <div class="bar-chart">
+                <i style="height:96%"></i><i style="height:88%"></i><i style="height:82%"></i><i style="height:76%"></i>
+                <i style="height:70%"></i><i style="height:64%"></i><i style="height:58%"></i><i style="height:52%"></i>
+                <i class="dim" style="height:46%"></i><i class="dim" style="height:40%"></i>
+              </div>
+              <div class="food-row"><div><b>Current weight</b><span>this morning</span></div><em>71.4 kg</em></div>
+              <div class="food-row"><div><b>Change so far</b><span>12 weeks</span></div><em>−3.6 kg</em></div>
+              <div class="food-row"><div><b>Weekly average</b><span>steady loss</span></div><em>−0.3 kg</em></div>
+              <p class="goal">On track for your goal in 9 weeks</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 AI Coach -->
+      <div class="feature">
+        <div class="f-text">
+          <div class="f-icon">05</div>
+          <h3>AI Coach</h3>
+          <p>Your coach reads your diary, spots what’s working, and suggests small, realistic swaps, more protein at lunch, a lighter dinner, instead of a rigid diet.</p>
+          <p class="benefit">One smart suggestion a day, not a lecture.</p>
+        </div>
+        <div class="f-phone">
+          <div class="phone" aria-hidden="true">
+            <div class="notch"><i></i></div>
+            <div class="screen">
+              <div class="appbar">AI Coach <span>● Today</span></div>
+              <div class="coach-msg"><b>Good morning, Sara.</b> You hit your protein goal 5 days in a row, nice streak.</div>
+              <div class="coach-msg"><b>Today’s tip:</b> swap the afternoon biscuit for a handful of almonds. Same crunch, 9 g more protein.</div>
+              <div class="chip-row"><span>High protein</span><span>Low sugar</span><span>Quick recipe</span></div>
+              <div class="coach-msg"><b>Recipe idea:</b> 15-minute chickpea stew, 420 kcal, 22 g protein. Want the recipe?</div>
+              <p class="goal">Coach replies in seconds, any time</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAND -->
+  <section class="stats" aria-label="Platewise in numbers">
+    <div class="wrap stats-grid">
+      <div><b data-count="14" data-suffix="M+">14M+</b><span>foods in the database</span></div>
+      <div><b data-count="1200" data-suffix="+" data-comma="1">1,200+</b><span>in-app recipes</span></div>
+      <div><b data-count="40" data-suffix="+">40+</b><span>cuisines covered</span></div>
+    </div>
+  </section>
+
+  <!-- DEVICE SYNC -->
+  <section class="sync">
+    <div class="wrap">
+      <p class="eyebrow reveal">03 · Sync</p>
+      <h2 class="reveal">Syncs with the devices you already own</h2>
+      <p class="reveal">Platewise connects with your everyday health tools, steps, workouts and weight flow in automatically.</p>
+      <div class="sync-grid reveal">
+        <span class="sync-item">Smartwatch</span>
+        <span class="sync-item">Fitness tracker</span>
+        <span class="sync-item">Health app</span>
+        <span class="sync-item">Smart scale</span>
+        <span class="sync-item">Cycling app</span>
+        <span class="sync-item">Workout app</span>
+      </div>
+      <div class="daylog reveal" aria-label="A populated day log">
+        <div class="daylog-head"><b>Today</b><span>Logged so far</span></div>
+        <div class="daylog-row"><div>Breakfast<span>Greek yoghurt, oats, blueberries</span></div><em>412 kcal</em></div>
+        <div class="daylog-row"><div>Lunch<span>Chicken, brown rice, salad</span></div><em>486 kcal</em></div>
+        <div class="daylog-row"><div>Snack<span>Apple, almonds</span></div><em>238 kcal</em></div>
+        <div class="daylog-row"><div>Dinner<span>Salmon, sweet potato, broccoli</span></div><em>489 kcal</em></div>
+        <div class="daylog-total"><div>1,625 of 2,100 kcal<span>475 kcal left · 96 g protein</span></div><em>78% of goal</em></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BMR CALCULATOR -->
+  <section class="calc-section" id="calculator">
+    <div class="wrap">
+      <p class="eyebrow reveal">04 · Calculator</p>
+      <h2 class="reveal">Free BMR calculator</h2>
+      <p class="sub reveal">No sign-up. Enter your details, pick a goal, and get your daily target, a week-by-week projection, macros, water and a sample day menu.</p>
+      <div class="calc-card">
+        <form class="calc-form" id="bmrForm" novalidate>
+          <h3>Your details</h3>
+          <div class="field">
+            <label id="sexLabel">Sex</label>
+            <div class="seg" role="group" aria-labelledby="sexLabel">
+              <input type="radio" name="sex" id="sexF" value="female" checked><label for="sexF">Female</label>
+              <input type="radio" name="sex" id="sexM" value="male"><label for="sexM">Male</label>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="age">Age (years)</label>
+              <input type="number" id="age" min="10" max="100" value="34" required>
+            </div>
+            <div class="field">
+              <label for="weight">Weight (kg)</label>
+              <input type="number" id="weight" min="30" max="300" step="0.1" value="68" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="height">Height (cm)</label>
+            <input type="number" id="height" min="120" max="230" step="0.5" value="168" required>
+          </div>
+          <div class="field">
+            <label for="activity">Activity level</label>
+            <select id="activity">
+              <option value="1.2">Sedentary, little or no exercise</option>
+              <option value="1.375" selected>Lightly active, 1–3 days / week</option>
+              <option value="1.55">Moderately active, 3–5 days / week</option>
+              <option value="1.725">Very active, 6–7 days / week</option>
+              <option value="1.9">Extra active, physical job or training twice a day</option>
+            </select>
+          </div>
+          <div class="field">
+            <label id="goalLabel">Your goal</label>
+            <div class="seg" role="group" aria-labelledby="goalLabel">
+              <input type="radio" name="goal" id="goalLose" value="lose" checked><label for="goalLose">Lose weight</label>
+              <input type="radio" name="goal" id="goalMaintain" value="maintain"><label for="goalMaintain">Maintain</label>
+              <input type="radio" name="goal" id="goalGain" value="gain"><label for="goalGain">Gain weight</label>
+            </div>
+          </div>
+          <p class="calc-error" id="calcError">Please enter a valid age (10–100), weight (30–300 kg) and height (120–230 cm).</p>
+          <button class="btn" type="submit" style="width:100%">CALCULATE</button>
+        </form>
+        <div class="calc-result" id="calcResult" aria-live="polite">
+          <h3>Your results</h3>
+          <p class="empty">Fill in your details and press CALCULATE.<br><br>Your BMR is the calories your body burns at complete rest. Your daily calories (TDEE) add your activity on top of that.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <p class="eyebrow reveal">05 · FAQ</p>
+      <h2 class="reveal">Frequently asked questions</h2>
+      <p class="sub reveal">Everything people usually ask before starting.</p>
+      <div class="faq">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Is Platewise really free to start?<span class="pm">+</span></button>
+          <div class="faq-a"><p>Yes. The free plan covers food logging, barcode scanning and the BMR calculator, with no card required. Extra features, Meal Scan, Voice Log and the AI Coach, are part of the optional Premium plan, and you can cancel any time.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">How accurate is Meal Scan?<span class="pm">+</span></button>
+          <div class="faq-a"><p>Meal Scan recognises common dishes and estimates portions from the photo. It is designed to get you within a useful range in seconds, you can always tap any item to correct the portion or swap it for an exact match from the database.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Do I need a smartwatch or fitness tracker?<span class="pm">+</span></button>
+          <div class="faq-a"><p>No. Platewise works fully on its own, you log food and weight by hand. If you do own a smartwatch, fitness tracker or health app, you can connect it so steps and workouts sync automatically and adjust your daily calorie target.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Can I use Platewise for weight gain or muscle building?<span class="pm">+</span></button>
+          <div class="faq-a"><p>Yes. When you set your goal you choose lose, maintain or gain weight, and Platewise sets your calorie and protein targets to match. The progress chart then tracks your trend against that goal, week by week.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Is my food and health data private?<span class="pm">+</span></button>
+          <div class="faq-a"><p>Your diary is private to your account by default. You choose what to share, nothing is posted or sold without your say-so, and you can export or delete all of your data at any time from the app settings.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <p class="eyebrow reveal" style="color:#fff">06 · Your first week</p>
+    <h2 class="reveal">Your first healthy week starts today</h2>
+    <p class="reveal">Join the people already logging with Platewise, free to start, no card required.</p>
+    <div class="week-path">
+      <div class="week-day reveal"><span class="w-num">DAY 01</span><div><b>Set your goal</b><span>Run the BMR calculator and get your daily target.</span></div></div>
+      <div class="week-day reveal"><span class="w-num">DAY 02</span><div><b>Log your first meal</b><span>Scan a plate and see the number in under 10 seconds.</span></div></div>
+      <div class="week-day reveal"><span class="w-num">DAY 03</span><div><b>Scan your pantry</b><span>Barcode the foods you already eat, so logging gets faster.</span></div></div>
+      <div class="week-day reveal"><span class="w-num">DAY 04</span><div><b>Hit your protein</b><span>Follow the macro target, the coach flags the gap at lunch.</span></div></div>
+      <div class="week-day reveal"><span class="w-num">DAY 05</span><div><b>Check your trend</b><span>Weigh in and watch the trend line, not one number.</span></div></div>
+      <div class="week-day reveal"><span class="w-num">DAY 06</span><div><b>Try a coach swap</b><span>One small suggestion a day, a lighter dinner, a better snack.</span></div></div>
+      <div class="week-day reveal"><span class="w-num">DAY 07</span><div><b>Review your week</b><span>Seven days logged. Adjust the target and start week two.</span></div></div>
+    </div>
+    <a class="btn pill-cta reveal" href="#calculator">START TODAY</a>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="col">
+        <h4>Platewise</h4>
+        <a href="#features">Features</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#calculator">BMR Calculator</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="col">
+        <h4>Tools</h4>
+        <a href="#calculator">Free BMR calculator</a>
+        <a href="#features">Meal Scan</a>
+        <a href="#features">Voice Log</a>
+        <a href="#features">Progress tracking</a>
+      </div>
+      <div class="col">
+        <h4>Support</h4>
+        <a href="#faq">Help &amp; FAQ</a>
+        <a href="#calculator">Contact us</a>
+        <a href="#calculator">Privacy</a>
+        <a href="#calculator">Terms</a>
+      </div>
+    </div>
+    <p class="photo-credits">Photos: buddha bowl: <a href="https://commons.wikimedia.org/wiki/File%3ABuddhaBowlLot.jpg">PizzaMan</a> (CC BY-SA 4.0) · hand with dumbbell: <a href="https://commons.wikimedia.org/wiki/File%3AClose-up_Hand_holding_dumbbell_in_gym.jpg">Nenad Stojkovic</a> (CC BY 2.0)</p>
+  </div>
+</footer>
+
+<script>
+/* ---------- shared motion helpers ---------- */
+var reducedMotion = (typeof window.matchMedia === 'function') && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* count-up 700ms, on Calculate only, from the previous value (never per keystroke) */
+var prevNums = { bmr: 0, tdee: 0, target: 0 };
+function animNum(el, to, fmtFn, key){
+  var from = prevNums[key] || 0;
+  prevNums[key] = to;
+  if(!el) return;
+  if(reducedMotion || typeof window.requestAnimationFrame !== 'function'){ el.textContent = fmtFn(to); return; }
+  var start = null;
+  (function tick(ts){
+    if(start === null) start = ts;
+    var p = Math.min(1, (ts - start) / 700);
+    el.textContent = fmtFn(from + (to - from) * p);
+    if(p < 1) window.requestAnimationFrame(tick);
+  })(performance.now());
+}
+
+/* ---------- Review carousel (6 reviews, manual only, no auto-advance) ---------- */
+var REVIEWS = [
+  {text:"“I used to guess my portions. Now I scan my plate, see the number, and move on with my day. I have lost 6 kilos in four months without ever feeling on a diet.”", who:"Sara M., lost 6 kg in 4 months"},
+  {text:"“Voice Log is the feature I did not know I needed. I log breakfast while I am still making it. It takes ten seconds, and I actually stick with it.”", who:"Daniel R., member for 8 months"},
+  {text:"“The AI Coach is like a friend who reads your diary. It told me my protein was low at lunch, one swap a day, and my energy is completely different.”", who:"Priya K., training for a 10K"},
+  {text:"“I have tried three tracking apps. This is the first one where the barcode scan worked on everything in my cupboard, first try.”", who:"Tom W., logs 5 days a week"},
+  {text:"“The progress chart keeps me honest without stressing me out. One bad weekend does not ruin the trend line, and that is why I am still here.”", who:"Elena G., down 9 kg this year"},
+  {text:"“As a shift worker I eat at strange hours. Platewise does not judge the timing, it just shows the numbers. Simple, fast, and it works offline too.”", who:"Marcus L., night-shift nurse"}
+];
+var reviewIndex = 0;
+var reviewText = document.getElementById('reviewText');
+var reviewWho = document.getElementById('reviewWho');
+var dotsWrap = document.getElementById('reviewDots');
+
+REVIEWS.forEach(function(_, i){
+  var d = document.createElement('button');
+  d.setAttribute('aria-label', 'Show review ' + (i + 1));
+  d.addEventListener('click', function(){ showReview(i); });
+  dotsWrap.appendChild(d);
+});
+function showReview(i){
+  reviewIndex = (i + REVIEWS.length) % REVIEWS.length;
+  reviewText.textContent = REVIEWS[reviewIndex].text;
+  reviewWho.innerHTML = '<b>' + REVIEWS[reviewIndex].who + '</b>';
+  Array.prototype.forEach.call(dotsWrap.children, function(d, j){
+    d.classList.toggle('active', j === reviewIndex);
+  });
+}
+document.getElementById('prevReview').addEventListener('click', function(){ showReview(reviewIndex - 1); });
+document.getElementById('nextReview').addEventListener('click', function(){ showReview(reviewIndex + 1); });
+showReview(0);
+
+/* ---------- FAQ accordion ---------- */
+document.querySelectorAll('.faq-item').forEach(function(item){
+  var btn = item.querySelector('.faq-q');
+  btn.addEventListener('click', function(){
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(function(o){
+      o.classList.remove('open');
+      o.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+    });
+    if (!isOpen){
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+});
+
+/* ---------- BMR calculator (formulas unchanged) ---------- */
+function calcBMR(sex, weightKg, heightCm, ageYears){
+  var bmr = 10 * weightKg + 6.25 * heightCm - 5 * ageYears + (sex === 'male' ? 5 : -161);
+  return bmr;
+}
+function bmi(weightKg, heightCm){
+  var m = heightCm / 100;
+  return weightKg / (m * m);
+}
+function bmiCategory(v){
+  if (v < 18.5) return 'Underweight';
+  if (v < 25)   return 'Healthy weight';
+  if (v < 30)   return 'Overweight';
+  return 'Obese';
+}
+
+/* Goal adjustments are fixed daily calorie shifts from TDEE, the standard
+   500 kcal deficit / 400 kcal surplus approach. 1 kg of body weight ≈ 7700 kcal. */
+var GOALS = {
+  lose:     { adj: -500, deltaText: '500 kcal below what you burn each day, a steady, sustainable deficit.' },
+  maintain: { adj: 0,    deltaText: 'the same as what you burn each day, your weight should stay steady.' },
+  gain:     { adj: 400,  deltaText: '400 kcal above what you burn each day, a steady, lean surplus.' }
+};
+var KCAL_PER_KG = 7700;
+var WATER_ML_PER_KG = 35;
+var MIN_TARGET_KCAL = 1200;
+/* Fixed macro split of the daily target: 30% protein, 25% fat, 45% carbs. */
+var MACRO_SPLIT = [
+  { name: 'Protein', pct: 0.30, kcalPerG: 4 },
+  { name: 'Fat',     pct: 0.25, kcalPerG: 9 },
+  { name: 'Carbs',   pct: 0.45, kcalPerG: 4 }
+];
+/* Sample-day menu: base template, scaled to the daily target, portions rounded to 5 g. */
+var MENU = [
+  { title: 'Breakfast', items: [
+    { name: 'Greek yoghurt 0% fat', grams: 200, kcalPerG: 0.59 },
+    { name: 'Rolled oats', grams: 50, kcalPerG: 3.89 },
+    { name: 'Blueberries', grams: 100, kcalPerG: 0.57 },
+    { name: 'Honey (1 tsp)', grams: 7, kcalPerG: 3.04 }
+  ]},
+  { title: 'Lunch', items: [
+    { name: 'Grilled chicken breast', grams: 150, kcalPerG: 1.65 },
+    { name: 'Brown rice, cooked', grams: 180, kcalPerG: 1.12 },
+    { name: 'Mixed salad with olive oil', grams: 150, kcalPerG: 0.60 }
+  ]},
+  { title: 'Snack', items: [
+    { name: 'Apple', grams: 180, kcalPerG: 0.52 },
+    { name: 'Almonds', grams: 25, kcalPerG: 5.79 }
+  ]},
+  { title: 'Dinner', items: [
+    { name: 'Baked salmon', grams: 130, kcalPerG: 2.08 },
+    { name: 'Sweet potato', grams: 150, kcalPerG: 0.86 },
+    { name: 'Steamed broccoli', grams: 120, kcalPerG: 0.34 }
+  ]}
+];
+function menuBaseKcal(){
+  var total = 0;
+  MENU.forEach(function(meal){
+    meal.items.forEach(function(it){ total += it.grams * it.kcalPerG; });
+  });
+  return total;
+}
+function round5(n){ return Math.max(5, Math.round(n / 5) * 5); }
+function buildMenu(target){
+  var scale = target / menuBaseKcal();
+  var meals = [], total = 0;
+  MENU.forEach(function(meal){
+    var items = [], sub = 0;
+    meal.items.forEach(function(it){
+      var g = round5(it.grams * scale);
+      var kcal = Math.round(g * it.kcalPerG);
+      items.push({ name: it.name, grams: g, kcal: kcal });
+      sub += kcal;
+    });
+    meals.push({ title: meal.title, items: items, subtotal: sub });
+    total += sub;
+  });
+  return { meals: meals, total: total };
+}
+var TIPS = {
+  lose: [
+    'Weigh yourself twice a week at the same time of day, the trend matters more than any single reading.',
+    'Hit the protein target: it keeps you full and protects muscle while the fat comes off.',
+    'Plan tomorrow’s menu tonight, a 500 kcal deficit is easy when the day is already decided.'
+  ],
+  maintain: [
+    'Weigh in once a week. If your weight drifts more than 1 kg for two weeks running, nudge your target by 100 kcal.',
+    'Keep the protein target, it steadies hunger and keeps the weight you have.',
+    'Use the menu as a template, not a rule: swap foods with similar calories to keep it interesting.'
+  ],
+  gain: [
+    'Put most of the extra calories into carbs around training, they are the easiest to eat.',
+    'Weigh yourself weekly and aim for about 0.3–0.4 kg per week, so most of the gain is muscle.',
+    'Struggling to finish meals? Split the snack into two smaller ones, morning and afternoon.'
+  ]
+};
+
+function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
+function signedKg(n, digits){
+  var d = (digits === undefined) ? 1 : digits;
+  if (n === 0) return (0).toFixed(d) + ' kg';
+  return (n < 0 ? '−' : '+') + Math.abs(n).toFixed(d) + ' kg';
+}
+
+function runCalc(animate){
+  var sex = document.querySelector('input[name="sex"]:checked').value;
+  var goal = document.querySelector('input[name="goal"]:checked').value;
+  var age = parseFloat(document.getElementById('age').value);
+  var weight = parseFloat(document.getElementById('weight').value);
+  var height = parseFloat(document.getElementById('height').value);
+  var activity = parseFloat(document.getElementById('activity').value);
+  var err = document.getElementById('calcError');
+  var ok = isFinite(age) && age >= 10 && age <= 100 &&
+           isFinite(weight) && weight >= 30 && weight <= 300 &&
+           isFinite(height) && height >= 120 && height <= 230 &&
+           isFinite(activity);
+  if (!ok){ err.style.display = 'block'; return; }
+  err.style.display = 'none';
+
+  var bmr = calcBMR(sex, weight, height, age);
+  var tdee = bmr * activity;
+  var tdeeRounded = Math.round(tdee);
+  var b = bmi(weight, height);
+
+  var target = tdeeRounded + GOALS[goal].adj;
+  var floored = false;
+  if (target < MIN_TARGET_KCAL){ target = MIN_TARGET_KCAL; floored = true; }
+  var dailyDelta = target - tdeeRounded; /* negative = deficit, positive = surplus */
+  var weeklyKg = dailyDelta * 7 / KCAL_PER_KG;
+
+  var menu = buildMenu(target);
+  var menuDiffPct = (menu.total - target) / target * 100;
+  var menuDiffText = menuDiffPct >= 0
+    ? Math.abs(menuDiffPct).toFixed(1) + '% over your target'
+    : Math.abs(menuDiffPct).toFixed(1) + '% under your target';
+
+  var waterMl = Math.round(weight * WATER_ML_PER_KG);
+
+  var html = '<h3>Your results</h3>' +
+    '<div class="res-line"><span>BMR (at rest)</span><b id="vBmr">' + fmt(bmr) + ' kcal</b></div>' +
+    '<div class="res-line"><span>Daily calories (TDEE)</span><b id="vTdee">' + fmt(tdee) + ' kcal</b></div>' +
+    '<div class="res-line"><span>BMI</span><b>' + b.toFixed(1) + '</b></div>' +
+    '<div class="res-line"><span>BMI category</span><b style="font-size:20px">' + bmiCategory(b) + '</b></div>';
+
+  html += '<div class="res-sec"><h4>Your daily target</h4>' +
+    '<div class="res-target"><span>Calories per day</span><b id="vTarget">' + fmt(target) + ' kcal</b></div>' +
+    '<p class="res-delta">That’s ' + GOALS[goal].deltaText + '</p>' +
+    '</div>';
+
+  html += '<div class="res-sec"><h4>What to expect: ' + signedKg(weeklyKg, 2) + ' per week</h4><div class="proj">';
+  [4, 8, 12].forEach(function(w){
+    var change = weeklyKg * w;
+    html += '<div><b>' + signedKg(change) + '</b><span>in ' + w + ' weeks<br>≈ ' + (weight + change).toFixed(1) + ' kg</span></div>';
+  });
+  html += '</div><p class="res-note">Projections use 1 kg ≈ 7,700 kcal and your actual daily ' +
+    (dailyDelta < 0 ? 'deficit of ' + fmt(Math.abs(dailyDelta)) + ' kcal' : dailyDelta > 0 ? 'surplus of ' + fmt(dailyDelta) + ' kcal' : 'balance') +
+    '. Real weight loss is rarely a straight line, water and glycogen make it jump around week to week.</p></div>';
+
+  html += '<div class="res-sec"><h4>Daily macros</h4>';
+  MACRO_SPLIT.forEach(function(m){
+    var grams = Math.round(target * m.pct / m.kcalPerG);
+    html += '<div class="macro-row"><div class="m-top"><span>' + m.name + ' · ' + grams + ' g</span><span>' + Math.round(m.pct * 100) + '% · ' + fmt(grams * m.kcalPerG) + ' kcal</span></div>' +
+      '<div class="macro-bar"><i style="width:' + Math.round(m.pct * 100) + '%"></i></div></div>';
+  });
+  html += '</div>';
+
+  html += '<div class="res-sec"><h4>Water</h4>' +
+    '<div class="res-line"><span>Daily water target</span><b>' + fmt(waterMl) + ' ml</b></div>' +
+    '<p class="res-note">About ' + (waterMl / 1000).toFixed(1) + ' litres a day, roughly 35 ml per kilogram of body weight. Spread it through the day; more if you train hard or it’s hot.</p></div>';
+
+  html += '<div class="res-sec"><h4>Sample day, scaled to your target</h4>';
+  menu.meals.forEach(function(meal){
+    html += '<div class="menu-meal"><h5>' + meal.title + '</h5>';
+    meal.items.forEach(function(it){
+      html += '<div class="m-line"><span>' + it.name + ' · ' + it.grams + ' g</span><span>' + fmt(it.kcal) + ' kcal</span></div>';
+    });
+    html += '<div class="m-sub"><span>' + meal.title + ' total</span><span>' + fmt(meal.subtotal) + ' kcal</span></div></div>';
+  });
+  html += '<div class="menu-total"><span>Sample day total</span><span>' + fmt(menu.total) + ' kcal</span></div>' +
+    '<p class="menu-note">That’s ' + menuDiffText + ' (target ' + fmt(target) + ' kcal). Portions are scaled from a base menu to match your target, swap any food for a similar-calorie alternative you prefer.</p></div>';
+
+  html += '<div class="res-sec"><h4>Your next steps</h4><ul class="tip-list">';
+  TIPS[goal].forEach(function(t){ html += '<li>' + t + '</li>'; });
+  html += '</ul></div>';
+
+
+  var calcResult = document.getElementById('calcResult');
+  calcResult.innerHTML = html;
+  /* count-up + macro-bar grow only on an explicit Calculate press */
+  if(animate){
+    if(!reducedMotion){
+      calcResult.classList.add('anim');
+      setTimeout(function(){ calcResult.classList.remove('anim'); }, 650);
+      animNum(document.getElementById('vBmr'), bmr, fmt, 'bmr');
+      animNum(document.getElementById('vTdee'), tdee, fmt, 'tdee');
+      animNum(document.getElementById('vTarget'), target, fmt, 'target');
+    } else {
+      prevNums.bmr = bmr; prevNums.tdee = tdee; prevNums.target = target;
+    }
+  } else {
+    prevNums.bmr = bmr; prevNums.tdee = tdee; prevNums.target = target;
+  }
+}
+
+var bmrForm = document.getElementById('bmrForm');
+bmrForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  runCalc(true);
+});
+/* Live re-run on every control, instant values, no animation (see count-up rule above). */
+bmrForm.addEventListener('input', function(){ runCalc(false); });
+bmrForm.addEventListener('change', function(){ runCalc(false); });
+runCalc(false);
+
+/* ---------- hamburger menu ---------- */
+var menuBtn = document.querySelector('.menu-btn');
+var navMain = document.getElementById('navMain');
+if(menuBtn && navMain){
+  menuBtn.addEventListener('click', function(){
+    var open = navMain.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    menuBtn.textContent = open ? '✕' : '☰';
+  });
+  navMain.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      navMain.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      menuBtn.setAttribute('aria-label', 'Open menu');
+      menuBtn.textContent = '☰';
+    });
+  });
+}
+
+/* ---------- scroll reveals: one observer, once-only, stagger 60ms capped at 6 per parent ---------- */
+var revealEls = document.querySelectorAll('.reveal');
+if('IntersectionObserver' in window && !reducedMotion){
+  var revealCounts = new Map();
+  var rio = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting) return;
+      var parent = en.target.parentElement;
+      var n = revealCounts.get(parent) || 0;
+      revealCounts.set(parent, n + 1);
+      if(n < 6) en.target.style.setProperty('--d', (n * 60) + 'ms');
+      en.target.classList.add('in');
+      rio.unobserve(en.target);
+    });
+  }, {threshold: .12, rootMargin: '0px 0px -8% 0px'});
+  revealEls.forEach(function(el){ rio.observe(el); });
+} else {
+  revealEls.forEach(function(el){ el.classList.add('in'); });
+}
+
+/* ---------- stats band count-up (once, when scrolled into view) ---------- */
+var statNums = document.querySelectorAll('.stats b[data-count]');
+function animStat(el){
+  var to = parseFloat(el.getAttribute('data-count'));
+  var suffix = el.getAttribute('data-suffix') || '';
+  var comma = el.getAttribute('data-comma') === '1';
+  var format = function(v){
+    var n = Math.round(v);
+    return (comma ? n.toLocaleString('en-US') : String(n)) + suffix;
+  };
+  if(reducedMotion || typeof window.requestAnimationFrame !== 'function'){ el.textContent = format(to); return; }
+  var start = null;
+  (function tick(ts){
+    if(start === null) start = ts;
+    var p = Math.min(1, (ts - start) / 700);
+    el.textContent = format(to * p);
+    if(p < 1) window.requestAnimationFrame(tick);
+  })(performance.now());
+}
+if(statNums.length){
+  if('IntersectionObserver' in window && !reducedMotion){
+    var sio = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ animStat(en.target); sio.unobserve(en.target); }
+      });
+    }, {threshold: .4});
+    statNums.forEach(function(el){ sio.observe(el); });
+  } else {
+    statNums.forEach(function(el){ animStat(el); });
+  }
+}
+</script>
+</body>
+</html>

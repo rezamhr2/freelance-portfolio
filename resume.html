@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رزومه · رضا محمدرضایی | مترجم انگلیسی–فارسی</title>
+<style>
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(web/assets/fonts/vazirmatn-arabic.woff2) format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(web/assets/fonts/vazirmatn-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+  :root { --navy: #1f3a5f; --navy2: #2c5282; --gold: #b7791f; --gold-soft: #f7ecd2; --ink: #222; --muted: #555; --line: #e3e3e0; --green: #2e7d32; }
+  * { box-sizing: border-box; }
+  body { font-family: Vazirmatn, Tahoma, 'Segoe UI', sans-serif; background: #eef1f4; color: var(--ink); margin: 0; padding: 0; line-height: 1.9; }
+  .page { max-width: 920px; margin: 0 auto; background: #fff; box-shadow: 0 0 32px rgba(0,0,0,.12); }
+  /* ---------- header ---------- */
+  header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 70%, #3a6ea8 100%); color: #fff; padding: 36px 40px 28px; border-bottom: 5px solid var(--gold); }
+  .head-inner { display: flex; gap: 30px; align-items: center; }
+  .head-photo { flex: 0 0 240px; margin: 0; }
+  .head-photo img { display: block; width: 100%; height: auto; border-radius: 10px; border: 3px solid var(--gold); box-shadow: 0 4px 18px rgba(0,0,0,.35); }
+  header h1 { margin: 0 0 2px; font-size: 34px; letter-spacing: .5px; }
+  header .role { margin: 0 0 16px; font-size: 18px; color: #d7e2ef; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .chips li { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); border-radius: 24px; padding: 3px 14px; font-size: 13.5px; }
+  .chips a { color: #fff; text-decoration: none; }
+  .chips li:hover { background: rgba(255,255,255,.24); }
+  .chips li svg { width: 15px; height: 15px; vertical-align: -2px; }
+  /* ---------- stats ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 20px 40px 0; }
+  .stat { background: #f7f7f5; border: 1px solid var(--line); border-radius: 10px; text-align: center; padding: 12px 6px 10px; position: relative; overflow: hidden; }
+  .stat::before { content: ""; position: absolute; top: 0; right: 0; left: 0; height: 3px; background: var(--gold); transform: scaleX(0); transform-origin: right; transition: transform .5s ease; }
+  .stat.in::before { transform: scaleX(1); }
+  .stat b { display: block; font-size: 24px; color: var(--navy); line-height: 1.3; }
+  .stat span { font-size: 13px; color: var(--muted); }
+  main { padding: 6px 40px 40px; }
+  section { margin-top: 30px; }
+  h2 { color: var(--navy); font-size: 20px; margin: 0 0 14px; padding-bottom: 6px; border-bottom: 2px solid var(--navy); position: relative; }
+  h2::before { content: ""; display: inline-block; width: 10px; height: 10px; background: var(--gold); margin-inline-end: 8px; border-radius: 2px; }
+  h2 .en { color: var(--gold); font-size: 13px; font-weight: normal; }
+  p { margin: 0 0 10px; }
+  ul { margin: 0; padding-inline-start: 20px; }
+  li { margin-bottom: 4px; }
+  /* ---------- services: verb cards ---------- */
+  .verbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .verb { border: 1px solid var(--line); border-top: 4px solid var(--navy); border-radius: 10px; padding: 14px 18px; background: #fff; transition: transform .2s ease, box-shadow .2s ease; }
+  .verb:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.09); }
+  .verb .v-en { display: block; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 11px; letter-spacing: .12em; color: var(--gold); font-weight: 700; margin-bottom: 4px; }
+  .verb h3 { margin: 0 0 4px; font-size: 16.5px; color: var(--navy); }
+  .verb p { margin: 0; font-size: 14px; color: var(--muted); }
+  /* ---------- real work: proof rows ---------- */
+  .proofs { list-style: none; padding: 0; margin: 0; }
+  .proofs li { padding: 8px 0; border-bottom: 1px solid #f0d48a; }
+  .proofs li:last-child { border-bottom: 0; }
+  .proofs a { color: var(--navy); font-weight: bold; font-size: 16px; }
+  .proofs .proof { display: block; font-size: 14px; color: var(--muted); }
+  /* ---------- real work ---------- */
+  .real { background: linear-gradient(135deg, #fff8e1, #fdf3d0); border: 1px solid #f0d48a; border-radius: 12px; padding: 18px 22px; }
+  .real p { margin: 0 0 6px; }
+  .real a { color: var(--navy); font-weight: bold; font-size: 17px; }
+  .real .tag { display: inline-block; background: var(--green); color: #fff; font-size: 12px; padding: 2px 10px; border-radius: 20px; margin-inline-start: 8px; vertical-align: middle; }
+  /* ---------- samples grid ---------- */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; background: #fff; transition: box-shadow .15s; }
+  .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.10); }
+  .card h3 { margin: 0 0 4px; font-size: 16px; }
+  .card h3 a { color: var(--navy); text-decoration: none; }
+  .card h3 a:hover { text-decoration: underline; }
+  .card p { margin: 0 0 8px; font-size: 14px; color: var(--muted); }
+  .card .go { font-size: 13.5px; font-weight: bold; color: var(--gold); text-decoration: none; }
+  .card .go:hover { text-decoration: underline; }
+  .sample-badge { display: inline-block; background: var(--gold); color: #fff; font-size: 11px; padding: 1px 9px; border-radius: 20px; margin-inline-start: 6px; vertical-align: middle; }
+  /* ---------- terms ---------- */
+  .terms { display: flex; flex-wrap: wrap; gap: 8px 26px; list-style: none; padding: 0; }
+  .terms li { margin: 0; }
+  .terms li::before { content: "✓ "; color: var(--gold); font-weight: bold; }
+  .note { font-size: 13px; color: var(--muted); }
+  .edu li { margin-bottom: 6px; }
+  /* ---------- english ---------- */
+  .en-section { direction: ltr; text-align: left; }
+  .en-section ul { padding-inline-start: 20px; }
+  .en-section .cols { direction: ltr; }
+  .en-section h2::before { margin-inline-end: 8px; margin-inline-start: 0; }
+  /* ---------- misc ---------- */
+  .print-btn { position: fixed; top: 16px; left: 16px; background: var(--gold); color: #fff; border: none; border-radius: 24px; padding: 8px 18px; font-family: inherit; font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.2); z-index: 10; }
+  footer { padding: 0 40px 28px; font-size: 13px; color: #888; }
+  /* ---------- reveal (once-only, no stagger) ---------- */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .55s ease, transform .55s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .stat::before { transform: scaleX(1); transition: none; }
+    .verb, .card { transition: none; }
+  }
+  @media (max-width: 900px) {
+    .verbs { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .head-inner { flex-direction: column; text-align: center; }
+    .head-photo { flex: none; max-width: 320px; width: 100%; }
+    header { padding-top: 64px; }
+    header, main, footer { padding-left: 20px; padding-right: 20px; }
+    .stats { grid-template-columns: 1fr 1fr; padding-left: 20px; padding-right: 20px; }
+    .cols, .grid, .verbs { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: #fff; }
+    .page { box-shadow: none; max-width: none; }
+    .print-btn { display: none; }
+    .en-section { page-break-before: always; }
+    header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .card:hover { box-shadow: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .stat::before { transform: scaleX(1); transition: none; }
+    .verb:hover { transform: none; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨 چاپ / ذخیره PDF</button>
+<div class="page">
+
+  <header>
+    <div class="head-inner">
+      <figure class="head-photo reveal">
+        <img src="profile-photo.jpg" alt="رضا محمدرضایی" width="2048" height="2048">
+      </figure>
+      <div class="reveal">
+        <h1>رضا محمدرضایی</h1>
+        <p class="role">مترجم انگلیسی–فارسی | سازنده وب‌سایت‌های دوزبانه</p>
+        <ul class="chips">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> <a href="mailto:rezamhr2@gmail.com">rezamhr2@gmail.com</a></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg> <a href="tel:09999513917" dir="ltr">09999513917</a></li>
+          <li>📍 گمبرون (بندرعباس)</li>
+          <li>🎬 <a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">پروفایل عمومی زیرنویس</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat reveal"><b>۱۱ سال</b><span>سابقه ترجمه</span></div>
+    <div class="stat reveal"><b>۲۰۰+</b><span>زیرنویس فیلم و سریال</span></div>
+    <div class="stat reveal"><b>۴ کتاب</b><span>و چندین مقاله</span></div>
+    <div class="stat reveal"><b>۲۴ ساعت</b><span>حداکثر زمان پاسخ</span></div>
+  </div>
+
+  <main>
+    <section class="reveal">
+      <h2>درباره من</h2>
+      <p>۱۱ سال سابقه مترجمی دارم، از سال ۱۳۹۴-۲۰۱۵ بیش از ۲۵۰ پروژه مختلف رو مدیریت، نظارت و ترجمه کردم، من جمله این پروژه‌ها میتونم به زیرنویس در ژانرهای فیلم، سریال، مستند، تریلر، بازی‌های ویدیویی، ویدیوهای آموزشی؛ مقالات در زمینه‌های عمومی، مهندسی برق، حقوق، کامپیوتر؛ و در نهایت کتاب‌هایی در موضوعات تاریخ، علوم معنوی و موضوعات عمومی اشاره کنم. وب‌سایت را هم خودم می‌سازم: محتوای فارسی و انگلیسی سایت را خودم می‌نویسم و ترجمه می‌کنم و سایت را دور آن می‌سازم — شرکتی یا فروشگاهی، با سبد خرید، فرم، محاسبه‌گر یا نقشه؛ نمونه‌های آماده‌اش در بخش نمونه کارهاست.</p>
+    </section>
+
+    <section class="reveal">
+      <h2>خدمات</h2>
+      <p>یک کار، یک تحویل: وب‌سایت کامل دوزبانه — محتوا و کد، یکجا.</p>
+      <div class="verbs">
+        <div class="verb">
+          <span class="v-en">SUBTITLE</span>
+          <h3>زیرنویس فیلم، سریال و ویدیوی آموزشی</h3>
+          <p>فیلم، سریال، مستند، تریلر، بازی‌های ویدیویی، ویدیوهای آموزشی؛ زمان‌بندی خط به خط با تصویر، آمادهٔ پخش.</p>
+        </div>
+        <div class="verb">
+          <span class="v-en">TRANSLATE EN↔FA</span>
+          <h3>ترجمه دوطرفه انگلیسی/فارسی</h3>
+          <p>کتاب و مقاله؛ مهندسی برق، حقوق، کامپیوتر، علوم معنوی، تاریخ.</p>
+        </div>
+        <div class="verb">
+          <span class="v-en">REVISE</span>
+          <h3>رونویسی و ویرایش زیرنویس دیگران</h3>
+          <p>بازبینی، اصلاح و هماهنگی زیرنویس موجود با تصویر. ابزار: سابتایتل ادیت، کپ‌کات یا هر نرم‌افزار مورد نیاز کارفرما.</p>
+        </div>
+        <div class="verb">
+          <span class="v-en">BUILD A SITE</span>
+          <h3>وب‌سایت شرکتی و فروشگاهی</h3>
+          <p>وردپرس با قالب اختصاصی «دوزبانه»؛ نمونه‌ها در بخش نمونه کارها، قابل‌مشاهده و قابل‌بررسی.</p>
+        </div>
+        <div class="verb">
+          <span class="v-en">AUTOMATE</span>
+          <h3>ربات تلگرام و ابزار پایتون</h3>
+          <p>مانیتور قیمت، تحلیل داده، شیت و اپس اسکریپت، نمونه‌ها در بخش نمونه کارها.</p>
+        </div>
+        <div class="verb">
+          <span class="v-en">AUDIT A UX</span>
+          <h3>بررسی تجربه کاربری</h3>
+          <p>تحلیل با پیشنهادهای اولویت‌دار، نمونه: فروشگاه تهران‌جانبی.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <h2>ابزارها</h2>
+      <ul class="terms">
+        <li>WordPress و WooCommerce — قالب اختصاصی «دوزبانه»</li>
+        <li>HTML ،CSS ،JavaScript</li>
+        <li>Leaflet — نقشه تعاملی</li>
+        <li>Python — python-telegram-bot ،pandas ،scikit-learn</li>
+        <li>Google Apps Script و Google Sheets</li>
+        <li>Git و GitHub</li>
+        <li>Node.js و Playwright — اجرا و آزمون صفحات</li>
+      </ul>
+    </section>
+
+    <section class="reveal">
+      <h2>نمونه‌کار واقعی</h2>
+      <div class="real">
+        <ul class="proofs">
+          <li><a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">پروفایل عمومی زیرنویس</a><span class="tag">کار واقعی</span>
+            <span class="proof">از ۱۳۹۴ تا امروز، بیش از ۲۰۰ زیرنویس، همه ژانرها، قابل‌مشاهده و قابل‌بررسی.</span></li>
+          <li><a href="web/store/index.html" target="_blank" rel="noopener">فروشگاه اینترنتی، ۱۳ محصول واقعی</a>
+            <span class="proof">محصولات واقعی با قیمت و مشخصات واقعی؛ سبد خرید کامل.</span></li>
+          <li><a href="web/map/index.html" target="_blank" rel="noopener">نقشه تعاملی، ۱۳ مکان واقعی تهران</a>
+            <span class="proof">روی نقشهٔ واقعی Esri؛ فیلترها نشانگر و فهرست را با هم عوض می‌کنند.</span></li>
+          <li><a href="code/price-monitor/report.html" target="_blank" rel="noopener">مانیتور قیمت، گزارش با قیمت‌های واقعی</a>
+            <span class="proof">تاریخچهٔ واقعی قیمت بیت‌کوین و اتریوم با نمودار و هشدار آستانه.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <h2>نمونه کارها</h2>
+      <div class="grid">
+        <div class="card">
+          <h3><a href="web/wordpress/index.html" target="_blank" rel="noopener">قالب وردپرس «دوزبانه»</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>قالب تجاری کامل دوزبانه: راست‌به‌چپ درست، تاریخ جلالی، پشتیبانی پایه ووکامرس؛ پیش‌نمایش فارسی و انگلیسی.</p>
+          <a class="go" href="web/wordpress/index.html" target="_blank" rel="noopener">پیش‌نمایش فارسی ←</a> <a class="go" href="web/wordpress-intl/index.html" target="_blank" rel="noopener">English ←</a> <a class="go" href="code/wordpress-theme/dozabaneh/readme.txt" target="_blank" rel="noopener">درباره قالب ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="web/corporate/index.html" target="_blank" rel="noopener">وب‌سایت شرکتی</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>سایت فارسی ۶ صفحه‌ای برای شرکت صنعتی، با کاتالوگ ۱۵ مدل واقعی تجهیزات، جدول مقایسه و فرم استعلام.</p>
+          <a class="go" href="web/corporate/index.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="web/corporate-intl/index.html" target="_blank" rel="noopener">وب‌سایت شرکتی</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>سایت برای شرکت فناوری مالی، با پیش‌نمایش زنده تسویه و محاسبه‌گر کارمزد.</p>
+          <a class="go" href="web/corporate-intl/index.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="web/store/index.html" target="_blank" rel="noopener">فروشگاه اینترنتی</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>فروشگاه فارسی با ۱۳ محصول واقعی؛ انتخاب رنگ کالا را همان رنگ نشان می‌دهد، سبد خرید کامل.</p>
+          <a class="go" href="web/store/index.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="web/store-intl/index.html" target="_blank" rel="noopener">فروشگاه اینترنتی</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>فروشگاه مینیمال با پیکربندی مرحله‌ای آیفون ۱۸ پرو واقعی و کیف خرید کشویی.</p>
+          <a class="go" href="web/store-intl/index.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="web/diet/index.html" target="_blank" rel="noopener">محاسبه‌گر رژیم غذایی</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>محاسبه کالری با فرمول میفلین–سنت ژور + پیش‌بینی وزن ۴/۸/۱۲ هفته، منوی نمونه با کالری و برنامه‌های رژیمی.</p>
+          <a class="go" href="web/diet/index.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="web/diet-intl/index.html" target="_blank" rel="noopener">محاسبه‌گر رژیم غذایی</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>اپلیکیشن شمارش کالری با محاسبه‌گر عمومی، پیش‌بینی وزن و منوی نمونه با کالری.</p>
+          <a class="go" href="web/diet-intl/index.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="web/map/index.html" target="_blank" rel="noopener">نقشه تعاملی</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>نقشه با ۱۳ مکان؛ فیلترها نشانگر و فهرست را با هم عوض می‌کنند، جزئیات کامل هر مکان.</p>
+          <a class="go" href="web/map/index.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="web/map-intl/index.html" target="_blank" rel="noopener">نقشه تعاملی</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>نقشه با نوار فیلتر شناور، «جستجو در این ناحیه»، مسیریابی و نمودار ساعات شلوغی.</p>
+          <a class="go" href="web/map-intl/index.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="https://t.me/Sepehrstoredemo_bot" target="_blank" rel="noopener">ربات تلگرام</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>ربات فروش اشتراک: جدول قیمت درون‌چتی، خرید و تحویل فوری کانفیگ، تمدید، اشتراک‌های من و پنل مدیریت.</p>
+          <a class="go" href="code/telegram-bot/README.md" target="_blank" rel="noopener">نحوه کار ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="code/price-monitor/report.html" target="_blank" rel="noopener">مانیتور قیمت</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>هشدار عبور از آستانه + گزارش اچ‌تی‌ام‌ال با نمودار تاریخچه قیمت.</p>
+          <a class="go" href="code/price-monitor/report.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="code/pandas-decision-tree/report.html" target="_blank" rel="noopener">تحلیل داده، درخت تصمیم</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>تحلیل داده مشتری با درخت تصمیم و گزارش طبقه‌بندی.</p>
+          <a class="go" href="code/pandas-decision-tree/report.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="sheets/price-inventory-preview.html" target="_blank" rel="noopener">مدیریت قیمت و موجودی</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>فایل شیت با داشبورد، فرمول و قالب‌بندی شرطی.</p>
+          <a class="go" href="sheets/price-inventory-preview.html" target="_blank" rel="noopener">مشاهده ←</a> <a class="go" href="sheets/price-inventory-sample.xlsx" target="_blank" rel="noopener">دانلود فایل ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="sheets/apps-script-sample.html" target="_blank" rel="noopener">اپس اسکریپت</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>ثبت خودکار تغییر قیمت و گزارش کمبود موجودی.</p>
+          <a class="go" href="sheets/apps-script-sample.html" target="_blank" rel="noopener">مشاهده ←</a> <a class="go" href="sheets/apps-script-sample.gs" target="_blank" rel="noopener">فایل کد ←</a>
+        </div>
+        <div class="card">
+          <h3><a href="ux-audit/tehranjanebi-ux-audit-sample.html" target="_blank" rel="noopener">تحلیل تجربه کاربری</a><span class="sample-badge">نمونه کار</span></h3>
+          <p>تحلیل فروشگاه تهران‌جانبی با پیشنهادهای اولویت‌دار.</p>
+          <a class="go" href="ux-audit/tehranjanebi-ux-audit-sample.html" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <h2>تحصیلات و گواهی</h2>
+      <ul class="edu">
+        <li>فوق دیپلم الکتروتکنیک، دانشگاه فنی شهید کرانی بندرعباس، ۱۳۹۵ تا ۱۳۹۷</li>
+        <li>مدرک زبان کانون زبان ایران، سطح پیشرفته</li>
+      </ul>
+    </section>
+
+    <section class="reveal">
+      <h2>شرایط کاری</h2>
+      <ul class="terms">
+        <li>دو دور اصلاح پس از تحویل، رایگان</li>
+        <li>حداکثر زمان پاسخگویی: ۲۴ ساعت</li>
+        <li>نام مشتریان به دلیل محرمانگی ذکر نمی‌شود</li>
+        <li>شهر: گمبرون (بندرعباس)</li>
+      </ul>
+    </section>
+
+    <section class="reveal">
+      <h2>روش کار</h2>
+      <p class="note">پیش‌نویس اولیه و پیشنهاد اصطلاحات ممکن است با کمک هوش مصنوعی انجام شود، اما ترجمه و ویرایش نهایی و کنترل کیفی هر خط همیشه به عهده خودم است؛ در پروژه‌هایی که کارفرما استفاده از هوش مصنوعی را مجاز نمی‌داند، ترجمه کاملاً دستی انجام می‌شود.</p>
+    </section>
+
+    <section class="en-section reveal">
+      <h2>English version</h2>
+      <p><strong>Reza Mohammadrezaei</strong>, English–Persian translator and bilingual-website builder · rezamhr2@gmail.com · 09999513917 · Gombron (Bandar Abbas)</p>
+      <p>11 years of translation, since 2015, 250+ projects managed, supervised and translated — subtitles (film, series, documentary, trailer, video games, educational videos), papers (general, electrical engineering, law, computer science), books (history, spiritual science, general topics). My public subtitle profile: <a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">subf2m.co/u/1069119/subtitles</a>. I build the website too: I write and translate the site's Persian and English content myself, then build the site around it — corporate or store, with a cart, a form, a calculator or a map; finished demo sites are in the samples below.</p>
+      <p><strong>Services — one job, one delivery: complete bilingual websites, content and code together.</strong> Corporate and store websites — WordPress with the custom bilingual "Dozabaneh" theme — with content I wrote and translated myself; translation &amp; subtitling: two-way EN↔FA translation; film, series, documentary, trailer, video game and educational subtitling; book and paper translation: electrical engineering, law, computer science, spiritual science, history; transcription and subtitle revision; timing and sync (Subtitle Edit, CapCut, or any software the client needs); Telegram bots (Python); Python tools and scripts: price monitoring, data analysis; Sheets and automation: Google Sheets and Apps Script; UX review.</p>
+      <p><strong>Tools:</strong> WordPress, WooCommerce (custom bilingual theme "Dozabaneh"); HTML, CSS, JavaScript; Leaflet (interactive maps); Python — python-telegram-bot, pandas, scikit-learn; Google Apps Script and Google Sheets; Git and GitHub; Node.js and Playwright (running and testing pages).</p>
+      <p><strong>Real work:</strong> public subtitle profile, <a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">subf2m.co/u/1069119/subtitles</a>: 200+ subtitles since 2015, all genres.</p>
+      <p><strong>Samples:</strong> WordPress theme "Dozabaneh", corporate site, store, diet calculator, interactive map; Telegram bot, price monitor, decision tree (Python); price/inventory workbook + Apps Script; UX audit of tehranjanebi.</p>
+      <p><strong>Education &amp; certificate:</strong> Associate degree, Electrotechnics, Shahid Korani University, Bandar Abbas, 2016–2018; Iran Language Institute certificate, Advanced level.</p>
+      <p><strong>Terms:</strong> two rounds of revision after delivery, free · maximum response time 24 hours · client names withheld under confidentiality.</p>
+      <p class="note">A first draft and terminology suggestions may be AI-assisted, but the final translation, editing, and quality control of every line are always mine; on projects where the client does not allow AI use, the translation is done entirely by hand.</p>
+    </section>
+  </main>
+
+</div>
+<script>
+(function(){
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduced){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      });
+    }, {threshold: .1, rootMargin: '0px 0px -8% 0px'});
+    els.forEach(function(el){ io.observe(el); });
+  } else {
+    els.forEach(function(el){ el.classList.add('in'); });
+  }
+})();
+</script>
+</body>
+</html>

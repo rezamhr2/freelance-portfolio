@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corelia: Financial infrastructure for the internet</title>
+<meta name="description" content="Corelia builds payment infrastructure for businesses of every size.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a2540; --grey:#425466; --muted:#6b7c93; --line:#e6ebf1;
+  --brand:#635bff; --brand-dark:#4a44d6; --bg:#f6f9fc; --card:#fff;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.6;background:#fff;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+.container{max-width:1120px;margin:0 auto;padding:0 24px}
+.badge{position:fixed;top:12px;right:12px;z-index:200;background:#f59e0b;color:#fff;padding:4px 14px;border-radius:999px;font-size:13px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.header-inner{display:flex;align-items:center;gap:28px;height:64px}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--ink);white-space:nowrap}
+.logo-mark{display:inline-block;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#635bff,#ff7a59 55%,#ffb020);vertical-align:-5px;margin-right:8px}
+nav.mainnav{display:flex;align-items:center;gap:4px;flex:1}
+.nav-item{position:relative}
+.nav-link{display:flex;align-items:center;min-height:44px;padding:8px 12px;border-radius:8px;font-size:15px;font-weight:500;color:var(--ink);cursor:pointer;background:none;border:0;font-family:inherit}
+.nav-link:hover,.nav-item.open .nav-link{background:#f0f3f8}
+.nav-link .caret{font-size:10px;margin-left:4px;color:var(--muted)}
+.dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:280px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(10,37,64,.16);padding:10px;display:none}
+.nav-item.open .dropdown{display:block}
+.dropdown a{display:flex;gap:12px;padding:10px 12px;border-radius:10px}
+.dropdown a:hover{background:var(--bg)}
+.dropdown .ic{width:34px;height:34px;flex:0 0 34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.dropdown b{display:block;font-size:14px;font-weight:600}
+.dropdown span{font-size:13px;color:var(--muted);line-height:1.4;display:block}
+.header-actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+.btn{display:inline-block;padding:11px 22px;border-radius:999px;font-weight:600;font-size:15px;cursor:pointer;border:0;font-family:inherit;transition:transform .12s ease,box-shadow .12s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--brand);color:#fff;box-shadow:0 4px 14px rgba(99,91,255,.35)}
+.btn-primary:hover{background:var(--brand-dark)}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-white{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 2px 6px rgba(10,37,64,.08)}
+.btn-sm{padding:11px 18px;font-size:14px}
+/* mobile menu */
+.menu-btn{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:20px;cursor:pointer;color:var(--ink);align-items:center;justify-content:center;flex:0 0 auto}
+.mobile-nav{display:none;border-top:1px solid var(--line);background:#fff;padding:8px 24px 16px}
+.mobile-nav.open{display:block}
+.mobile-nav a{display:flex;align-items:center;min-height:48px;font-size:16px;font-weight:600;border-bottom:1px solid var(--line)}
+.mobile-nav a:last-child{border-bottom:0}
+/* ---------- hero ---------- */
+.hero{padding:88px 0 64px;background:radial-gradient(720px 420px at 85% 8%,#efefff 0%,rgba(239,239,255,0) 60%),linear-gradient(180deg,#fbfcfe 0%,#f6f9fc 100%)}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:56px;align-items:center}
+.eyebrow{font-size:15px;font-weight:600;color:var(--brand);margin-bottom:18px}
+.eyebrow b{color:var(--ink)}
+.hero h1{font-size:clamp(38px,5.6vw,64px);line-height:1.06;letter-spacing:-2px;font-weight:800}
+.hero h1 .tone2{color:#8a97a8;font-weight:700}
+.hero p.lede{font-size:19px;color:var(--grey);max-width:620px;margin:22px 0 30px}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.hero-note{font-size:13px;color:var(--muted);margin-top:16px}
+/* checkout preview widget (hero) */
+.checkout{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 60px rgba(10,37,64,.14);padding:26px}
+.checkout-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.checkout-head b{font-size:16px}
+.checkout-head span{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#157347;background:#e8f8ef;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.checkout>p{font-size:14px;color:var(--grey);margin-bottom:16px}
+.plan-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.plan-pick button{padding:10px 6px;min-height:48px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--grey)}
+.plan-pick button small{display:block;font-weight:500;font-size:12px;color:var(--muted);margin-top:2px}
+.plan-pick button[aria-pressed="true"]{border-color:var(--brand);background:#eef0ff;color:var(--ink)}
+.plan-pick button[aria-pressed="true"] small{color:var(--brand)}
+.fee-rows{border-top:1px solid var(--line);padding-top:12px}
+.fee-row{display:flex;justify-content:space-between;gap:12px;font-size:15px;color:var(--grey);padding:5px 0}
+.fee-row b{color:var(--ink);white-space:nowrap}
+.fee-row.total{font-size:17px;font-weight:700;color:var(--ink);border-top:1px solid var(--line);margin-top:8px;padding-top:12px}
+.checkout .btn{width:100%;margin-top:16px;min-height:48px}
+.checkout-note{display:none;margin-top:12px;padding:10px 14px;border-radius:10px;background:#e8f8ef;color:#157347;font-size:14px}
+.checkout-note.show{display:block}
+/* ---------- sections ---------- */
+section{padding:84px 0}
+.section-head{max-width:680px;margin-bottom:44px}
+.section-head h2{font-size:clamp(28px,3.6vw,40px);line-height:1.15;letter-spacing:-1.2px;font-weight:800;margin-bottom:14px}
+.section-head p{font-size:18px;color:var(--grey)}
+.eyebrow-sm{font-size:14px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+/* reveal-on-scroll */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.marquee{animation:none}}
+/* numbers band */
+.numbers{background:var(--bg)}
+.numbers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.number-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px 24px}
+.number-card b{font-size:38px;letter-spacing:-1.5px;display:block;line-height:1.1}
+.number-card span{color:var(--grey);font-size:15px}
+.number-card small{display:block;color:var(--muted);font-size:13px;margin-top:6px}
+/* audience, tabbed panels */
+.aud-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+.aud-tab{padding:12px 22px;min-height:48px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-family:inherit;font-size:15px;font-weight:600;color:var(--grey);cursor:pointer}
+.aud-tab:hover{border-color:var(--brand);color:var(--ink)}
+.aud-tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.aud-panel{display:none}
+.aud-panel.active{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:stretch;animation:fade .35s ease}
+.aud-copy{background:#fff;border:1px solid var(--line);border-radius:20px;padding:32px}
+.aud-copy .tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:#eef0ff;color:var(--brand);margin-bottom:16px}
+.aud-copy h3{font-size:26px;letter-spacing:-.6px;margin-bottom:10px}
+.aud-copy p{color:var(--grey);font-size:16px;margin-bottom:18px}
+.aud-copy a.link{color:var(--brand);font-weight:600;font-size:15px}
+.aud-copy a.link:hover{text-decoration:underline}
+.aud-case{background:var(--ink);color:#fff;border-radius:20px;padding:32px;display:flex;flex-direction:column;justify-content:center}
+.aud-case b{font-size:15px;color:#c7d6e8}
+.aud-case .metric{font-size:40px;font-weight:800;letter-spacing:-1px;margin:10px 0 6px;line-height:1.15}
+.aud-case .metric small{font-size:16px;font-weight:500;color:#aab8cc;letter-spacing:0}
+.aud-case p{color:#aab8cc;font-size:15px}
+.aud-case a{color:#8ea2ff;font-weight:600;margin-top:16px;display:inline-block;font-size:15px}
+.aud-case a:hover{text-decoration:underline}
+/* product */
+.product{background:var(--bg)}
+.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.prod-card{background:#fff;border:1px solid var(--line);border-top:4px solid var(--accent,#635bff);border-radius:18px;padding:28px}
+.prod-visual{height:150px;border-radius:12px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.prod-visual svg{width:100%;height:100%}
+.prod-card h3{font-size:20px;margin-bottom:8px}
+.prod-card p{color:var(--grey);font-size:15px;margin-bottom:14px}
+.prod-card a{color:var(--brand);font-weight:600;font-size:15px}
+.prod-card a:hover{text-decoration:underline}
+/* quotes carousel */
+.quotes{background:#fff}
+.carousel{position:relative;max-width:820px;margin:0 auto;text-align:center}
+.quote-slide{display:none}
+.quote-slide.active{display:block;animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.quote-slide blockquote{font-size:clamp(22px,3vw,30px);line-height:1.4;letter-spacing:-.6px;font-weight:600}
+.quote-slide .who{margin-top:22px}
+.quote-slide .who b{display:block;font-size:16px}
+.quote-slide .who span{color:var(--muted);font-size:14px}
+.quote-slide .who a{color:var(--brand);font-weight:600;font-size:14px}
+.carousel-controls{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:28px}
+.car-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:18px;cursor:pointer;color:var(--ink);flex:0 0 auto}
+.car-btn:hover{background:var(--bg)}
+.dots{display:flex;gap:2px}
+.dot{width:44px;height:44px;border-radius:50%;background:none;border:0;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
+.dot::after{content:"";width:9px;height:9px;border-radius:50%;background:#d3dce6}
+.dot.active::after{background:var(--brand)}
+.car-count{font-size:14px;color:var(--muted);font-weight:600;min-width:44px;text-align:center}
+/* developers */
+.dev{background:#0a2540;color:#fff;border-radius:0}
+.dev h2{color:#fff}
+.dev p.sub{color:#aab8cc;font-size:18px}
+.dev-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:40px 0}
+.dev-stat b{font-size:34px;letter-spacing:-1px;display:block}
+.dev-stat span{color:#aab8cc;font-size:15px}
+.dev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:36px}
+.dev-card{background:#122f4d;border:1px solid #1d3d5e;border-radius:16px;padding:24px}
+.dev-card h3{font-size:18px;margin-bottom:8px}
+.dev-card p{color:#aab8cc;font-size:15px;margin-bottom:14px}
+.dev-card a{color:#8ea2ff;font-weight:600;font-size:15px}
+.code{background:#06182e;border:1px solid #1d3d5e;border-radius:14px;padding:20px 22px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;line-height:1.7;overflow-x:auto;color:#c7d6e8;white-space:pre}
+.code-wrap{position:relative}
+.code-copy{position:absolute;top:10px;right:10px;padding:8px 14px;min-height:36px;border:1px solid #1d3d5e;border-radius:8px;background:#122f4d;color:#c7d6e8;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.code-copy:hover{background:#1d3d5e;color:#fff}
+.code .k{color:#8ea2ff}.code .s{color:#7ee2a8}.code .c{color:#5b7290}
+/* pricing teaser */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.price-card{border:1px solid var(--line);border-radius:18px;padding:28px;background:#fff}
+.price-card.featured{border:2px solid var(--brand);box-shadow:0 12px 32px rgba(99,91,255,.14)}
+.price-card h3{font-size:19px;margin-bottom:4px}
+.price-card .fee{font-size:32px;font-weight:800;letter-spacing:-1px;margin:12px 0 4px}
+.price-card .fee small{font-size:15px;font-weight:500;color:var(--muted)}
+.price-card p{color:var(--grey);font-size:15px;margin-bottom:16px}
+.price-card ul{list-style:none;margin-bottom:22px}
+.price-card li{padding:5px 0 5px 26px;position:relative;font-size:15px;color:var(--grey)}
+.price-card li::before{content:"✓";position:absolute;left:0;color:var(--brand);font-weight:700}
+/* final CTA */
+.final-cta{background:linear-gradient(120deg,#635bff,#7a5cff 45%,#ff7a59);border-radius:24px;color:#fff;padding:56px 48px;text-align:center}
+.final-cta h2{font-size:clamp(28px,4vw,40px);letter-spacing:-1px;margin-bottom:12px}
+.final-cta p{color:rgba(255,255,255,.85);font-size:18px;margin-bottom:28px}
+.final-cta .row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.final-cta .btn-white{border:0}
+.final-cta .btn-ghost{background:transparent;border:1.5px solid rgba(255,255,255,.7);color:#fff}
+/* FAQ */
+.faq{max-width:760px}
+.faq-item{border:1px solid var(--line);border-radius:14px;margin-bottom:12px;background:#fff;overflow:hidden}
+.faq-q{width:100%;min-height:56px;text-align:left;background:none;border:0;padding:16px 20px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--ink)}
+.faq-q .chev{color:var(--muted);font-size:18px;transition:transform .2s;flex:0 0 auto}
+.faq-item.open .chev{transform:rotate(180deg)}
+.faq-a{display:none;padding:0 20px 18px;color:var(--grey);font-size:15px}
+.faq-item.open .faq-a{display:block}
+/* contact form */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.contact-form{background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px}
+.contact-form label{display:block;font-size:14px;font-weight:600;margin:14px 0 6px}
+.contact-form input,.contact-form select,.contact-form textarea{width:100%;padding:11px 14px;border:1px solid #cfd8e3;border-radius:10px;font-size:15px;font-family:inherit;color:var(--ink)}
+.contact-form input:focus,.contact-form select:focus,.contact-form textarea:focus{outline:2px solid var(--brand);border-color:var(--brand)}
+.contact-form input.invalid{border-color:#b3261e;outline:2px solid #f6c6c0}
+.field-err{display:none;color:#b3261e;font-size:13px;margin-top:6px}
+.field-err.show{display:block}
+.form-msg{display:none;margin-top:16px;padding:12px 16px;border-radius:10px;font-size:15px}
+.form-msg.ok{display:block;background:#e8f8ef;color:#157347}
+.form-msg.err{display:block;background:#fdecea;color:#b3261e}
+/* footer */
+footer{background:#f6f9fc;border-top:1px solid var(--line);padding:64px 0 32px}
+.foot-grid{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:32px;margin-bottom:40px}
+.foot-grid h4{font-size:14px;margin-bottom:14px}
+.foot-grid ul{list-style:none}
+.foot-grid li{margin-bottom:9px}
+.foot-grid a{font-size:14px;color:var(--grey)}
+.foot-grid a:hover{color:var(--ink);text-decoration:underline}
+.foot-brand p{font-size:14px;color:var(--grey);margin-top:12px;max-width:260px}
+.foot-bottom{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.disclaimer{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:28px}
+@media(max-width:900px){
+  .numbers-grid,.prod-grid,.dev-grid,.price-grid{grid-template-columns:1fr 1fr}
+  .aud-panel.active{grid-template-columns:1fr}
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .contact-grid{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  nav.mainnav{display:none}
+  .menu-btn{display:flex}
+  .dev-stats{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .container{padding:0 20px}
+  .numbers-grid,.prod-grid,.dev-grid,.price-grid,.foot-grid{grid-template-columns:1fr}
+  .hero{padding:56px 0 40px}
+  section{padding:56px 0}
+  .final-cta{padding:40px 24px}
+  .header-inner{gap:12px}
+  .badge{top:auto;bottom:12px}
+  .checkout{padding:20px}
+  .aud-copy,.aud-case{padding:24px}
+  .plan-pick button{font-size:13px}
+}
+
+/* ===== rework 2026-11-10 (batch B), Aesop direction over the Stripe structure =====
+   Design read: premium fintech sample for business buyers, apothecary restraint,
+   cream canvas, charcoal/navy ink, one amber accent, square corners, hierarchy
+   from space not size, colour from photography. Dials ENERGY 2 / RHYTHM 2 / MOTION 2.
+   Reason per decision (R-31): cream #fffef2 stops the page reading clinical;
+   amber #945c26 is the single hue (Aesop amber glass); square corners are the
+   Aesop rule; 100px gaps and a 31px display size keep headings hushed. */
+:root{--brand:#945c26;--brand-dark:#7a4a1e;--bg:#f6f5e8;--line:#d6d5cc}
+body{background:#fffef2}
+.badge{top:auto;bottom:12px}
+.prod-card{--accent:#945c26!important}
+.prod-visual svg [fill="#635bff"]{fill:#945c26}
+.prod-visual svg [stroke="#635bff"]{stroke:#945c26}
+.container{max-width:1200px}
+section{padding:100px 0}
+header{background:rgba(255,254,242,.92)}
+.logo-mark{background:#945c26;border-radius:0}
+.btn,.btn-sm,.checkout,.number-card,.aud-copy,.aud-case,.prod-card,.price-card,.faq-item,.contact-form,.code,.final-cta,.dropdown,.menu-btn,.plan-pick button,.aud-tab,.car-btn,.code-copy,.checkout-head span,.aud-copy .tag{border-radius:0}
+.btn-primary{box-shadow:0 4px 14px rgba(148,92,38,.3)}
+.btn-primary:hover{background:var(--brand-dark)}
+.hero{background:#fffef2}
+.hero h1{font-size:clamp(38px,5vw,56px);font-weight:400;letter-spacing:-1px}
+.hero h1 .tone2{color:#666;font-weight:400}
+.section-head h2{font-size:31px;font-weight:400;letter-spacing:0}
+.final-cta h2{font-size:31px;font-weight:400;letter-spacing:0}
+.eyebrow-sm{letter-spacing:.071em}
+.plan-pick button[aria-pressed="true"]{background:#f6f5e8}
+.aud-copy .tag{background:#f6f5e8}
+.price-card.featured{border:2px solid var(--brand);box-shadow:0 12px 32px rgba(148,92,38,.14)}
+.aud-case a,.dev-card a,.code .k{color:#e8c88a}
+.final-cta{background:#252525}
+footer{background:#252525;border-top:0}
+footer h4{color:#fffef2}
+.foot-grid a{color:#d6d5cc}
+.foot-grid a:hover{color:#fffef2}
+.foot-brand p{color:#d6d5cc}
+.foot-bottom{color:#999993;border-top-color:#444}
+/* hero photo band: full-bleed film opening the page (Aesop film-hero pattern);
+   the district at dusk carries the colour, the rest of the page stays flat */
+.hero-photo{margin:0;line-height:0}
+.hero-photo img{width:100%;height:420px;object-fit:cover;display:block}
+.hero-photo figcaption{font-size:12px;color:var(--muted);line-height:1.5;text-align:center;padding:12px 20px;background:#f6f5e8}
+.band-photo{margin:0 0 44px;line-height:0}
+.band-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.band-photo figcaption{font-size:12px;color:var(--muted);line-height:1.5;padding:10px 4px 0}
+.aud-intro{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:end;margin-bottom:44px}
+.aud-intro .section-head{margin-bottom:0}
+.aud-intro .band-photo{margin:0}
+.aud-intro .band-photo img{aspect-ratio:4/5;max-height:460px}
+.photo-credits{font-size:12px;color:#999993;text-align:center;padding-top:16px;border-top:1px solid #444;margin-top:16px;line-height:1.8}
+.dev-num{font-size:13px;font-weight:700;letter-spacing:2px;color:#e8c88a;margin-right:10px}
+.photo-credits a{color:#d6d5cc;text-decoration:underline}
+@media(max-width:900px){.aud-intro{grid-template-columns:1fr}.aud-intro .band-photo img{aspect-ratio:16/9;max-height:300px}.hero-photo img{height:280px}}
+@media(max-width:560px){section{padding:64px 0}.hero-photo img{height:220px}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+<div class="badge">نمونه کار</div>
+
+<header>
+  <div class="container header-inner">
+    <a class="logo" href="index.html"><span class="logo-mark" aria-hidden="true"></span>Corelia</a>
+    <nav class="mainnav" aria-label="Main">
+      <div class="nav-item">
+        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Products <span class="caret">▾</span></button>
+        <div class="dropdown">
+          <a href="#products"><span><b>Payments</b><span>Accept cards, wallets and bank payments in 142 currencies.</span></span></a>
+          <a href="#products"><span><b>Billing</b><span>Subscriptions, invoicing and revenue recovery, built in.</span></span></a>
+          <a href="#products"><span><b>Treasury</b><span>Move money between accounts and manage payouts globally.</span></span></a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Solutions <span class="caret">▾</span></button>
+        <div class="dropdown">
+          <a href="#audiences"><span><b>Enterprise</b><span>Global payments at scale, with dedicated support.</span></span></a>
+          <a href="#audiences"><span><b>Startups</b><span>Launch in a day and scale without re-platforming.</span></span></a>
+          <a href="#audiences"><span><b>Platforms</b><span>Onboard sellers and split payouts automatically.</span></span></a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Developers <span class="caret">▾</span></button>
+        <div class="dropdown">
+          <a href="#developers"><span><b>API reference</b><span>One consistent API for payments, billing and payouts.</span></span></a>
+          <a href="#developers"><span><b>SDKs &amp; libraries</b><span>Official libraries for Python, Node, Ruby, Go and Java.</span></span></a>
+          <a href="#developers"><span><b>Test mode</b><span>Build and test end-to-end before going live.</span></span></a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Resources <span class="caret">▾</span></button>
+        <div class="dropdown">
+          <a href="#quotes"><span><b>Customer stories</b><span>How teams grow on Corelia, in their own words.</span></span></a>
+          <a href="#numbers"><span><b>Corelia in numbers</b><span>The scale our infrastructure runs at today.</span></span></a>
+          <a href="pricing.html"><span><b>Pricing</b><span>Transparent, pay-as-you-go pricing. No hidden fees.</span></span></a>
+        </div>
+      </div>
+      <div class="nav-item"><a class="nav-link" href="pricing.html">Pricing</a></div>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-dark btn-sm" href="#contact">Contact sales</a>
+    </div>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">☰</button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+    <a href="#products">Products</a>
+    <a href="#audiences">Solutions</a>
+    <a href="#developers">Developers</a>
+    <a href="#quotes">Customer stories</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="#contact">Contact sales</a>
+  </nav>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Global online commerce running on Corelia: <b id="gdpStat">~2.4%</b>, and growing every quarter</p>
+        <h1>Financial infrastructure <span class="tone2">for the internet, built for businesses that never stand still.</span></h1>
+        <p class="lede">From a first checkout to billions in annual volume, Corelia gives you payments, billing, payouts and fraud protection in one platform, so your team ships product, not plumbing.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#developers">Start building</a>
+          <a class="btn btn-white" href="#contact">Talk to sales →</a>
+        </div>
+        <p class="hero-note">No setup fees · Test mode is free · Live in minutes</p>
+      </div>
+      <aside class="checkout" aria-label="Checkout preview">
+        <div class="checkout-head"><b>Checkout preview</b><span>Live preview</span></div>
+        <p>Pick a price, the fee updates instantly.</p>
+        <div class="plan-pick" role="group" aria-label="Choose a price">
+          <button type="button" data-amount="49.99" data-label="One-time" aria-pressed="true">One-time<small>$49.99</small></button>
+          <button type="button" data-amount="19" data-label="Monthly" aria-pressed="false">Monthly<small>$19.00</small></button>
+          <button type="button" data-amount="199" data-label="Annual" aria-pressed="false">Annual<small>$199.00</small></button>
+        </div>
+        <div class="fee-rows">
+          <div class="fee-row"><span id="coPlanLabel">One-time charge</span><b id="coAmount">$49.99</b></div>
+          <div class="fee-row"><span>Corelia fee (2.9% + 30¢)</span><b id="coFee">$1.75</b></div>
+          <div class="fee-row total"><span>You receive</span><b id="coNet">$48.24</b></div>
+        </div>
+        <button class="btn btn-primary" id="coPay" type="button">Pay $49.99</button>
+        <p class="checkout-note" id="coNote" role="status">✓ Payment complete.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- HERO PHOTO: the financial district at dusk, full-bleed film opening the page -->
+  <figure class="hero-photo">
+    <img src="../assets/graphics/corporate-intl/financial-district.jpg" alt="Cabot Square, Canary Wharf at dusk, towers and fountain where the money actually lives" width="1200" height="645" fetchpriority="high">
+    <figcaption>Cabot Square, Canary Wharf. Photo: Diliff, CC BY-SA 3.0</figcaption>
+  </figure>
+
+  <!-- NUMBERS BAND -->
+  <section class="numbers" id="numbers">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow-sm">Corelia in numbers</p>
+        <h2>Proof before pitch</h2>
+        <p>The scale our infrastructure runs at.</p>
+      </div>
+      <div class="numbers-grid">
+        <div class="number-card reveal"><b data-count="142">142</b><span>currencies &amp; payment methods</span><small>Cards, wallets and bank rails in one integration.</small></div>
+        <div class="number-card reveal"><b data-count="820" data-prefix="$" data-suffix="B">$820B</b><span>processed in 2025</span><small>Total payment volume across the platform.</small></div>
+        <div class="number-card reveal"><b data-count="99.999" data-decimals="3" data-suffix="%">99.999%</b><span>uptime, trailing 12 months</span><small>Across all core payment APIs.</small></div>
+        <div class="number-card reveal"><b data-count="38" data-suffix="M+">38M+</b><span>active subscriptions</span><small>Billed through Corelia every month.</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow-sm">Products</p>
+        <h2>Flexible solutions for every business model</h2>
+        <p>One platform, modular pieces. Start with payments and add billing, treasury and fraud protection as you grow.</p>
+      </div>
+      <div class="prod-grid">
+        <div class="prod-card" style="--accent:#635bff">
+          <div class="prod-visual" style="background:#f6f5e8">
+            <svg viewBox="0 0 400 150" aria-hidden="true"><rect x="40" y="35" width="320" height="80" rx="14" fill="#0a2540"/><rect x="40" y="35" width="320" height="22" rx="11" fill="#635bff"/><circle cx="70" cy="88" r="12" fill="#ffb020"/><rect x="95" y="82" width="90" height="10" rx="5" fill="#fff" opacity=".85"/><rect x="300" y="82" width="34" height="10" rx="5" fill="#fff" opacity=".5"/></svg>
+          </div>
+          <h3>Payments</h3>
+          <p>Accept cards, digital wallets and local bank payments with a checkout that converts, optimised for every device and market.</p>
+          <a href="#pricing">See payment pricing →</a>
+        </div>
+        <div class="prod-card" style="--accent:#12a150">
+          <div class="prod-visual" style="background:#f6f5e8">
+            <svg viewBox="0 0 400 150" aria-hidden="true"><rect x="50" y="25" width="300" height="100" rx="12" fill="#fff" stroke="#e6ebf1"/><rect x="70" y="45" width="150" height="10" rx="5" fill="#0a2540"/><rect x="70" y="65" width="210" height="8" rx="4" fill="#aab6c4"/><rect x="70" y="85" width="120" height="8" rx="4" fill="#aab6c4"/><rect x="280" y="95" width="50" height="14" rx="7" fill="#635bff"/></svg>
+          </div>
+          <h3>Billing</h3>
+          <p>Subscriptions, usage-based pricing and invoicing that handle proration, retries and tax, without a spreadsheet in sight.</p>
+          <a href="#pricing">See billing pricing →</a>
+        </div>
+        <div class="prod-card" style="--accent:#e8590c">
+          <div class="prod-visual" style="background:#f6f5e8">
+            <svg viewBox="0 0 400 150" aria-hidden="true"><circle cx="120" cy="75" r="34" fill="#ffb020" opacity=".85"/><circle cx="280" cy="75" r="34" fill="#635bff" opacity=".85"/><path d="M150 60 L250 90 M150 90 L250 60" stroke="#0a2540" stroke-width="3" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Treasury &amp; payouts</h3>
+          <p>Hold balances, move money between accounts and pay out sellers, creators and contractors in 40+ countries.</p>
+          <a href="pricing.html">See payout pricing →</a>
+        </div>
+        <div class="prod-card" style="--accent:#8b5cf6">
+          <div class="prod-visual" style="background:#f6f5e8">
+            <svg viewBox="0 0 400 150" aria-hidden="true"><path d="M200 30 L260 60 L260 95 Q260 125 200 140 Q140 125 140 95 L140 60 Z" fill="none" stroke="#945c26" stroke-width="5" stroke-linejoin="round"/><path d="M175 82 L195 102 L228 68" fill="none" stroke="#0a2540" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Fraud protection</h3>
+          <p>Machine-learning risk scoring on every transaction, tuned to your business: block fraud, not your good customers.</p>
+          <a href="#developers">How our risk API works →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUDIENCES -->
+  <section id="audiences">
+    <div class="container">
+      <div class="aud-intro">
+        <div class="section-head">
+          <p class="eyebrow-sm">Who it's for</p>
+          <h2>Built for every stage, from first sale to global scale</h2>
+          <p>Different businesses need different proof. Here is what each one gets from Corelia.</p>
+        </div>
+        <figure class="band-photo">
+          <img src="../assets/graphics/corporate-intl/modern-architecture.jpg" alt="Brutalist concrete geometry of the Australian Embassy in Paris against a blue sky" width="829" height="1023" loading="lazy">
+          <figcaption>Built to last: the Australian Embassy, Paris. Photo: seier+seier, CC BY 2.0</figcaption>
+        </figure>
+      </div>
+      <div class="aud-tabs" role="tablist" aria-label="Choose an audience">
+        <button class="aud-tab" role="tab" id="tab-ent" aria-selected="true" aria-controls="panel-ent" data-panel="panel-ent">Enterprise</button>
+        <button class="aud-tab" role="tab" id="tab-start" aria-selected="false" aria-controls="panel-start" data-panel="panel-start">Startups</button>
+        <button class="aud-tab" role="tab" id="tab-plat" aria-selected="false" aria-controls="panel-plat" data-panel="panel-plat">Platforms</button>
+      </div>
+      <div class="aud-panel active" id="panel-ent" role="tabpanel" aria-labelledby="tab-ent">
+        <div class="aud-copy">
+          <span class="tag">Enterprise</span>
+          <h3>Global scale, without the global headache</h3>
+          <p>Multi-entity settlement, local acquiring in 40+ markets and a dedicated team that answers in minutes, not days.</p>
+          <a class="link" href="#quotes">See what customers say →</a>
+        </div>
+        <div class="aud-case">
+          <b>Helios Energy · case study</b>
+          <div class="metric">42 <small>countries</small> · 9,800 <small>locations</small></div>
+          <p>One integration replaced seven regional processors and cut payment failures by 31%.</p>
+          <a href="#quotes">Read the Helios story →</a>
+        </div>
+      </div>
+      <div class="aud-panel" id="panel-start" role="tabpanel" aria-labelledby="tab-start">
+        <div class="aud-copy">
+          <span class="tag">Startups</span>
+          <h3>Launch today, scale tomorrow</h3>
+          <p>Checkout, subscriptions and payouts from a single dashboard. No sales call required, start in test mode and go live when you're ready.</p>
+          <a class="link" href="#quotes">See what customers say →</a>
+        </div>
+        <div class="aud-case">
+          <b>Fern &amp; Co · case study</b>
+          <div class="metric">$48M <small>ARR</small> · 3.2M <small>users</small></div>
+          <p>From first payment to $48M in annual recurring revenue in three years, on the same integration.</p>
+          <a href="#quotes">Read the Fern &amp; Co story →</a>
+        </div>
+      </div>
+      <div class="aud-panel" id="panel-plat" role="tabpanel" aria-labelledby="tab-plat">
+        <div class="aud-copy">
+          <span class="tag">Platforms</span>
+          <h3>Onboard sellers, split payouts, stay compliant</h3>
+          <p>Identity verification, tax forms and payouts for thousands of sellers, handled by Corelia, not your support team.</p>
+          <a class="link" href="#quotes">See what customers say →</a>
+        </div>
+        <div class="aud-case">
+          <b>Atlas Freight · case study</b>
+          <div class="metric">12,000 <small>sellers onboarded</small></div>
+          <p>Average seller onboarding dropped from 6 days to 11 minutes after switching to Corelia Connect.</p>
+          <a href="#quotes">Read the Atlas story →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTES CAROUSEL -->
+  <section class="quotes" id="quotes">
+    <div class="container">
+      <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center">
+        <p class="eyebrow-sm">Customer stories</p>
+        <h2>In their own words</h2>
+      </div>
+      <div class="carousel" id="quoteCarousel" aria-live="polite">
+        <div class="quote-slide active">
+          <blockquote>“Corelia took payments off our roadmap entirely. We stopped thinking about processors, retries and regional quirks, and got back to building the product our customers actually pay for.”</blockquote>
+          <div class="who"><b>Mara Ellison</b><span>Chief Product Officer, Helios Energy</span><br><a href="#audiences">Read the Helios story →</a></div>
+        </div>
+        <div class="quote-slide">
+          <blockquote>“We went live in an afternoon. Three years later the same integration handles 3.2 million users and every subscription change we throw at it. It just scales.”</blockquote>
+          <div class="who"><b>Daniel Okafor</b><span>Co-founder &amp; CEO, Fern &amp; Co</span><br><a href="#audiences">Read the Fern &amp; Co story →</a></div>
+        </div>
+        <div class="quote-slide">
+          <blockquote>“Seller onboarding was our biggest support cost. Corelia cut it from six days to eleven minutes, and our sellers get paid on time, every time, in 40 countries.”</blockquote>
+          <div class="who"><b>Priya Raman</b><span>VP Operations, Atlas Freight</span><br><a href="#audiences">Read the Atlas story →</a></div>
+        </div>
+        <div class="carousel-controls">
+          <button class="car-btn" id="carPrev" aria-label="Previous quote">‹</button>
+          <div class="dots" id="carDots" role="tablist" aria-label="Choose quote"></div>
+          <span class="car-count" id="carCount" aria-live="polite">1 / 3</span>
+          <button class="car-btn" id="carNext" aria-label="Next quote">›</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEVELOPERS -->
+  <section class="dev" id="developers">
+    <div class="container">
+      <p class="eyebrow-sm" style="color:#e8c88a">Developers</p>
+      <h2 style="font-size:31px;font-weight:400;letter-spacing:0;margin-bottom:14px">An API your engineers will actually enjoy</h2>
+      <p class="sub">One consistent, well-documented API for payments, billing and payouts, with SDKs, webhooks and a test mode that behaves exactly like production.</p>
+      <div class="dev-stats">
+        <div class="dev-stat"><b>480M+</b><span>API requests per day</span></div>
+        <div class="dev-stat"><b>9,500</b><span>requests per second at peak</span></div>
+        <div class="dev-stat"><b>120K+</b><span>webhooks delivered per minute</span></div>
+      </div>
+      <div class="dev-grid">
+        <div class="dev-card">
+          <h3><span class="dev-num">01</span> No-code</h3>
+          <p>Payment links and a hosted checkout, no code at all. Share a link, get paid.</p>
+          <a href="#contact">Create a payment link →</a>
+        </div>
+        <div class="dev-card">
+          <h3><span class="dev-num">02</span> Pre-integrated</h3>
+          <p>Ready-made plugins for the platforms you already use: WordPress, Shopify, and more.</p>
+          <a href="#pricing">Browse integrations →</a>
+        </div>
+        <div class="dev-card">
+          <h3><span class="dev-num">03</span> Build your own</h3>
+          <p>Full API access, official SDKs and sandbox keys in minutes. Your stack, your rules.</p>
+          <a href="#contact">Get API keys →</a>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <button class="code-copy" id="codeCopy" type="button">Copy code</button>
+        <div class="code" id="codeSnippet"><span class="c"># Create a payment in four lines</span>
+<span class="k">import</span> corelia
+corelia.api_key = <span class="s">"sk_test_…"</span>
+
+payment = corelia.Payment.create(
+    amount=<span class="s">4999</span>, currency=<span class="s">"usd"</span>,
+    description=<span class="s">"Fern &amp; Co, Annual plan"</span>,
+)</div>
+      </div>
+      <p style="margin-top:20px;color:#aab8cc;font-size:15px">SDKs: Python · Node.js · Ruby · Go · Java · PHP, plus a Postman collection and an OpenAPI spec.</p>
+    </div>
+  </section>
+
+  <!-- PRICING TEASER -->
+  <section id="pricing">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow-sm">Pricing</p>
+        <h2>Transparent pricing, no surprises</h2>
+        <p>Pay as you go. No setup fees, no monthly minimums on the standard plan, and volume discounts that kick in automatically.</p>
+      </div>
+      <div class="price-grid">
+        <div class="price-card">
+          <h3>Standard</h3>
+          <p>For getting started and growing steadily.</p>
+          <div class="fee">2.9% <small>+ 30¢</small></div>
+          <p>per successful card charge</p>
+          <ul><li>Online payments &amp; checkout</li><li>Subscriptions &amp; invoicing</li><li>Standard fraud protection</li><li>Email support</li></ul>
+          <a class="btn btn-white" href="pricing.html" style="display:block;text-align:center">See full pricing</a>
+        </div>
+        <div class="price-card featured">
+          <h3>Growth</h3>
+          <p>For businesses scaling fast and selling globally.</p>
+          <div class="fee">2.5% <small>+ 25¢</small></div>
+          <p>per successful card charge</p>
+          <ul><li>Everything in Standard</li><li>Local acquiring in 40+ markets</li><li>Advanced fraud rules</li><li>Priority support, 24/7</li></ul>
+          <a class="btn btn-primary" href="pricing.html" style="display:block;text-align:center">See full pricing</a>
+        </div>
+        <div class="price-card">
+          <h3>Enterprise</h3>
+          <p>For high volume, custom terms and dedicated help.</p>
+          <div class="fee">Custom</div>
+          <p>tailored to your volume &amp; mix</p>
+          <ul><li>Everything in Growth</li><li>Custom rates &amp; interchange+</li><li>Dedicated success manager</li><li>99.999% uptime SLA</li></ul>
+          <a class="btn btn-white" href="pricing.html" style="display:block;text-align:center">See full pricing</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow-sm">Questions</p>
+        <h2>Answers before you ask</h2>
+        <p>The four things every team asks us first. Anything else, ask sales, we answer within one business day.</p>
+      </div>
+      <div class="faq">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">How fast can I go live? <span class="chev">▾</span></button>
+          <p class="faq-a">Most teams take their first live payment the same day. Create an account, drop in the hosted checkout or a payment link, and switch from test mode to live when you're ready, no sales call required.</p>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Which currencies and payment methods do you support? <span class="chev">▾</span></button>
+          <p class="faq-a">142 currencies and payment methods: cards, digital wallets and local bank payments, with local acquiring in 40+ markets so your customers pay the way they prefer.</p>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">What does test mode include? <span class="chev">▾</span></button>
+          <p class="faq-a">Everything. Test mode behaves exactly like production, same API, same webhooks, same dashboard, with test cards and no real money moving. It's free, with no time limit.</p>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Do you handle tax and compliance for sellers? <span class="chev">▾</span></button>
+          <p class="faq-a">Yes, identity verification, tax-form collection and payouts for your sellers are built into the platform, so your support team doesn't have to chase documents.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT / FINAL CTA -->
+  <section id="contact" style="padding-top:24px">
+    <div class="container">
+      <div class="contact-grid">
+        <div>
+          <p class="eyebrow-sm">Contact sales</p>
+          <h2 style="font-size:31px;font-weight:400;letter-spacing:0;margin-bottom:14px">Talk to a human about your volume</h2>
+          <p style="color:var(--grey);font-size:18px;margin-bottom:20px">Tell us about your business and we'll come back within one business day with pricing, a migration plan and, if you want it, a sandbox walkthrough.</p>
+          <ul style="list-style:none;color:var(--grey);font-size:15px">
+            <li style="padding:4px 0">✓ Custom volume pricing, quoted in writing</li>
+            <li style="padding:4px 0">✓ Migration help from your current processor</li>
+            <li style="padding:4px 0">✓ No obligation, test mode stays free either way</li>
+          </ul>
+        </div>
+        <form class="contact-form" id="salesForm" novalidate>
+          <label for="fName">Work email</label>
+          <input id="fName" name="email" type="email" placeholder="you@company.com" required aria-describedby="errEmail">
+          <p class="field-err" id="errEmail">Please enter a valid work email address.</p>
+          <label for="fCompany">Company</label>
+          <input id="fCompany" name="company" type="text" placeholder="Company name" required aria-describedby="errCompany">
+          <p class="field-err" id="errCompany">Please enter your company name.</p>
+          <label for="fVolume">Annual payment volume</label>
+          <select id="fVolume" name="volume">
+            <option>Under $100K</option><option>$100K – $1M</option><option selected>$1M – $10M</option><option>$10M – $100M</option><option>Over $100M</option>
+          </select>
+          <label for="fMsg">What are you building? (optional)</label>
+          <textarea id="fMsg" name="message" rows="3" placeholder="A short note helps us route you to the right team."></textarea>
+          <button class="btn btn-primary" type="submit" style="width:100%;margin-top:20px">Request a call back</button>
+          <div class="form-msg" id="formMsg" role="status"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="container">
+      <div class="final-cta">
+        <h2>Ready to take payments live?</h2>
+        <p>Start in test mode in minutes, or talk to sales about custom pricing.</p>
+        <div class="row">
+          <a class="btn btn-white" href="#developers">Start building, it's free</a>
+          <a class="btn btn-ghost" href="#contact">Contact sales</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="logo" href="index.html"><span class="logo-mark" aria-hidden="true"></span>Corelia</a>
+        <p>Financial infrastructure for the internet.</p>
+      </div>
+      <div>
+        <h4>Products</h4>
+        <ul><li><a href="#products">Payments</a></li><li><a href="#products">Billing</a></li><li><a href="#products">Treasury &amp; payouts</a></li><li><a href="#products">Fraud protection</a></li></ul>
+      </div>
+      <div>
+        <h4>Solutions</h4>
+        <ul><li><a href="#audiences">Enterprise</a></li><li><a href="#audiences">Startups</a></li><li><a href="#audiences">Platforms</a></li><li><a href="#audiences">Marketplaces</a></li></ul>
+      </div>
+      <div>
+        <h4>Developers</h4>
+        <ul><li><a href="#developers">API reference</a></li><li><a href="#developers">SDKs &amp; libraries</a></li><li><a href="#developers">Test mode</a></li><li><a href="#developers">Webhooks</a></li></ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul><li><a href="#quotes">Customer stories</a></li><li><a href="#numbers">Corelia in numbers</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="#contact">Contact sales</a></li></ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Corelia. All rights reserved.</span>
+      <span>Privacy · Terms · Security</span>
+    </div>
+    <p class="photo-credits">Photos: Cabot Square, Canary Wharf: <a href="https://commons.wikimedia.org/wiki/File%3ACabot_Square%2C_Canary_Wharf_-_June_2008.jpg">Diliff</a> (CC BY-SA 3.0) · Australian Embassy, Paris: <a href="https://www.flickr.com/photos/94852245@N00/7006799497">seier+seier</a> (CC BY 2.0)</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  /* --- dropdown nav: click to toggle, close on outside click / Esc --- */
+  var items = document.querySelectorAll(".nav-item");
+  function closeAll(except){
+    items.forEach(function(it){
+      if(it!==except){
+        it.classList.remove("open");
+        var b=it.querySelector(".nav-link[aria-expanded]");
+        if(b) b.setAttribute("aria-expanded","false");
+      }
+    });
+  }
+  items.forEach(function(it){
+    var btn = it.querySelector(".nav-link[aria-expanded]");
+    if(!btn) return;
+    btn.addEventListener("click", function(e){
+      e.stopPropagation();
+      var willOpen = !it.classList.contains("open");
+      closeAll(it);
+      it.classList.toggle("open", willOpen);
+      btn.setAttribute("aria-expanded", String(willOpen));
+    });
+    /* hover intent for desktop */
+    it.addEventListener("mouseenter", function(){ closeAll(it); it.classList.add("open"); btn.setAttribute("aria-expanded","true"); });
+    it.addEventListener("mouseleave", function(){ it.classList.remove("open"); btn.setAttribute("aria-expanded","false"); });
+  });
+  document.addEventListener("click", function(){ closeAll(null); });
+  document.addEventListener("keydown", function(e){ if(e.key==="Escape") closeAll(null); });
+
+  /* --- quote carousel --- */
+  var carousel = document.getElementById("quoteCarousel");
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".quote-slide"));
+  var dotsWrap = document.getElementById("carDots");
+  var carCount = document.getElementById("carCount");
+  var current = 0, timer = null;
+  slides.forEach(function(_, i){
+    var d = document.createElement("button");
+    d.className = "dot" + (i===0 ? " active" : "");
+    d.setAttribute("aria-label", "Show quote " + (i+1));
+    d.addEventListener("click", function(){ show(i); restart(); });
+    dotsWrap.appendChild(d);
+  });
+  var dots = Array.prototype.slice.call(dotsWrap.children);
+  function show(i){
+    current = (i + slides.length) % slides.length;
+    slides.forEach(function(s, j){ s.classList.toggle("active", j===current); });
+    dots.forEach(function(d, j){ d.classList.toggle("active", j===current); });
+    if(carCount) carCount.textContent = (current+1) + " / " + slides.length;
+  }
+  function restart(){ if(timer) clearInterval(timer); timer = setInterval(function(){ show(current+1); }, 6000); }
+  function pause(){ if(timer){ clearInterval(timer); timer = null; } }
+  document.getElementById("carPrev").addEventListener("click", function(){ show(current-1); restart(); });
+  document.getElementById("carNext").addEventListener("click", function(){ show(current+1); restart(); });
+  carousel.addEventListener("mouseenter", pause);
+  carousel.addEventListener("mouseleave", restart);
+  carousel.addEventListener("focusin", pause);
+  carousel.addEventListener("focusout", restart);
+  carousel.addEventListener("keydown", function(e){
+    if(e.key === "ArrowLeft"){ show(current-1); restart(); }
+    if(e.key === "ArrowRight"){ show(current+1); restart(); }
+  });
+  restart();
+
+  /* --- sales form: per-field validation + success message --- */
+  var form = document.getElementById("salesForm");
+  var msg = document.getElementById("formMsg");
+  var emailInput = document.getElementById("fName");
+  var companyInput = document.getElementById("fCompany");
+  var errEmail = document.getElementById("errEmail");
+  var errCompany = document.getElementById("errCompany");
+  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function validate(){
+    var okEmail = validEmail(emailInput.value.trim());
+    var okCompany = companyInput.value.trim().length > 0;
+    emailInput.classList.toggle("invalid", !okEmail);
+    companyInput.classList.toggle("invalid", !okCompany);
+    errEmail.classList.toggle("show", !okEmail);
+    errCompany.classList.toggle("show", !okCompany);
+    return okEmail && okCompany;
+  }
+  emailInput.addEventListener("input", function(){ if(validEmail(emailInput.value.trim())){ emailInput.classList.remove("invalid"); errEmail.classList.remove("show"); } });
+  companyInput.addEventListener("input", function(){ if(companyInput.value.trim()){ companyInput.classList.remove("invalid"); errCompany.classList.remove("show"); } });
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    if(!validate()){
+      msg.className = "form-msg err";
+      msg.textContent = "Please fix the highlighted fields above.";
+      return;
+    }
+    msg.className = "form-msg ok";
+    msg.textContent = "Thanks, your request was noted. Our sales team will reply within one business day.";
+    form.reset();
+  });
+
+  /* --- mobile menu --- */
+  var menuBtn = document.getElementById("menuBtn");
+  var mobileNav = document.getElementById("mobileNav");
+  if(menuBtn && mobileNav){
+    menuBtn.addEventListener("click", function(){
+      var open = mobileNav.classList.toggle("open");
+      menuBtn.setAttribute("aria-expanded", String(open));
+      menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      menuBtn.textContent = open ? "✕" : "☰";
+    });
+    mobileNav.querySelectorAll("a").forEach(function(a){
+      a.addEventListener("click", function(){
+        mobileNav.classList.remove("open");
+        menuBtn.setAttribute("aria-expanded", "false");
+        menuBtn.setAttribute("aria-label", "Open menu");
+        menuBtn.textContent = "☰";
+      });
+    });
+  }
+
+  /* --- hero eyebrow stat: count up to 2.4% on load --- */
+  var gdp = document.getElementById("gdpStat");
+  var reducedMotion = (typeof window.matchMedia === "function") && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(gdp && !reducedMotion && typeof window.requestAnimationFrame === "function"){
+    var start = null;
+    (function tick(ts){
+      if(start === null) start = ts;
+      var p = Math.min(1, (ts - start) / 1200);
+      gdp.textContent = "~" + (2.4 * p).toFixed(1) + "%";
+      if(p < 1) window.requestAnimationFrame(tick);
+    })(0);
+  }
+  /* ensure the final value lands even if animation frames never fire */
+  setTimeout(function(){ if(gdp) gdp.textContent = "~2.4%"; }, 1300);
+
+  /* --- numbers count-up: 700ms, once, on scroll into view; final value is the default --- */
+  var reduced = (typeof window.matchMedia === "function") && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function fmtCount(v, decimals){
+    var s = decimals ? v.toFixed(decimals) : String(Math.round(v));
+    var parts = s.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+  }
+  document.querySelectorAll("[data-count]").forEach(function(el){
+    var target = parseFloat(el.getAttribute("data-count"));
+    var decimals = parseInt(el.getAttribute("data-decimals") || "0", 10);
+    var prefix = el.getAttribute("data-prefix") || "";
+    var suffix = el.getAttribute("data-suffix") || "";
+    function render(v){ el.textContent = prefix + fmtCount(v, decimals) + suffix; }
+    if(reduced || !("IntersectionObserver" in window)){ render(target); return; }
+    var cio = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        cio.unobserve(el);
+        var start = null;
+        (function tick(ts){
+          if(start === null) start = ts;
+          var p = Math.min(1, (ts - start) / 700);
+          render(target * p);
+          if(p < 1) window.requestAnimationFrame(tick);
+        })(performance.now());
+      });
+    }, {threshold: .4});
+    cio.observe(el);
+  });
+
+  /* --- reveal-on-scroll for the main blocks (one observer, once-only, 60ms stagger capped at 6) --- */
+  var autoReveal = document.querySelectorAll(".section-head, .prod-card, .price-card, .dev-card, .aud-copy, .aud-case, .faq-item, .contact-form, .final-cta, .hero-photo, .aud-intro");
+  autoReveal.forEach(function(el){ if(!el.classList.contains("reveal")) el.classList.add("reveal"); });
+  var arParents = new Map();
+  autoReveal.forEach(function(el){
+    var key = el.parentElement;
+    var n = arParents.get(key) || 0;
+    if(n < 6){ el.style.transitionDelay = (n * 60) + "ms"; }
+    arParents.set(key, n + 1);
+  });
+  if("IntersectionObserver" in window && !reduced){
+    var aio = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); aio.unobserve(en.target); } });
+    }, {threshold: .15, rootMargin: "0px 0px -10% 0px"});
+    autoReveal.forEach(function(el){ aio.observe(el); });
+  } else {
+    autoReveal.forEach(function(el){ el.classList.add("in"); });
+  }
+
+  /* --- reveal numbers/cards on scroll --- */
+  var revealEls = document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } });
+    }, {threshold: .2});
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add("in"); });
+  }
+
+  /* --- checkout preview widget: fee = 2.9% + 30c --- */
+  var coBtns = Array.prototype.slice.call(document.querySelectorAll(".plan-pick button"));
+  var coAmount = document.getElementById("coAmount");
+  var coFee = document.getElementById("coFee");
+  var coNet = document.getElementById("coNet");
+  var coLabel = document.getElementById("coPlanLabel");
+  var coPay = document.getElementById("coPay");
+  var coNote = document.getElementById("coNote");
+  function money(n){ return "$" + n.toFixed(2); }
+  function updateCheckout(btn){
+    var amount = parseFloat(btn.getAttribute("data-amount"));
+    var fee = amount * 0.029 + 0.30;
+    coBtns.forEach(function(b){ b.setAttribute("aria-pressed", String(b === btn)); });
+    coLabel.textContent = btn.getAttribute("data-label") + " charge";
+    coAmount.textContent = money(amount);
+    coFee.textContent = money(fee);
+    coNet.textContent = money(amount - fee);
+    coPay.textContent = "Pay " + money(amount);
+    coNote.classList.remove("show");
+  }
+  coBtns.forEach(function(b){ b.addEventListener("click", function(){ updateCheckout(b); }); });
+  if(coBtns.length) updateCheckout(coBtns[0]);
+  if(coPay){
+    coPay.addEventListener("click", function(){
+      coNote.classList.add("show");
+      coPay.textContent = "✓ Complete";
+    });
+  }
+
+  /* --- audience tabs --- */
+  var audTabs = Array.prototype.slice.call(document.querySelectorAll(".aud-tab"));
+  var audPanels = Array.prototype.slice.call(document.querySelectorAll(".aud-panel"));
+  audTabs.forEach(function(tab){
+    tab.addEventListener("click", function(){
+      audTabs.forEach(function(t){ t.setAttribute("aria-selected", String(t === tab)); });
+      audPanels.forEach(function(p){ p.classList.toggle("active", p.id === tab.getAttribute("data-panel")); });
+    });
+  });
+
+  /* --- FAQ accordion --- */
+  document.querySelectorAll(".faq-item").forEach(function(item){
+    var q = item.querySelector(".faq-q");
+    q.addEventListener("click", function(){
+      var wasOpen = item.classList.contains("open");
+      document.querySelectorAll(".faq-item").forEach(function(i){
+        i.classList.remove("open");
+        i.querySelector(".faq-q").setAttribute("aria-expanded", "false");
+      });
+      if(!wasOpen){ item.classList.add("open"); q.setAttribute("aria-expanded", "true"); }
+    });
+  });
+
+  /* --- copy code snippet --- */
+  var copyBtn = document.getElementById("codeCopy");
+  var snippet = document.getElementById("codeSnippet");
+  if(copyBtn && snippet){
+    copyBtn.addEventListener("click", function(){
+      var text = snippet.textContent;
+      function done(){ copyBtn.textContent = "✓ Copied"; setTimeout(function(){ copyBtn.textContent = "Copy code"; }, 2000); }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, done);
+      } else {
+        var ta = document.createElement("textarea");
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand("copy"); } catch(e){}
+        document.body.removeChild(ta);
+        done();
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تماس با ما | آریا صنعت توان</title>
+<meta name="description" content="فرم استعلام قیمت و تماس با آریا صنعت توان؛ پاسخ استعلام در یک روز کاری.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="badge">نمونه کار</div>
+<header>
+  <div class="container header-inner">
+    <div class="logo">آریا صنعت <span>توان</span><small>توزیع تجهیزات برق صنعتی</small></div>
+    <button class="menu-btn" type="button" aria-label="باز کردن منو" aria-expanded="false" aria-controls="mainNav">☰</button>
+    <nav id="mainNav" aria-label="ناوبری اصلی">
+      <ul>
+        <li><a href="index.html">صفحه اصلی</a></li>
+        <li><a href="products.html">محصولات</a></li>
+        <li><a href="services.html">خدمات</a></li>
+        <li><a href="projects.html">پروژه‌ها</a></li>
+        <li><a href="about.html">درباره ما</a></li>
+        <li><a href="contact.html" class="active">تماس با ما</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="page-head"><div class="container"><h1>تماس با ما</h1><p>استعلام قیمت، درخواست نمایندگی یا سؤال فنی؛ پاسخ می‌دهیم</p></div></div>
+
+<section>
+  <div class="container">
+    <div class="two">
+      <div class="card reveal">
+        <p class="eyebrow right">۰۱ · اطلاعات تماس</p>
+        <h2 class="right">اطلاعات تماس</h2>
+        <p><strong>آدرس:</strong> تهران، خیابان ولیعصر، پلاک ۱۰۰</p>
+        <p><strong>تلفن:</strong> ۰۲۱-۱۲۳۴۵۶۷۸</p>
+        <p><strong>ایمیل:</strong> info@example.com</p>
+        <p><strong>ساعات کاری:</strong> شنبه تا چهارشنبه، ۹ تا ۱۷</p>
+        <p style="margin-top:16px">برای استعلام قیمت، فرم روبه‌رو را پر کنید؛ قیمت و زمان تحویل در یک روز کاری اعلام می‌شود. در یک وب‌سایت واقعی، پیام شما به‌صورت خودکار به تیم فروش می‌رسد و کد پیگیری دریافت می‌کنید.</p>
+        <h2 style="margin-top:20px">پاسخ به استعلام چطور انجام می‌شود؟</h2>
+        <ul class="check">
+          <li>پیش‌فاکتور مکتوب با قیمت، زمان تحویل و شرایط پرداخت</li>
+          <li>برگه مشخصات فنی محصول، به‌همراه پیش‌فاکتور</li>
+          <li>امکان مشاوره تلفنی با کارشناس فنی پیش از خرید</li>
+        </ul>
+      </div>
+      <div class="card reveal" style="--d:80ms">
+        <p class="eyebrow right">۰۲ · فرم استعلام</p>
+        <h2 class="right">فرم استعلام و تماس</h2>
+        <form id="inquiryForm" novalidate>
+          <label for="name">نام و نام خانوادگی *</label>
+          <input type="text" id="name" placeholder="مثلاً: علی رضایی">
+          <div class="error" id="nameError">لطفاً نام خود را وارد کنید.</div>
+
+          <label for="company">نام شرکت یا سازمان</label>
+          <input type="text" id="company" placeholder="مثلاً: کارخانه نمونه">
+
+          <label for="phone">شماره تماس *</label>
+          <input type="tel" id="phone" placeholder="مثلاً: 09123456789" dir="ltr" style="text-align:right">
+          <div class="error" id="phoneError">لطفاً یک شماره موبایل معتبر وارد کنید (۱۱ رقم، با ۰۹ شروع شود).</div>
+
+          <label for="email">ایمیل (اختیاری)</label>
+          <input type="email" id="email" placeholder="مثلاً: name@example.com" dir="ltr" style="text-align:right">
+          <div class="error" id="emailError">لطفاً یک ایمیل معتبر وارد کنید.</div>
+
+          <label for="product">محصول موردنظر *</label>
+          <select id="product">
+            <option value="AT-2500">ترانسفورماتور خشک رزینی جیافول ۲۵۰۰ · AT-2500</option>
+            <option value="AT-1600">ترانسفورماتور توزیع روغنی ۱۶۰۰ · AT-1600</option>
+            <option value="AT-33">ترانسفورماتور ولتاژ تک‌فاز تی‌جی‌سی ۷ · AT-33</option>
+            <option value="TT-5000">دستگاه آزمون عایقی MIT515 · TT-5000</option>
+            <option value="TT-100">اهم‌متر ترانسفورماتور MTO210 · TT-100</option>
+            <option value="TT-REL">مجموعه آزمون رله CMC 356 · TT-REL</option>
+            <option value="CB-20">کابل قدرت N2XS2Y · CB-20</option>
+            <option value="CB-C">کابل کنترل اولفلکس کلاسیک ۱۱۰ · CB-C</option>
+            <option value="CB-I">کابل کنترل شیلددار اولفلکس کلاسیک ۱۱۰ · CB-I</option>
+            <option value="SW-24">کلید خلأ 3AH5 · SW-24</option>
+            <option value="SW-R">رله حفاظتی فیدر REF615 · SW-R</option>
+            <option value="SW-33">سکسیونر 3DC · SW-33</option>
+            <option value="MT-87">مولتی‌متر صنعتی 87V · MT-87</option>
+            <option value="MT-C">کلمپ‌متر 376 FC · MT-C</option>
+            <option value="MT-Q">تحلیل‌گر کیفیت توان 1775 · MT-Q</option>
+            <option value="other">سایر / چند محصول / درخواست نمایندگی</option>
+          </select>
+
+          <label for="qty">تعداد (اختیاری)</label>
+          <input type="text" id="qty" placeholder="مثلاً: ۵" dir="ltr" style="text-align:right">
+          <div class="error" id="qtyError">لطفاً تعداد را به‌صورت عدد وارد کنید.</div>
+
+          <label for="message">متن پیام *</label>
+          <textarea id="message" placeholder="نیاز یا سؤال خود را بنویسید؛ مثلاً محل تحویل و زمان موردنیاز..."></textarea>
+          <div class="error" id="messageError">لطفاً دست‌کم ۱۰ حرف بنویسید.</div>
+
+          <button type="submit" class="btn" style="margin-top:18px">ارسال درخواست استعلام</button>
+          <div class="success" id="successBox">
+            <b>✓ درخواست شما با موفقیت ثبت شد.</b>
+            کد پیگیری شما: <span id="trackCode" dir="ltr"></span><br>
+            کارشناسان ما در یک روز کاری با شما تماس می‌گیرند.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <h4>آریا صنعت توان</h4>
+        <p>توزیع‌کننده تجهیزات برق صنعتی.</p>
+        <p style="margin-top:8px">تهران، خیابان ولیعصر، پلاک ۱۰۰<br>تلفن: ۰۲۱-۱۲۳۴۵۶۷۸</p>
+      </div>
+      <div>
+        <h4>دسترسی سریع</h4>
+        <ul>
+          <li><a href="products.html">کاتالوگ محصولات</a></li>
+          <li><a href="services.html">خدمات</a></li>
+          <li><a href="projects.html">پروژه‌ها</a></li>
+          <li><a href="about.html">درباره ما</a></li>
+          <li><a href="contact.html">تماس با ما</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>دسته‌های محصولات</h4>
+        <ul>
+          <li><a href="products.html">ترانسفورماتور</a></li>
+          <li><a href="products.html">تجهیزات آزمون</a></li>
+          <li><a href="products.html">کابل و سیم</a></li>
+          <li><a href="products.html">کلید و حفاظت</a></li>
+          <li><a href="products.html">ابزار اندازه‌گیری</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>نمادهای اعتماد</h4>
+        <div class="foot-badges">
+          <span class="foot-badge">نماد اعتماد<br>الکترونیکی</span>
+          <span class="foot-badge">ساماندهی<br>رسانه‌های دیجیتال</span>
+          <span class="foot-badge">درگاه پرداخت<br>امن</span>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">© ۱۴۰۵</div>
+  </div>
+</footer>
+<script src="main.js"></script>
+</body>
+</html>

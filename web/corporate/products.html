@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کاتالوگ محصولات | آریا صنعت توان</title>
+<meta name="description" content="کاتالوگ ۱۵ محصول آریا صنعت توان: ترانسفورماتور، تجهیزات آزمون، کابل و سیم، کلید و حفاظت و ابزار اندازه‌گیری؛ با جستجو، فیلتر، جدول مقایسه و دانلود برگه مشخصات فنی.">
+<meta name="keywords" content="کاتالوگ تجهیزات صنعتی، ترانسفورماتور، تجهیزات آزمون، کابل قدرت، کلید فشار متوسط، رله حفاظتی، جدول مقایسه محصولات">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="badge">نمونه کار</div>
+<header>
+  <div class="container header-inner">
+    <div class="logo">آریا صنعت <span>توان</span><small>توزیع تجهیزات برق صنعتی</small></div>
+    <button class="menu-btn" type="button" aria-label="باز کردن منو" aria-expanded="false" aria-controls="mainNav">☰</button>
+    <nav id="mainNav" aria-label="ناوبری اصلی">
+      <ul>
+        <li><a href="index.html">صفحه اصلی</a></li>
+        <li><a href="products.html" class="active">محصولات</a></li>
+        <li><a href="services.html">خدمات</a></li>
+        <li><a href="projects.html">پروژه‌ها</a></li>
+        <li><a href="about.html">درباره ما</a></li>
+        <li><a href="contact.html">تماس با ما</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="page-head"><div class="container"><h1>کاتالوگ محصولات</h1><p>۱۵ محصول در ۵ دسته؛ جستجو کنید، مقایسه کنید، برگه مشخصات را دانلود کنید</p></div></div>
+
+<section>
+  <div class="container">
+
+    <p class="eyebrow right reveal">۰۱ · کاتالوگ</p>
+    <div class="toolbar reveal">
+      <input type="search" id="productSearch" placeholder="جستجو در نام محصول، مدل یا دسته..." aria-label="جستجو در محصولات">
+      <select id="productSort" aria-label="مرتب‌سازی">
+        <option value="name">مرتب‌سازی: نام محصول</option>
+        <option value="cat">مرتب‌سازی: دسته</option>
+        <option value="brand">مرتب‌سازی: سازنده</option>
+      </select>
+      <a class="btn btn-small" href="datasheets/catalogue.pdf" download target="_blank" rel="noopener">دانلود کاتالوگ کامل</a>
+    </div>
+
+    <div class="tabs reveal" id="catTabs" style="justify-content:flex-start">
+      <button class="tab active" data-cat="all">همه محصولات</button>
+      <button class="tab" data-cat="transformer">ترانسفورماتور</button>
+      <button class="tab" data-cat="test">تجهیزات آزمون</button>
+      <button class="tab" data-cat="cable">کابل و سیم</button>
+      <button class="tab" data-cat="switch">کلید و حفاظت</button>
+      <button class="tab" data-cat="measure">ابزار اندازه‌گیری</button>
+    </div>
+
+    <p id="resultCount" class="subtitle right" style="margin-bottom:16px">نمایش ۱۵ محصول از ۱۵ محصول</p>
+
+    <div class="grid" id="productGrid"></div>
+    <p class="empty" id="emptyState">محصولی با این مشخصات پیدا نشد. عبارت جستجو یا دسته را تغییر دهید.</p>
+
+    <div class="compare-bar" id="compareBar">
+      <span id="compareCount">۰ محصول انتخاب شده</span>
+      <span>
+        <button class="btn btn-small" id="showCompare" type="button">مشاهده جدول مقایسه</button>
+        <button class="btn btn-small" id="clearCompare" type="button" style="background:#475569">پاک کردن انتخاب</button>
+      </span>
+    </div>
+
+    <div class="compare-table-wrap" id="compareWrap" style="display:none"></div>
+
+    <div class="card reveal" style="margin-top:32px">
+      <p class="eyebrow right">۰۲ · قیمت و سفارش</p>
+      <h2 class="right">درباره قیمت و سفارش عمده</h2>
+      <p>قیمت محصولات به‌صورت عمده و بر اساس حجم سفارش اعلام می‌شود. برای دریافت پیش‌فاکتور، محصول موردنظر را انتخاب کنید و از دکمه «استعلام قیمت» استفاده کنید؛ یا مستقیم از <a href="contact.html" style="color:#0f3b5e;font-weight:bold;text-decoration:underline">فرم استعلام</a> درخواست خود را بفرستید. پاسخ استعلام در یک روز کاری آماده می‌شود.</p>
+      <p style="margin-top:8px">همه محصولات با برگه آزمون کارخانه و ضمانت‌نامه معتبر تحویل داده می‌شوند و امکان ارسال به سراسر کشور وجود دارد.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <h4>آریا صنعت توان</h4>
+        <p>توزیع‌کننده تجهیزات برق صنعتی.</p>
+        <p style="margin-top:8px">تهران، خیابان ولیعصر، پلاک ۱۰۰<br>تلفن: ۰۲۱-۱۲۳۴۵۶۷۸</p>
+      </div>
+      <div>
+        <h4>دسترسی سریع</h4>
+        <ul>
+          <li><a href="products.html">کاتالوگ محصولات</a></li>
+          <li><a href="services.html">خدمات</a></li>
+          <li><a href="projects.html">پروژه‌ها</a></li>
+          <li><a href="about.html">درباره ما</a></li>
+          <li><a href="contact.html">تماس با ما</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>دسته‌های محصولات</h4>
+        <ul>
+          <li><a href="products.html?cat=transformer">ترانسفورماتور</a></li>
+          <li><a href="products.html?cat=test">تجهیزات آزمون</a></li>
+          <li><a href="products.html?cat=cable">کابل و سیم</a></li>
+          <li><a href="products.html?cat=switch">کلید و حفاظت</a></li>
+          <li><a href="products.html?cat=measure">ابزار اندازه‌گیری</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>نمادهای اعتماد</h4>
+        <div class="foot-badges">
+          <span class="foot-badge">نماد اعتماد<br>الکترونیکی</span>
+          <span class="foot-badge">ساماندهی<br>رسانه‌های دیجیتال</span>
+          <span class="foot-badge">درگاه پرداخت<br>امن</span>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">© ۱۴۰۵</div>
+  </div>
+</footer>
+<script src="main.js"></script>
+</body>
+</html>
