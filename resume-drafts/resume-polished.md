@@ -69,7 +69,7 @@
 - دو دور اصلاح پس از تحویل، رایگان
 - حداکثر زمان پاسخگویی: ۲۴ ساعت
 - نام مشتریان به دلیل محرمانگی ذکر نمی‌شود
-- شهر: گمبرون (بندرعباس)
+- شهر: بندرعباس
 - عکس پروفایل: `profile-photo.jpg` در همین مجموعه
 
 ## روش کار
@@ -120,7 +120,7 @@ In this pack, all labelled as samples, not client work: corporate site, store (1
 - Two rounds of revision after delivery, free
 - Maximum response time: 24 hours
 - Client names withheld under confidentiality
-- City: Gombron (Bandar Abbas)
+- City: Bandar Abbas
 - Profile photo: `profile-photo.jpg` in this pack
 
 ### Workflow
