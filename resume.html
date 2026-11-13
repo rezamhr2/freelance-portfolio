@@ -27,8 +27,8 @@
   .page { max-width: 920px; margin: 0 auto; background: #fff; box-shadow: 0 0 32px rgba(0,0,0,.12); }
   /* ---------- header ---------- */
   header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 70%, #3a6ea8 100%); color: #fff; padding: 36px 40px 28px; border-bottom: 5px solid var(--gold); }
-  .head-inner { display: flex; gap: 30px; align-items: center; }
-  .head-photo { flex: 0 0 67px; margin: 0; }
+  .head-inner { display: flex; gap: 30px; align-items: flex-start; }
+  .head-photo { flex: 0 0 74px; margin: 8px 0 0; }
   .head-photo img { display: block; width: 100%; height: auto; border-radius: 8px; border: 2px solid var(--gold); box-shadow: 0 2px 8px rgba(0,0,0,.3); }
   header h1 { margin: 0 0 2px; font-size: 34px; letter-spacing: .5px; }
   header .role { margin: 0 0 16px; font-size: 18px; color: #d7e2ef; }
@@ -108,7 +108,7 @@
   }
   @media (max-width: 640px) {
     .head-inner { gap: 16px; }
-    .head-photo { flex: 0 0 67px; }
+    .head-photo { flex: 0 0 74px; }
     header { padding-top: 64px; }
     header, main, footer { padding-left: 20px; padding-right: 20px; }
     .stats { grid-template-columns: 1fr 1fr; padding-left: 20px; padding-right: 20px; }
