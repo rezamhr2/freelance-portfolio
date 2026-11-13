@@ -48,20 +48,14 @@
 - Git و GitHub
 - Node.js و Playwright — اجرا و آزمون صفحات
 
-## نمونه‌کار واقعی
-
-پروفایل عمومی زیرنویس من این‌جاست: [subf2m.co/u/1069119/subtitles](https://subf2m.co/u/1069119/subtitles) — از ۱۳۹۴ تا امروز، بیش از ۲۰۰ زیرنویس، همه ژانرها.
-
-و نمونه‌هایی از کار وب که با داده واقعی ساخته شده‌اند: فروشگاه با ۱۳ محصول واقعی و سبد خرید کامل؛ نقشه تعاملی با ۱۳ مکان واقعی تهران؛ مانیتور قیمت با قیمت‌های واقعی بیت‌کوین و اتریوم.
-
-قالب وردپرس «دوزبانه» — قالب تجاری کامل دوزبانه با راست‌به‌چپ درست، تاریخ جلالی و پشتیبانی پایه ووکامرس؛ پیش‌نمایش آن در همین مجموعه است.
-
 ## نمونه کارها
+
+پروفایل عمومی زیرنویس من این‌جاست: [subf2m.co/u/1069119/subtitles](https://subf2m.co/u/1069119/subtitles) — از ۱۳۹۴ تا امروز، بیش از ۲۰۰ زیرنویس، همه ژانرها. **(کار واقعی)**
 
 در پوشه‌های همین مجموعه — همه با برچسب «نمونه کار»، نه کار مشتری:
 
-- **وب:** سایت شرکتی ۶ صفحه‌ای، فروشگاه، محاسبه‌گر رژیم، نقشه تعاملی، قالب وردپرس «دوزبانه»
-- **کد:** ربات تلگرام، مانیتور قیمت، درخت تصمیم (پایتون)
+- **وب:** سایت شرکتی ۶ صفحه‌ای، فروشگاه (۱۳ محصول واقعی)، محاسبه‌گر رژیم، نقشه تعاملی (۱۳ مکان واقعی تهران)، قالب وردپرس «دوزبانه»
+- **کد:** ربات تلگرام، مانیتور قیمت (قیمت‌های واقعی بیت‌کوین و اتریوم)، درخت تصمیم (پایتون)
 - **شیت و اتوماسیون:** فایل مدیریت قیمت و موجودی + اپس اسکریپت
 - **تحلیل تجربه کاربری:** فروشگاه تهران‌جانبی
 
@@ -110,17 +104,11 @@ Accurate, on time, and quick to reply.
 
 WordPress, WooCommerce (custom bilingual theme "Dozabaneh"); HTML, CSS, JavaScript; Leaflet (interactive maps); Python — python-telegram-bot, pandas, scikit-learn; Google Apps Script and Google Sheets; Git and GitHub; Node.js and Playwright (running and testing pages).
 
-### Real work
-
-Public subtitle profile — [subf2m.co/u/1069119/subtitles](https://subf2m.co/u/1069119/subtitles): 200+ subtitles since 2015, all genres.
-
-And web work built on real data: a store with 13 real products and a full cart; an interactive map with 13 real Tehran places; a price monitor running on real Bitcoin and Ethereum prices.
-
-WordPress theme "Dozabaneh" — a complete bilingual business theme with correct RTL, Jalali dates and basic WooCommerce support; its preview is in this pack.
-
 ### Samples
 
-In this pack, all labelled as samples, not client work: corporate site, store, diet calculator, interactive map, WordPress theme "Dozabaneh"; Telegram bot, price monitor, decision tree (Python); price/inventory workbook + Apps Script; UX audit of tehranjanebi.
+Public subtitle profile — [subf2m.co/u/1069119/subtitles](https://subf2m.co/u/1069119/subtitles): 200+ subtitles since 2015, all genres. **(Real work)**
+
+In this pack, all labelled as samples, not client work: corporate site, store (13 real products), diet calculator, interactive map (13 real Tehran places), WordPress theme "Dozabaneh"; Telegram bot, price monitor (real Bitcoin and Ethereum prices), decision tree (Python); price/inventory workbook + Apps Script; UX audit of tehranjanebi.
 
 ### Education & certificate
 

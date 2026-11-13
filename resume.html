@@ -69,7 +69,7 @@
   .real { background: linear-gradient(135deg, #fff8e1, #fdf3d0); border: 1px solid #f0d48a; border-radius: 12px; padding: 18px 22px; }
   .real p { margin: 0 0 6px; }
   .real a { color: var(--navy); font-weight: bold; font-size: 17px; }
-  .real .tag { display: inline-block; background: var(--green); color: #fff; font-size: 12px; padding: 2px 10px; border-radius: 20px; margin-inline-start: 8px; vertical-align: middle; }
+  .tag { display: inline-block; background: var(--green); color: #fff; font-size: 12px; padding: 2px 10px; border-radius: 20px; margin-inline-start: 8px; vertical-align: middle; }
   /* ---------- samples grid ---------- */
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; background: #fff; transition: box-shadow .15s; }
@@ -107,6 +107,9 @@
     .verbs { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 640px) {
+    .chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .chips li { text-align: center; font-size: 12.5px; padding: 3px 10px; }
+    .chips li:first-child, .chips li:last-child { grid-column: 1 / -1; }
     .head-inner { gap: 16px; }
     .head-photo { flex: 0 0 74px; }
     header { padding-top: 64px; }
@@ -212,25 +215,16 @@
       </ul>
     </section>
 
-    <section class="reveal">
-      <h2>نمونه‌کار واقعی</h2>
-      <div class="real">
-        <ul class="proofs">
-          <li><a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">پروفایل عمومی زیرنویس</a><span class="tag">کار واقعی</span>
-            <span class="proof">از ۱۳۹۴ تا امروز، بیش از ۲۰۰ زیرنویس، همه ژانرها، قابل‌مشاهده و قابل‌بررسی.</span></li>
-          <li><a href="web/store/index.html" target="_blank" rel="noopener">فروشگاه اینترنتی، ۱۳ محصول واقعی</a>
-            <span class="proof">محصولات واقعی با قیمت و مشخصات واقعی؛ سبد خرید کامل.</span></li>
-          <li><a href="web/map/index.html" target="_blank" rel="noopener">نقشه تعاملی، ۱۳ مکان واقعی تهران</a>
-            <span class="proof">روی نقشهٔ واقعی Esri؛ فیلترها نشانگر و فهرست را با هم عوض می‌کنند.</span></li>
-          <li><a href="code/price-monitor/report.html" target="_blank" rel="noopener">مانیتور قیمت، گزارش با قیمت‌های واقعی</a>
-            <span class="proof">تاریخچهٔ واقعی قیمت بیت‌کوین و اتریوم با نمودار و هشدار آستانه.</span></li>
-        </ul>
-      </div>
-    </section>
+    
 
     <section class="reveal">
       <h2>نمونه کارها</h2>
       <div class="grid">
+        <div class="card">
+          <h3><a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">پروفایل عمومی زیرنویس</a><span class="tag">کار واقعی</span></h3>
+          <p>از ۱۳۹۴ تا امروز، بیش از ۲۰۰ زیرنویس، همه ژانرها، قابل‌مشاهده و قابل‌بررسی.</p>
+          <a class="go" href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">مشاهده ←</a>
+        </div>
         <div class="card">
           <h3><a href="web/wordpress/index.html" target="_blank" rel="noopener">قالب وردپرس «دوزبانه»</a><span class="sample-badge">نمونه کار</span></h3>
           <p>قالب تجاری کامل دوزبانه: راست‌به‌چپ درست، تاریخ جلالی، پشتیبانی پایه ووکامرس؛ پیش‌نمایش فارسی و انگلیسی.</p>
@@ -283,7 +277,7 @@
         </div>
         <div class="card">
           <h3><a href="code/price-monitor/report.html" target="_blank" rel="noopener">مانیتور قیمت</a><span class="sample-badge">نمونه کار</span></h3>
-          <p>هشدار عبور از آستانه + گزارش اچ‌تی‌ام‌ال با نمودار تاریخچه قیمت.</p>
+          <p>هشدار عبور از آستانه + گزارش اچ‌تی‌ام‌ال با نمودار تاریخچه قیمت واقعی بیت‌کوین و اتریوم.</p>
           <a class="go" href="code/price-monitor/report.html" target="_blank" rel="noopener">مشاهده ←</a>
         </div>
         <div class="card">
@@ -338,8 +332,7 @@
       <p>11 years of translation, since 2015, 250+ projects managed, supervised and translated — subtitles (film, series, documentary, trailer, video games, educational videos), papers (general, electrical engineering, law, computer science), books (history, spiritual science, general topics). My public subtitle profile: <a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">subf2m.co/u/1069119/subtitles</a>. I build the website too: I write and translate the site's Persian and English content myself, then build the site around it — corporate or store, with a cart, a form, a calculator or a map; finished demo sites are in the samples below.</p>
       <p><strong>Services — one job, one delivery: complete bilingual websites, content and code together.</strong> Corporate and store websites — WordPress with the custom bilingual "Dozabaneh" theme — with content I wrote and translated myself; translation &amp; subtitling: two-way EN↔FA translation; film, series, documentary, trailer, video game and educational subtitling; book and paper translation: electrical engineering, law, computer science, spiritual science, history; transcription and subtitle revision; timing and sync (Subtitle Edit, CapCut, or any software the client needs); Telegram bots (Python); Python tools and scripts: price monitoring, data analysis; Sheets and automation: Google Sheets and Apps Script; UX review.</p>
       <p><strong>Tools:</strong> WordPress, WooCommerce (custom bilingual theme "Dozabaneh"); HTML, CSS, JavaScript; Leaflet (interactive maps); Python — python-telegram-bot, pandas, scikit-learn; Google Apps Script and Google Sheets; Git and GitHub; Node.js and Playwright (running and testing pages).</p>
-      <p><strong>Real work:</strong> public subtitle profile, <a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">subf2m.co/u/1069119/subtitles</a>: 200+ subtitles since 2015, all genres.</p>
-      <p><strong>Samples:</strong> WordPress theme "Dozabaneh", corporate site, store, diet calculator, interactive map; Telegram bot, price monitor, decision tree (Python); price/inventory workbook + Apps Script; UX audit of tehranjanebi.</p>
+      <p><strong>Samples:</strong> public subtitle profile, <a href="https://subf2m.co/u/1069119/subtitles" target="_blank" rel="noopener">subf2m.co/u/1069119/subtitles</a>: 200+ subtitles since 2015, all genres (real work); WordPress theme "Dozabaneh", corporate site, store, diet calculator, interactive map; Telegram bot, price monitor, decision tree (Python); price/inventory workbook + Apps Script; UX audit of tehranjanebi.</p>
       <p><strong>Education &amp; certificate:</strong> Associate degree, Electrotechnics, Shahid Korani University, Bandar Abbas, 2016–2018; Iran Language Institute certificate, Advanced level.</p>
       <p><strong>Terms:</strong> two rounds of revision after delivery, free · maximum response time 24 hours · client names withheld under confidentiality.</p>
       <p class="note">A first draft and terminology suggestions may be AI-assisted, but the final translation, editing, and quality control of every line are always mine; on projects where the client does not allow AI use, the translation is done entirely by hand.</p>
